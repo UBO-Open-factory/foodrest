@@ -1,4 +1,4 @@
-//#include //Librairie wifiESP826
+#include "WiFiClientSecure.h"//Librairie wifiESP826
 
 int epoch_rtc;
 
@@ -12,16 +12,16 @@ const String host = "https://uboopenfactory.univ-brest.fr/cad/proto1/backoffice/
 const String url  = "/mesure/add/FR_TEST2";
 
 
-void rtc_timestamp() 
+int rtc_timestamp() 
 {
-  epoch_rtc; //code RTC
+  return epoch_rtc; //code RTC
 }
-void mesure_poid() 
+int mesure_poid() 
 {
   // code CZL635-20
   poid;
 }
-void niveau_battrie() 
+int niveau_battrie() 
 {
   nv_batt = analogRead(pin_batt);//lecture de la valeur analogique
   Serial.print("niveau de la battrie = ");
@@ -31,27 +31,21 @@ void niveau_battrie()
 
 void loop() {
 
-  rtc_timestamp();
-  mesure_poid();
-  niveau_battrie();
   
   // Concatenation des mesures .............................
   String Mesures = "";
 
-  // timestamp0 is the 'Timestamp' value from your sensor 'RTC_Timestamp' (as float)
-  float Timestamp0 = epoch_rtc; // <- Your code to read value from sensor goes here 
-  Mesures.concat(formatString(Timestamp0, "10.0"));
+  // timestamp0 is the 'Timestamp' value from your sensor 'RTC_Timestamp' (as float) 
+  Mesures.concat(formatString(rtc_timestamp(), "10.0"));
 
   // poid1 is the 'Poid' value from your sensor 'CZL635-20' (as float)
-  float Poid1 = poid; // <- Your code to read value from sensor goes here 
-  Mesures.concat(formatString(Poid1, "-5.0"));
+  Mesures.concat(formatString( mesure_poid(), "-5.0"));
 
   // valeur analogique(0 a 1023)2 is the 'Valeur analogique(0 à 1023)' value from your sensor 'CAN (1024)' (as float)
-  float Valeur analogique(0 a 1023)2 = nv_batt(); // <- Your code to read value from sensor goes here 
-  Mesures.concat(formatString(Valeur analogique(0 a 1023)2, "4.0"));
+  Mesures.concat(formatString(niveau_battrie(), "4.0"));
 
   // Envoie des données vers TOCIO .........................
-  sendDataInHTTPSRequest( url, Mesures );
+  sendDataInHTTPSRequest(Mesures);
 
   // Pause .................................................
   delay(60 * 1000);
@@ -113,6 +107,7 @@ String formatString(float p_valeur, String p_formattage) {
 // --------------------------------------------------------------------------------
 // Envoi au serveur TOCIO les mesures ("data") passées en paramètre.
 // @param data : String contenant les mesures formatée selon la payload défini dans le Back Office de Tocio
+
 String sendDataInHTTPSRequest(String data) {
 
   // If we are connecte to the WIFI
