@@ -11,9 +11,6 @@ int nv_batt; //valeur numérique du niveau de battrie
 const String host = "https://uboopenfactory.univ-brest.fr/cad/proto1/backoffice/";
 const String url  = "/mesure/add/FR_TEST2";
 
-// Use the web site https://www.grc.com/fingerprints.htm to get the fingerprint from your web site
-const char fingerprint[] PROGMEM = "BD:CD:08:B3:............:A4:A8:CB";
-
 
 void rtc_timestamp() 
 {
@@ -122,8 +119,7 @@ String sendDataInHTTPSRequest(String data) {
   if (WiFi.status() == WL_CONNECTED) {
 
     //Create an https client
-    //WiFiClientSecure client;
-    //client.setFingerprint(fingerprint);
+    WiFiClientSecure client;
     int port = 443;
     if (!client.connect(host, port)) {
       Serial.println("connection failed");
