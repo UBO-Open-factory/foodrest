@@ -1,4 +1,8 @@
+#include <ESP8266WiFi.h>
+
+// @see : https://github.com/espressif/arduino-esp32/blob/ef99cd7fe7778719c92d6f8df0f10d3f0f7aa35e/libraries/WiFiClientSecure/src/WiFiClientSecure.h
 #include <WiFiClientSecure.h>
+
 
 // Paramètres de connection au réseau wifi
 const char* ssid = "congres";
@@ -112,7 +116,6 @@ String formatString(float p_valeur, String p_formattage) {
 // --------------------------------------------------------------------------------
 // Envoi au serveur TOCIO les mesures ("data") passées en paramètre.
 // @param data : String contenant les mesures formatée selon la payload défini dans le Back Office de Tocio
-
 String sendDataInHTTPSRequest(String data) {
 
   // If we are connecte to the WIFI
@@ -147,19 +150,39 @@ String sendDataInHTTPSRequest(String data) {
 }
 
 
+// --------------------------------------------------------------------------------
+/**
+ * Renvoie le timestamp actuel sous forme d'integer.
+ * @return integer
+ */
 int rtc_timestamp() {
-  return epoch_rtc; //code RTC
+  return 1615220068;
 }
+
+// --------------------------------------------------------------------------------
+/**
+ * Renvoie le poind en gramme sous forme d'intger.
+ * @return integer
+ */
 int mesure_poid() {
   int poid = 5000; //poid en grame ici = 5kg capteur de 0 a 20kg 
 
   // code CZL635-20
   return poid;
 }
+
+
+// --------------------------------------------------------------------------------
+/**
+ * Renvoie le niveau de la batterie (de 0 à 1024).
+ * @return integer
+ */
 int niveau_battrie() {
-  nv_batt = analogRead(pin_batt);//lecture de la valeur analogique
+  // Lecture de la valeur analogique sur la pin de la batterie
+  int nv_batt = analogRead(pin_batt);
+  
   Serial.print("niveau de la battrie = ");
   Serial.print(nv_batt);
 
-  return nv_batt
+  return nv_batt;
 }
