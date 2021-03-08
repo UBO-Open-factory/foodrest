@@ -1,37 +1,42 @@
-#include "WiFiClientSecure.h"//Librairie wifiESP826
+#include <WiFiClientSecure.h>
 
-int epoch_rtc;
+// Paramètres de connection au réseau wifi
+const char* ssid = "congres";
+const char* password = "sufca!2019!dsiun";
 
-int poid = 5000; //poid en grame ici = 5kg capteur de 0 a 20kg 
 
 const int pin_batt = A0; //ESP8266 analog PIN = A0, ici niveau_battrie(pin_batt)
-int nv_batt; //valeur numérique du niveau de battrie
 
 
 const String host = "https://uboopenfactory.univ-brest.fr/cad/proto1/backoffice/";
 const String url  = "/mesure/add/FR_TEST2";
 
 
-int rtc_timestamp() 
-{
-  return epoch_rtc; //code RTC
-}
-int mesure_poid() 
-{
-  // code CZL635-20
-  poid;
-}
-int niveau_battrie() 
-{
-  nv_batt = analogRead(pin_batt);//lecture de la valeur analogique
-  Serial.print("niveau de la battrie = ");
-  Serial.print(nv_batt);
+
+
+// *********************************************************************************
+void setup() {
+  // initialisation de la liason série (pour le moniteur)
+  Serial.begin(115200);
+  Serial.println("OK, let's go");
+
+  // Connection WIFI -----------------------------------------------------------------------
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+
+  Serial.println();
+  Serial.print("Connection au réseau WIFI en cours ");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Voila, c'est fait.");
+  Serial.print("IP address: "); Serial.println(WiFi.localIP());
+  Serial.print("MAC address: "); Serial.println(WiFi.macAddress());
 }
 
 
-void loop() {
-
-  
+void loop() { 
   // Concatenation des mesures .............................
   String Mesures = "";
 
@@ -139,5 +144,22 @@ String sendDataInHTTPSRequest(String data) {
   } else {
     return "nok";
   }
+}
 
+
+int rtc_timestamp() {
+  return epoch_rtc; //code RTC
+}
+int mesure_poid() {
+  int poid = 5000; //poid en grame ici = 5kg capteur de 0 a 20kg 
+
+  // code CZL635-20
+  return poid;
+}
+int niveau_battrie() {
+  nv_batt = analogRead(pin_batt);//lecture de la valeur analogique
+  Serial.print("niveau de la battrie = ");
+  Serial.print(nv_batt);
+
+  return nv_batt
 }
