@@ -116,11 +116,7 @@ void setup_rtc_pcf8523 () {
  * librairie adafruit RTClib
  */
 int rtc_timestamp() {
-// ----procedure de test----
-  return 1615220068;
-//--------------------------
-/**
- //CODE RTC 
+
  DateTime now = rtc.now();
 
     Serial.print(now.year(), DEC);
@@ -144,25 +140,7 @@ int rtc_timestamp() {
     Serial.print(now.unixtime() / 86400L);
     Serial.println("d");
 
-    // calculate a date which is 7 days, 12 hours and 30 seconds into the future
-    DateTime future (now + TimeSpan(7,12,30,6));
-
-    Serial.print(" now + 7d + 12h + 30m + 6s: ");
-    Serial.print(future.year(), DEC);
-    Serial.print('/');
-    Serial.print(future.month(), DEC);
-    Serial.print('/');
-    Serial.print(future.day(), DEC);
-    Serial.print(' ');
-    Serial.print(future.hour(), DEC);
-    Serial.print(':');
-    Serial.print(future.minute(), DEC);
-    Serial.print(':');
-    Serial.print(future.second(), DEC);
     Serial.println();
-
-    Serial.println();
- */
 }
 // --------------------------------------------------------------------------------------
 
@@ -171,12 +149,7 @@ int rtc_timestamp() {
  * balence CZL635_20
  */
 int mesure_poid() {
-// ----procedure de test----
-  int poid = 5000; //poid en grame ici = 5kg capteur de 0 a 20kg 
-  return poid;
-//--------------------------
-/**
- * CODE CAPTEUR CZL635820 DU TUTO CZL635820
+  
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
 
   Serial.print("Reading: ");
@@ -194,7 +167,7 @@ int mesure_poid() {
     else if(temp == '-' || temp == 'z')
       calibration_factor -= 10;
   }
-*/
+
 }
 //---------------------------------------------------------------------------------------
 
