@@ -41,6 +41,7 @@ void setup() {
   Serial.print("IP address: "); Serial.println(WiFi.localIP());
   Serial.print("MAC address: "); Serial.println(WiFi.macAddress());
   setup_CZL635_20();
+  setup_rtc_pcf8523();
 }
 //--------------------------------------------------------------------------------------
 
