@@ -40,7 +40,13 @@ void setup_CZL635_20() {
  * @return integer
  */
 int rtc_timestamp() {
+// ----procedure de test----
   return 1615220068;
+//--------------------------
+/**
+ *CODE RTC 
+
+ */
 }
 // --------------------------------------------------------------------------------------
 
@@ -49,8 +55,12 @@ int rtc_timestamp() {
  * balence CZL635_20
  */
 int mesure_poid() {
-  //int poid = 5000; //poid en grame ici = 5kg capteur de 0 a 20kg 
-  //return poid;
+// ----procedure de test----
+  int poid = 5000; //poid en grame ici = 5kg capteur de 0 a 20kg 
+  return poid;
+//--------------------------
+/**
+ * CODE CAPTEUR CZL635820 DU TUTO CZL635820
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
 
   Serial.print("Reading: ");
@@ -68,6 +78,7 @@ int mesure_poid() {
     else if(temp == '-' || temp == 'z')
       calibration_factor -= 10;
   }
+*/
 }
 //---------------------------------------------------------------------------------------
 
