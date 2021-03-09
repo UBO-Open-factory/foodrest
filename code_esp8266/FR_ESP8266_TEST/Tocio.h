@@ -6,12 +6,8 @@
 #include <WiFiClientSecure.h>
 
 
-// Paramètres de connection au réseau wifi
-const char* ssid = "congres";
-const char* password = "sufca!2019!dsiun";
-
-const String host = "https://uboopenfactory.univ-brest.fr/cad/proto1/backoffice/";
-const String url  = "/mesure/add/FR_TEST2";
+const String host = "uboopenfactory.univ-brest.fr";
+const String url  = "/cad/proto1/backoffice/mesure/add/";
 
 
 
@@ -68,36 +64,68 @@ String formatString(float p_valeur, String p_formattage) {
 
 // --------------------------------------------------------------------------------
 // Envoi au serveur TOCIO les mesures ("data") passées en paramètre.
-// @param data : String contenant les mesures formatée selon la payload défini dans le Back Office de Tocio
-String sendDataInHTTPSRequest(String data) {
+// @param data : String contenant les mesures formatées selon la payload défini dans le Back Office de Tocio
+// @param config : le fichier de configuration pour lire les variables locales de connection Wifi, ID poubelle, etc...
+String sendDataInHTTPSRequest(String data, Configuration configLocale) {
 
-  // If we are connecte to the WIFI
+  // If we are connect to the WIFI
   if (WiFi.status() == WL_CONNECTED) {
 
-    //Create an https client
+    //  Create an https client
     WiFiClientSecure client;
+
+   // Don't validate the fingerprint and the certificat.
+   client.setInsecure();
+
     int port = 443;
     if (!client.connect(host, port)) {
       Serial.println("connection failed");
-      return "nok";
+      return "connection failed (host:" + String(host) + ", port:" + String(port) + ")";
     }
 
     // Send data to the client with a GET method
-    String request = url + "/" + data;
-    client.print(String("GET ") + request + " HTTP/1.1\r\n" +
-        "Host: " + host + "\r\n" +
-        "Connection: close\r\n\r\n");
+    String request = url + configLocale.IDPoubelle + "/" + data;
+    Serial.println("sendDataInHTTPSRequest> Request : " + String(request) );
+    
+    client.println("GET " + request + " HTTP/1.1");
+    client.println("Host: " + host);
+    client.println("Accept: */*");
+    client.println("User-Agent: ESP8266/NodeMCU 0.9");
+    client.println("Connection: close");
+    client.println(); // end HTTP request header
 
-    // Lecture de ce qui est renvoyée par le serveur
-    while (client.available()) {
-      String line = client.readStringUntil('\r');
-      Serial.print(line);
+    // Read server respons
+    String retour = "";
+    while (client.connected()) {
+      if (client.available()) {
+        // read an incoming byte from the server and print it to serial monitor:
+        char c = client.read();
+        // Serial.print(c);
+        retour.concat( String (c) );
+      }
     }
 
-    client.stop();
+    // Extraction du message d'erreur dans le retour JSON
+    // 'error' est toujours renvoyé, même si le message est vide
+    retour = retour.substring(retour.indexOf("\"error") + 8 );
+
+
+    // Si on trouve le mot success dans la trame, c'est que l'insertion a bien été faite.
+    // 'success' est renvoyé qu'ne cas de succés, s'il n'apparait pas, il faut donc renvoyer le message d'erreur
+    if ( retour.indexOf("\"success") == -1 ) {
+      return retour;
+    }
+
+
+    // Fin de la connection
+    if (!client.connected()) {
+      // if the server's disconnected, stop the client:
+      Serial.println("disconnected");
+      client.stop();
+    }
     return "ok";
 
   } else {
-    return "nok";
+    return "Connection WIFI impossible : WiFi.status() = " + String(WiFi.status());
   }
 }
