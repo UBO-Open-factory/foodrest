@@ -1,5 +1,6 @@
 /**
  * librairie boad firebeetle esp8266 : fichier->preference->http://download.dfrobot.top/FireBeetle/package_firebeetle8266_index.json
+ * librairiecapteur poid hx711 : https://github.com/bogde/HX711/archive/master.zip
  */
  
 // Librairies pour le fonctionnement avec le Back office de TOCIO

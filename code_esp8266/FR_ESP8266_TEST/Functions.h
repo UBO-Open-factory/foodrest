@@ -118,7 +118,7 @@ void setup_rtc_pcf8523 () {
 int rtc_timestamp() {
 
  DateTime now = rtc.now();
-
+/*
     Serial.print(now.year(), DEC);
     Serial.print('/');
     Serial.print(now.month(), DEC);
@@ -133,13 +133,14 @@ int rtc_timestamp() {
     Serial.print(':');
     Serial.print(now.second(), DEC);
     Serial.println();
-
+*/
     Serial.print(" since midnight 1/1/1970 = ");
     Serial.print(now.unixtime());
     Serial.print("s = ");
     Serial.print(now.unixtime() / 86400L);
     Serial.println("d");
 
+    return now.unixtime;
     Serial.println();
 }
 // --------------------------------------------------------------------------------------
