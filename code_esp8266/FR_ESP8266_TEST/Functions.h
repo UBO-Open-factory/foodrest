@@ -8,7 +8,7 @@
 #define DOUT  D3
 #define CLK  D2
 HX711 scale;
-float calibration_factor = conf.calibrationFactor;
+float calibration_factor = configLocale.calibrationFactor;
 //---------------------------------------------------------------------------------------
 /**
    capteur RTC pcf8523
@@ -138,7 +138,7 @@ int rtc_timestamp() {
     Serial.print(now.unixtime() / 86400L);
     Serial.println("d");
 
-    return now.unixtime;
+    return now.unixtime();
     Serial.println();
 }
 // --------------------------------------------------------------------------------------
