@@ -8,7 +8,7 @@ typedef struct {
   String ssid = "";
   String password = "";
   String IDPoubelle = "";
-  int poidVide;
+  int calibrationFactor;
 } Configuration;
 
 
@@ -28,7 +28,7 @@ Configuration lectureConfigurationFromSD() {
   conf.ssid       = "congres";
   conf.password   = "sufca!2019!dsiun";
   conf.IDPoubelle = "FR_TEST2";
-  conf.poidVide   = 100;
+  conf.calibrationFactor   = -7050;
 
   return conf;
 }
