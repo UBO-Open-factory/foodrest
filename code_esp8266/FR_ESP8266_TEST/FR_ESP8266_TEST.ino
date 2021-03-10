@@ -16,6 +16,11 @@ void setup() {
   Serial.begin(115200);
   Serial.println("OK, let's go");
 
+  // Lecture de la config à partir du fichier sur la carte SD -----------------------------
+  // ( renseigne le ssid, password, poid, IDPoubelle
+  configLocale = lectureConfigurationFromSD();
+  
+
   // Connection WIFI ----------------------------------------------------------------------
   WiFi.mode(WIFI_STA);
   WiFi.begin(configLocale.ssid, configLocale.password);
