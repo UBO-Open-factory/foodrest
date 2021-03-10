@@ -1,4 +1,32 @@
-// Librairies pour la lecture de la ccnfiguration
+/**
+ * Gestion des mesures de la poubelle connectée.
+ * Principe des mesure !
+ * La poubelle est en mode deep sleep.
+ * Dès que le capteur d'ouverture (capteur ILS) détecte une ouverture, on réveil la poubelle.
+ *   .On fait clignoter la LED rouge (tant que le couvercle est ouvert)
+ *
+ * Dés que le capteur d'ouverture (capteur ILS) détecte une fermeture :
+ *   . On éteind la LED rouge et on allume la led verte
+ *   . On fait la mesure du poid.
+ *   . On prend l'heure (timestamp).
+ *   . On prend le niveau de la batterie.
+ *   . On enregistre l'ID de la poubelle + timestamp + poids + niveau batterie sur la carte SD dans un fichier CSV temporaire.
+ *   . On éteind la led verte.
+ *   . On endors la puobelle
+ *   
+ * Chaque jour à 03:00 :
+ *   . On se connecte au réseau WIFI local.
+ *   . On charge le fichier CSV temporaire.
+ *   . On allume la led verte.
+ *      - Pour chacune des lignes, on l'envoie au serveur TOCIO.
+ *        . Si tout se passe bien (retour "ok") 
+ *          - On écrit la ligne dans le fichier CSV des mesures.
+ *          - On supprime la ligne dans le fichier CSV temporaire.
+ *   . On éteind la LED verte.
+ *   . On endors la poubelle.
+ */
+
+// Librairies pour la lecture de la configuration
 #include "Config.h"
 Configuration configLocale;
 
@@ -50,7 +78,7 @@ void loop() {
   String Mesures = "";
 
   // timestamp0 is the 'Timestamp' value from your sensor 'RTC_Timestamp' (as float)
-  Mesures.concat(formatString(rtc_timestamp(), "10.0"));
+  Mesures.concat(rtc_timestamp());
 
   // poid1 is the 'Poid' value from your sensor 'CZL635-20' (as float)
   Mesures.concat(formatString( mesure_poid(), "-5.0"));
