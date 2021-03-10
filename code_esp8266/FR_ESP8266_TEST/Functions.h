@@ -2,17 +2,17 @@
 #include <SPI.h>
 
 /**
- * capteur CZL635_20 [poids(kg/lbs)]
+   capteur CZL635_20 [poids(kg/lbs)]
 */
 #include "HX711.h"
 #define DOUT  D3
 #define CLK  D2
 HX711 scale;
-float calibration_factor = -7050; //-7050 worked for my 440lb max scale setup <-- tuto
+float calibration_factor = conf.calibrationFactor;
 //---------------------------------------------------------------------------------------
 /**
- * capteur RTC pcf8523
- */
+   capteur RTC pcf8523
+*/
 // Date and time functions using a PCF8523 RTC connected via I2C and Wire lib
 #include "RTClib.h"
 RTC_PCF8523 rtc;
@@ -24,8 +24,8 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
 #define pin_batt A0 //ESP8266 analog PIN = A0, ici niveau_battrie(pin_batt)
 
 /**
- * setup capteur CZL635_20
- */
+   setup capteur CZL635_20
+*/
 void setup_CZL635_20() {
   Serial.println("HX711 calibration sketch");
   Serial.println("Remove all weight from scale");
@@ -43,11 +43,9 @@ void setup_CZL635_20() {
 }
 //---------------------------------------------------------------------------------------
 /**
- * setup_RTC du code exemple adafruit pcf8523
- */
+   setup_RTC du code exemple adafruit pcf8523
+*/
 void setup_rtc_pcf8523 () {
-  //Serial.begin(57600);
-
 #ifndef ESP8266
   while (!Serial); // wait for serial port to connect. Needed for native USB
 #endif
@@ -85,7 +83,7 @@ void setup_rtc_pcf8523 () {
   // the RTC is running.
   rtc.start();
 
-   // The PCF8523 can be calibrated for:
+  // The PCF8523 can be calibrated for:
   //        - Aging adjustment
   //        - Temperature compensation
   //        - Accuracy tuning
@@ -111,43 +109,45 @@ void setup_rtc_pcf8523 () {
 //---------------------------------------------------------------------------------------
 
 /**
- * Renvoie le timestamp actuel sous forme de float.
- * @return integer
- * librairie adafruit RTClib
- */
+   Renvoie le timestamp actuel sous forme de float.
+   @return integer
+   librairie adafruit RTClib
+*/
 int rtc_timestamp() {
 
- DateTime now = rtc.now();
+  DateTime now = rtc.now();
 
-    Serial.print(now.year(), DEC);
-    Serial.print('/');
-    Serial.print(now.month(), DEC);
-    Serial.print('/');
-    Serial.print(now.day(), DEC);
-    Serial.print(" (");
-    Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-    Serial.print(") ");
-    Serial.print(now.hour(), DEC);
-    Serial.print(':');
-    Serial.print(now.minute(), DEC);
-    Serial.print(':');
-    Serial.print(now.second(), DEC);
-    Serial.println();
+  Serial.print(now.year(), DEC);
+  Serial.print('/');
+  Serial.print(now.month(), DEC);
+  Serial.print('/');
+  Serial.print(now.day(), DEC);
+  Serial.print(" (");
+  Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+  Serial.print(") ");
+  Serial.print(now.hour(), DEC);
+  Serial.print(':');
+  Serial.print(now.minute(), DEC);
+  Serial.print(':');
+  Serial.print(now.second(), DEC);
+  Serial.println();
 
-    Serial.print(" since midnight 1/1/1970 = ");
-    Serial.print(now.unixtime());
-    Serial.print("s = ");
-    Serial.print(now.unixtime() / 86400L);
-    Serial.println("d");
+  Serial.print(" since midnight 1/1/1970 = ");
+  Serial.print(now.unixtime());
+  Serial.print("s = ");
+  Serial.print(now.unixtime() / 86400L);
+  Serial.println("d");
 
-    Serial.println();
+  Serial.println();
+
+  return now.unixtime();
 }
 // --------------------------------------------------------------------------------------
 
 /**
- * mesure capteur de poid
- * balence CZL635_20
- */
+   mesure capteur de poid
+   balence CZL635_20
+*/
 int mesure_poid() {
 
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
@@ -159,12 +159,12 @@ int mesure_poid() {
   Serial.print(calibration_factor);
   Serial.println();
 
-  if(Serial.available())
+  if (Serial.available())
   {
     char temp = Serial.read();
-    if(temp == '+' || temp == 'a')
+    if (temp == '+' || temp == 'a')
       calibration_factor += 10;
-    else if(temp == '-' || temp == 'z')
+    else if (temp == '-' || temp == 'z')
       calibration_factor -= 10;
   }
 
@@ -172,9 +172,9 @@ int mesure_poid() {
 //---------------------------------------------------------------------------------------
 
 /**
- * Renvoie le niveau de la batterie (de 0 à 1024).
- * @return integer
- */
+   Renvoie le niveau de la batterie (de 0 à 1024).
+   @return integer
+*/
 int niveau_battrie() {
   // Lecture de la valeur analogique sur la pin de la batterie
   // int nv_batt = analogRead(pin_batt);
