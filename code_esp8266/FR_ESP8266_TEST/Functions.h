@@ -106,14 +106,14 @@ void setup_rtc_pcf8523 () {
   Serial.print("Offset is "); Serial.println(offset); // Print to control offset
 
 }
-//---------------------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------------------
 /**
    Renvoie le timestamp actuel sous forme de float.
    @return integer
    librairie adafruit RTClib
 */
-int rtc_timestamp() {
+String rtc_timestamp() {
 
  DateTime now = rtc.now();
 /*
@@ -138,11 +138,12 @@ int rtc_timestamp() {
     Serial.print(now.unixtime() / 86400L);
     Serial.println("d");
 
-    return now.unixtime();
+    return String(now.unixtime());
     Serial.println();
 }
-// --------------------------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------------------------
 /**
    mesure capteur de poid
    balence CZL635_20
