@@ -29,7 +29,7 @@ void setup() {
   Serial.println("Voila, c'est fait.");
   Serial.print("IP address: "); Serial.println(WiFi.localIP());
   Serial.print("MAC address: "); Serial.println(WiFi.macAddress());
-  
+
   // Initialisation de la balance
   setup_CZL635_20();
 
