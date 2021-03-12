@@ -1,15 +1,10 @@
-
 #include <ESP8266WiFi.h>
-
-
-// @see : https://github.com/espressif/arduino-esp32/blob/ef99cd7fe7778719c92d6f8df0f10d3f0f7aa35e/libraries/WiFiClientSecure/src/WiFiClientSecure.h
 #include <WiFiClientSecure.h>
 
+// @see : https://github.com/espressif/arduino-esp32/blob/ef99cd7fe7778719c92d6f8df0f10d3f0f7aa35e/libraries/WiFiClientSecure/src/WiFiClientSecure.h
+const char* fingerprint = "2A:12:65:E0:C9:41:C3:77:58:23:9F:02:EA:49:7F:84:D1:90:DE:50";
 
-const String host = "uboopenfactory.univ-brest.fr";
 const String url  = "/cad/foodrest/backoffice/mesure/add/";
-
-
 
 // --------------------------------------------------------------------------------
 // Formattage d'une chaine de caractères "chaine" selon le format "formattage".
@@ -73,12 +68,17 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
 
     //  Create an https client
     WiFiClientSecure client;
+    const char* host = "uboopenfactory.univ-brest.fr";
+    // Don't validate the fingerprint and the certificat.
+    //client.setInsecure();
+    if (client.verify(fingerprint, host)) {
+      Serial.println("certificate matches");
+    } else {
+      Serial.println("certificate doesn't match");
+    }
 
-   // Don't validate the fingerprint and the certificat.
-//   client.setInsecure();
-
-    int port = 443;
-    if (!client.connect(host, port)) {
+    const int port = 443;
+    if (!client.connect(host, port)) { 
       Serial.println("connection failed");
       return "connection failed (host:" + String(host) + ", port:" + String(port) + ")";
     }
@@ -86,9 +86,12 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
     // Send data to the client with a GET method
     String request = url + configLocale.IDPoubelle + "/" + data;
     Serial.println("sendDataInHTTPSRequest> Request : " + String(request) );
-    
-    client.println("GET " + request + " HTTP/1.1");
-    client.println("Host: " + host);
+
+    //client.println("GET " + request + " HTTP/1.1");
+    client.print(String("GET ") + url + " HTTP/1.1\r\n" +
+                 "Host: " + host + "\r\n" +
+                 "User-Agent: BuildFailureDetectorESP8266\r\n" +
+                 "Connection: close\r\n\r\n");
     client.println("Accept: */*");
     client.println("User-Agent: ESP8266/NodeMCU 0.9");
     client.println("Connection: close");

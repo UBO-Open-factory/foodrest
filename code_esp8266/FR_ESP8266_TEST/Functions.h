@@ -34,7 +34,7 @@ void calibrageUsine(){
 
   // Calibration de la RTC
   setup_rtc_pcf8523();
-  
+
   // On rentre en mode deep sleep
   // TODO
 }
@@ -47,11 +47,13 @@ void calibrageUsine(){
  * setup capteur CZL635_20
 */
 void setup_CZL635_20() {
+  /*
   Serial.println("HX711 calibration sketch");
   Serial.println("Remove all weight from scale");
   Serial.println("After readings begin, place known weight on scale");
   Serial.println("Press + or a to increase calibration factor");
   Serial.println("Press - or z to decrease calibration factor");
+*/
 
   scale.begin(DOUT, CLK); //definition des pin
   scale.set_scale();
@@ -60,14 +62,16 @@ void setup_CZL635_20() {
   long zero_factor = scale.read_average(); //Get a baseline reading
   Serial.print("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
   Serial.println(zero_factor);
+
 }
 
 
 //---------------------------------------------------------------------------------------
-/**   
+/**
  *    setup_RTC du code exemple adafruit pcf8523
 */
 void setup_rtc_pcf8523 () {
+
 #ifndef ESP8266
   while (!Serial); // wait for serial port to connect. Needed for native USB
 #endif
@@ -170,8 +174,10 @@ String rtc_timestamp() {
    mesure capteur de poid
    balence CZL635_20
 */
-int mesure_poid() {
+String mesure_poid() {
 
+return "+55555";
+/*
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
 
   Serial.print("Reading: ");
@@ -189,7 +195,7 @@ int mesure_poid() {
     else if (temp == '-' || temp == 'z')
       calibration_factor -= 10;
   }
-
+*/
 }
 //---------------------------------------------------------------------------------------
 
@@ -200,9 +206,11 @@ int mesure_poid() {
 int niveau_battrie() {
   // Lecture de la valeur analogique sur la pin de la batterie
   // int nv_batt = analogRead(pin_batt);
+Serial.print("debug f1");
   int nv_batt = 1234;
-
+Serial.print("debug f2");  //BUG dans la suite du code
   // Serial.println("niveau de la battrie = "+String(nv_batt));
   return nv_batt;
+Serial.print("debug f3");
 }
 //---------------------------------------------------------------------------------------
