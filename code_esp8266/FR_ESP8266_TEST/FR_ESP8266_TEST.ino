@@ -41,13 +41,13 @@ void setup() {
   Serial.println("Voila, c'est fait.");
   Serial.print("IP address: "); Serial.println(WiFi.localIP());
   Serial.print("MAC address: "); Serial.println(WiFi.macAddress());
-  Serial.print("debug1");
+
   // Initialisation de la balance
   //setup_CZL635_20();
-  Serial.print("debug2");
+
   // Initialisation de l'horloge
   setup_rtc_pcf8523();
-  Serial.print("debug3");
+
 }
 
 
@@ -56,17 +56,17 @@ void setup() {
 void loop() {
   // Concatenation des mesures .............................
   String Mesures = "";
-
+  Serial.println("debug1");
   // timestamp0 is the 'Timestamp' value from your sensor 'RTC_Timestamp' (as float)
   Mesures.concat(rtc_timestamp());
-
+  Serial.println("debug2");
   // poid1 is the 'Poid' value from your sensor 'CZL635-20' (as float)
   //Mesures.concat(formatString( mesure_poid(), "-5.0"));
   Mesures.concat(mesure_poid());
-
+  Serial.println("debug3");
   // valeur analogique(0 a 1023)2 is the 'Valeur analogique(0 à 1023)' value from your sensor 'CAN (1024)' (as float)
   Mesures.concat(formatString(niveau_battrie(), "4.0"));
-
+  Serial.println("debug4");
   // Envoie des données vers TOCIO .........................
   String retour = sendDataInHTTPSRequest( Mesures, configLocale );
   if ( retour != "ok") {

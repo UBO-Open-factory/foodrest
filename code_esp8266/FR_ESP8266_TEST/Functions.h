@@ -34,6 +34,7 @@ void setup_CZL635_20() {
   Serial.println("Press + or a to increase calibration factor");
   Serial.println("Press - or z to decrease calibration factor");
 */
+ 
   scale.begin(DOUT, CLK); //definition des pin
   scale.set_scale();
   scale.tare(); //Reset the scale to 0
@@ -41,6 +42,7 @@ void setup_CZL635_20() {
   long zero_factor = scale.read_average(); //Get a baseline reading
   Serial.print("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
   Serial.println(zero_factor);
+
 }
 //---------------------------------------------------------------------------------------
 /**
@@ -118,28 +120,11 @@ void setup_rtc_pcf8523 () {
 String rtc_timestamp() {
 
  DateTime now = rtc.now();
-/*
-    Serial.print(now.year(), DEC);
-    Serial.print('/');
-    Serial.print(now.month(), DEC);
-    Serial.print('/');
-    Serial.print(now.day(), DEC);
-    Serial.print(" (");
-    Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-    Serial.print(") ");
-    Serial.print(now.hour(), DEC);
-    Serial.print(':');
-    Serial.print(now.minute(), DEC);
-    Serial.print(':');
-    Serial.print(now.second(), DEC);
-    Serial.println();
-*/
+
     Serial.print(" since midnight 1/1/1970 = ");
     Serial.print(now.unixtime());
-    Serial.print("s = ");
-    Serial.print(now.unixtime() / 86400L);
-    Serial.println("d");
-
+    Serial.print("s;");
+    
     return String(now.unixtime());
     Serial.println();
 }
@@ -152,7 +137,7 @@ String rtc_timestamp() {
 */
 String mesure_poid() {
 
-return "-55555"; 
+return "+55555";
 /*
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
 
@@ -182,9 +167,11 @@ return "-55555";
 int niveau_battrie() {
   // Lecture de la valeur analogique sur la pin de la batterie
   // int nv_batt = analogRead(pin_batt);
+Serial.print("debug f1");
   int nv_batt = 1234;
-
+Serial.print("debug f2");  //BUG dans la suite du code
   // Serial.println("niveau de la battrie = "+String(nv_batt));
   return nv_batt;
+Serial.print("debug f3");
 }
 //---------------------------------------------------------------------------------------
