@@ -1,0 +1,7 @@
+[wifi]
+ssid="congres"
+password="mot de passe"
+
+[Poubelle]
+ID=
+InitialisationUsine=True
