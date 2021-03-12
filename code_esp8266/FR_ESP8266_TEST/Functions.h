@@ -23,8 +23,28 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
 #define led_v D5 //led indicateur visuel vert
 #define pin_batt A0 //ESP8266 analog PIN = A0, ici niveau_battrie(pin_batt)
 
+
+//---------------------------------------------------------------------------------------
 /**
-   setup capteur CZL635_20
+ * Permet de calibrer les capteurs.
+ */
+void calibrageUsine(){
+  // Calibration de la ballance
+  setup_CZL635_20();
+
+  // Calibration de la RTC
+  setup_rtc_pcf8523();
+  
+  // On rentre en mode deep sleep
+  // TODO
+}
+
+
+
+
+//---------------------------------------------------------------------------------------
+/**
+ * setup capteur CZL635_20
 */
 void setup_CZL635_20() {
   Serial.println("HX711 calibration sketch");
@@ -41,9 +61,11 @@ void setup_CZL635_20() {
   Serial.print("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
   Serial.println(zero_factor);
 }
+
+
 //---------------------------------------------------------------------------------------
-/**
-   setup_RTC du code exemple adafruit pcf8523
+/**   
+ *    setup_RTC du code exemple adafruit pcf8523
 */
 void setup_rtc_pcf8523 () {
 #ifndef ESP8266
@@ -109,7 +131,7 @@ void setup_rtc_pcf8523 () {
 
 //---------------------------------------------------------------------------------------
 /**
-   Renvoie le timestamp actuel sous forme de float.
+   Renvoie le timestamp actuel sous forme de chaine de 10 caractères.
    @return integer
    librairie adafruit RTClib
 */
@@ -131,15 +153,15 @@ String rtc_timestamp() {
     Serial.print(':');
     Serial.print(now.second(), DEC);
     Serial.println();
-*/
     Serial.print(" since midnight 1/1/1970 = ");
     Serial.print(now.unixtime());
     Serial.print("s = ");
     Serial.print(now.unixtime() / 86400L);
     Serial.println("d");
+    Serial.println();
+*/
 
     return String(now.unixtime());
-    Serial.println();
 }
 
 
