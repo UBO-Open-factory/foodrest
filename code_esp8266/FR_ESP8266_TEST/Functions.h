@@ -152,7 +152,7 @@ String rtc_timestamp() {
 */
 String mesure_poid() {
 
-return "-55555";
+return "-55555"; 
 /*
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
 

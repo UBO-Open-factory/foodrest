@@ -28,7 +28,7 @@
 
 // Librairies pour la lecture de la configuration
 #include "Config.h"
-Configuration configLocale;
+Configuration configLocale; 
 
 // Librairies pour le fonctionnement avec le Back office de TOCIO
 #include "Tocio.h"

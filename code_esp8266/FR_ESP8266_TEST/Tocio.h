@@ -78,7 +78,7 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
     }
 
     const int port = 443;
-    if (!client.connect(host, port)) {
+    if (!client.connect(host, port)) { 
       Serial.println("connection failed");
       return "connection failed (host:" + String(host) + ", port:" + String(port) + ")";
     }
