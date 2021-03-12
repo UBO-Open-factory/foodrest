@@ -75,7 +75,7 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
     WiFiClientSecure client;
 
    // Don't validate the fingerprint and the certificat.
-   client.setInsecure();
+//   client.setInsecure();
 
     int port = 443;
     if (!client.connect(host, port)) {
