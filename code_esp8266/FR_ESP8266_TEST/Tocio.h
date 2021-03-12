@@ -7,7 +7,7 @@
 
 
 const String host = "uboopenfactory.univ-brest.fr";
-const String url  = "/cad/proto1/backoffice/mesure/add/";
+const String url  = "/cad/foodrest/backoffice/mesure/add/";
 
 
 
