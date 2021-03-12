@@ -27,16 +27,17 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
    setup capteur CZL635_20
 */
 void setup_CZL635_20() {
+  /*
   Serial.println("HX711 calibration sketch");
   Serial.println("Remove all weight from scale");
   Serial.println("After readings begin, place known weight on scale");
   Serial.println("Press + or a to increase calibration factor");
   Serial.println("Press - or z to decrease calibration factor");
-
+*/
   scale.begin(DOUT, CLK); //definition des pin
   scale.set_scale();
   scale.tare(); //Reset the scale to 0
-
+  
   long zero_factor = scale.read_average(); //Get a baseline reading
   Serial.print("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
   Serial.println(zero_factor);
@@ -46,6 +47,7 @@ void setup_CZL635_20() {
    setup_RTC du code exemple adafruit pcf8523
 */
 void setup_rtc_pcf8523 () {
+ 
 #ifndef ESP8266
   while (!Serial); // wait for serial port to connect. Needed for native USB
 #endif
@@ -148,8 +150,10 @@ String rtc_timestamp() {
    mesure capteur de poid
    balence CZL635_20
 */
-int mesure_poid() {
+String mesure_poid() {
 
+return "-55555";
+/*
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
 
   Serial.print("Reading: ");
@@ -167,7 +171,7 @@ int mesure_poid() {
     else if (temp == '-' || temp == 'z')
       calibration_factor -= 10;
   }
-
+*/
 }
 //---------------------------------------------------------------------------------------
 
