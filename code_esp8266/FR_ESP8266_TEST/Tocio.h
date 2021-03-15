@@ -1,7 +1,9 @@
 #include <ESP8266WiFi.h>
-#include <WiFiClientSecure.h>
 
 // @see : https://github.com/espressif/arduino-esp32/blob/ef99cd7fe7778719c92d6f8df0f10d3f0f7aa35e/libraries/WiFiClientSecure/src/WiFiClientSecure.h
+#include <WiFiClientSecure.h>
+
+// Use the web site https://www.grc.com/fingerprints.htm to the fingerprint from  your web site
 const char* fingerprint = "2A:12:65:E0:C9:41:C3:77:58:23:9F:02:EA:49:7F:84:D1:90:DE:50";
 
 const String url  = "/cad/foodrest/backoffice/mesure/add/";
@@ -68,14 +70,20 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
 
     //  Create an https client
     WiFiClientSecure client;
-    const char* host = "uboopenfactory.univ-brest.fr";
-    // Don't validate the fingerprint and the certificat.
-    //client.setInsecure();
+    const String host = "uboopenfactory.univ-brest.fr";
+
+    
+    // Don't validate the certificat (and avoid fingerprint).
+    client.setInsecure();
+
+    // Validate the fingerprint
+    /*
     if (client.verify(fingerprint, host)) {
       Serial.println("certificate matches");
     } else {
       Serial.println("certificate doesn't match");
     }
+    */
 
     const int port = 443;
     if (!client.connect(host, port)) { 
@@ -87,15 +95,27 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
     String request = url + configLocale.IDPoubelle + "/" + data;
     Serial.println("sendDataInHTTPSRequest> Request : " + String(request) );
 
+        // Send data to the client with a GET method
+    Serial.println("Request : " + url + "/" + data);
+    client.println("GET " + request + " HTTP/1.1");
+    client.println("Host: " + host);
+    client.println("Accept: */*");
+    client.println("User-Agent: ESP8266/NodeMCU 0.9");
+    client.println("Connection: close");
+    client.println(); // end HTTP request header
+
+    
+/*
     //client.println("GET " + request + " HTTP/1.1");
     client.print(String("GET ") + url + " HTTP/1.1\r\n" +
                  "Host: " + host + "\r\n" +
                  "User-Agent: BuildFailureDetectorESP8266\r\n" +
                  "Connection: close\r\n\r\n");
-    client.println("Accept: */*");
+    client.println("Accept: * /*");
     client.println("User-Agent: ESP8266/NodeMCU 0.9");
     client.println("Connection: close");
     client.println(); // end HTTP request header
+*/
 
     // Read server respons
     String retour = "";

@@ -24,36 +24,21 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
 #define pin_batt A0 //ESP8266 analog PIN = A0, ici niveau_battrie(pin_batt)
 
 
-//---------------------------------------------------------------------------------------
-/**
- * Permet de calibrer les capteurs.
- */
-void calibrageUsine(){
-  // Calibration de la ballance
-  setup_CZL635_20();
-
-  // Calibration de la RTC
-  setup_rtc_pcf8523();
-
-  // On rentre en mode deep sleep
-  // TODO
-}
-
 
 
 
 //---------------------------------------------------------------------------------------
 /**
- * setup capteur CZL635_20
+   setup capteur CZL635_20
 */
 void setup_CZL635_20() {
   /*
-  Serial.println("HX711 calibration sketch");
-  Serial.println("Remove all weight from scale");
-  Serial.println("After readings begin, place known weight on scale");
-  Serial.println("Press + or a to increase calibration factor");
-  Serial.println("Press - or z to decrease calibration factor");
-*/
+    Serial.println("HX711 calibration sketch");
+    Serial.println("Remove all weight from scale");
+    Serial.println("After readings begin, place known weight on scale");
+    Serial.println("Press + or a to increase calibration factor");
+    Serial.println("Press - or z to decrease calibration factor");
+  */
 
   scale.begin(DOUT, CLK); //definition des pin
   scale.set_scale();
@@ -68,7 +53,7 @@ void setup_CZL635_20() {
 
 //---------------------------------------------------------------------------------------
 /**
- *    setup_RTC du code exemple adafruit pcf8523
+      setup_RTC du code exemple adafruit pcf8523
 */
 void setup_rtc_pcf8523 () {
 
@@ -129,8 +114,7 @@ void setup_rtc_pcf8523 () {
   // rtc.calibrate(PCF8523_TwoHours, offset); // Un-comment to perform calibration once drift (seconds) and observation period (seconds) are correct
   // rtc.calibrate(PCF8523_TwoHours, 0); // Un-comment to cancel previous calibration
 
-  Serial.print("Offset is "); Serial.println(offset); // Print to control offset
-
+  // Serial.print("Offset is "); Serial.println(offset); // Print to control offset
 }
 
 //---------------------------------------------------------------------------------------
@@ -141,31 +125,31 @@ void setup_rtc_pcf8523 () {
 */
 String rtc_timestamp() {
 
- DateTime now = rtc.now();
-/*
-    Serial.print(now.year(), DEC);
-    Serial.print('/');
-    Serial.print(now.month(), DEC);
-    Serial.print('/');
-    Serial.print(now.day(), DEC);
-    Serial.print(" (");
-    Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-    Serial.print(") ");
-    Serial.print(now.hour(), DEC);
-    Serial.print(':');
-    Serial.print(now.minute(), DEC);
-    Serial.print(':');
-    Serial.print(now.second(), DEC);
-    Serial.println();
-    Serial.print(" since midnight 1/1/1970 = ");
-    Serial.print(now.unixtime());
-    Serial.print("s = ");
-    Serial.print(now.unixtime() / 86400L);
-    Serial.println("d");
-    Serial.println();
-*/
+  DateTime now = rtc.now();
+  /*
+      Serial.print(now.year(), DEC);
+      Serial.print('/');
+      Serial.print(now.month(), DEC);
+      Serial.print('/');
+      Serial.print(now.day(), DEC);
+      Serial.print(" (");
+      Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+      Serial.print(") ");
+      Serial.print(now.hour(), DEC);
+      Serial.print(':');
+      Serial.print(now.minute(), DEC);
+      Serial.print(':');
+      Serial.print(now.second(), DEC);
+      Serial.println();
+      Serial.print(" since midnight 1/1/1970 = ");
+      Serial.print(now.unixtime());
+      Serial.print("s = ");
+      Serial.print(now.unixtime() / 86400L);
+      Serial.println("d");
+      Serial.println();
+  */
 
-    return String(now.unixtime());
+  return String(now.unixtime());
 }
 
 
@@ -176,26 +160,26 @@ String rtc_timestamp() {
 */
 String mesure_poid() {
 
-return "+55555";
-/*
-  scale.set_scale(calibration_factor); //Adjust to this calibration factor
+  return "+55555";
+  /*
+    scale.set_scale(calibration_factor); //Adjust to this calibration factor
 
-  Serial.print("Reading: ");
-  Serial.print(scale.get_units(), 1);
-  Serial.print(" lbs"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
-  Serial.print(" calibration_factor: ");
-  Serial.print(calibration_factor);
-  Serial.println();
+    Serial.print("Reading: ");
+    Serial.print(scale.get_units(), 1);
+    Serial.print(" lbs"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
+    Serial.print(" calibration_factor: ");
+    Serial.print(calibration_factor);
+    Serial.println();
 
-  if (Serial.available())
-  {
-    char temp = Serial.read();
-    if (temp == '+' || temp == 'a')
-      calibration_factor += 10;
-    else if (temp == '-' || temp == 'z')
-      calibration_factor -= 10;
-  }
-*/
+    if (Serial.available())
+    {
+      char temp = Serial.read();
+      if (temp == '+' || temp == 'a')
+        calibration_factor += 10;
+      else if (temp == '-' || temp == 'z')
+        calibration_factor -= 10;
+    }
+  */
 }
 //---------------------------------------------------------------------------------------
 
@@ -206,11 +190,24 @@ return "+55555";
 int niveau_battrie() {
   // Lecture de la valeur analogique sur la pin de la batterie
   // int nv_batt = analogRead(pin_batt);
-Serial.print("debug f1");
   int nv_batt = 1234;
-Serial.print("debug f2");  //BUG dans la suite du code
-  // Serial.println("niveau de la battrie = "+String(nv_batt));
+  
   return nv_batt;
-Serial.print("debug f3");
 }
+
+
+
 //---------------------------------------------------------------------------------------
+/**
+ * Permet de calibrer les capteurs.
+*/
+void calibrageUsine() {
+  // Calibration de la ballance
+  setup_CZL635_20();
+
+  // Calibration de la RTC
+  setup_rtc_pcf8523();
+
+  // On rentre en mode deep sleep
+  // TODO
+}

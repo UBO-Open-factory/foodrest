@@ -8,6 +8,7 @@ typedef struct {
   String ssid = "";
   String password = "";
   String IDPoubelle = "";
+  boolean InitialisationUsine = false;
   int calibrationFactor;
 } Configuration;
 
@@ -27,7 +28,8 @@ Configuration lectureConfigurationFromSD() {
   // Initialisation de la structure à partir du fichier de la carte SD @todo
   conf.ssid       = "congres";
   conf.password   = "sufca!2019!dsiun";
-  conf.IDPoubelle = "FR_TEST2";
+  conf.IDPoubelle = "TEST_2";
+  conf.InitialisationUsine = false;
   conf.calibrationFactor   = -7050;
 
   return conf;
