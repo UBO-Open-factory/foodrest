@@ -4,6 +4,11 @@ Code pour le Projet de poubelle connectée basée sur la solution Open Source [T
 Ce projet présente le code Arduino pour un ESP ou un Arduino.
 
 # Principe de fonctionnement du programme
+Principe d’enregistrement de mesures lors de l’utilisation de la poubelle connectée.
+
+En jaune : Les interactions avec l’utilisateur.
+En Rouge, ce qu'il faut encore affiner.
+
 ![Algorythme](./Algorythme.png?raw=true "Algorythme")
 
 
