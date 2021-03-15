@@ -3,5 +3,10 @@ ssid="congres"
 password="mot de passe"
 
 [Poubelle]
+; ID de la poubelle (celui qui est écrit sur la face)
 ID=
+
+[Settings]
+; Cette partie concerne le calibrage usine de la poubelle.
+; Ne modifiez aucun paramètre sans savoir ce que vous faites.
 InitialisationUsine=True
