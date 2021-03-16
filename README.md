@@ -9,7 +9,7 @@ Principe d’enregistrement de mesures lors de l’utilisation de la poubelle co
 En jaune : Les interactions avec l’utilisateur.
 En Rouge, ce qu'il faut encore affiner.
 
-![Algorythme](./Algorythme.png?raw=true "Algorythme")
+![Algorythme](./Doc/Algorythme.png?raw=true "Algorythme")
 
 
 ## Librairies Arduino utilisées
