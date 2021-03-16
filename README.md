@@ -42,3 +42,10 @@ Cette librairie est également disponible dans le répertoire du projet (répert
 La librairie **HX711** utilisée est celle disponible sur le [Arduino core for ESP32](https://github.com/espressif/arduino-esp32)
 
 Cette librairie est également disponible dans le répertoire du projet (répertoire /Librairies/HX711 ).
+
+
+# Configuration de Arduino
+Installation des cartes NodeMCU TODO
+
+Sélection de la carte 
+![Utilisation de la carte Firebeetle dans Arduino](./Doc/Arduino_Conf_NodeMCU?raw=true "Utilisation de la carte Firebeetle dans Arduino")
