@@ -1,10 +1,10 @@
+> **Attention**
+> Ce projet est en cours de développement.
+
 # FoodRest
 Code pour le Projet de poubelle connectée basée sur la solution Open Source [TOCIO](https://github.com/UBO-Open-factory/TOCIO-Back-office) permettant de collecter et afficher des données.
 
 Ce projet présente le code Arduino pour un ESP ou un Arduino.
-
-> **Attention**
-> Ce projet est en cours de développement.
 
 # Principe de fonctionnement du programme
 Principe d’enregistrement de mesures lors de l’utilisation de la poubelle connectée.
