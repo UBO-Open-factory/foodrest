@@ -13,24 +13,33 @@ typedef struct {
 } Configuration;
 
 
- 
+
+// Librairie pour les entrées/sortiues sur la carte SD
+#include "SDCard.h";
+
+
 
 // -------------------------------------------------------------------------------------
 /**
-   Lecture du fichier de configuration à partir de la carte SD.
-   @TODO
+   Lecture des fichiers de configuration à partir de la carte SD.
+   wifi.txt -> Les paramètres de connection au réseau WIFI.
+   params.txt -> Les paramètres de config de la carte.
 */
 Configuration lectureConfigurationFromSD() {
-  
   // Définition d'une structure pour la configuration
   Configuration conf;
 
-  // Initialisation de la structure à partir du fichier de la carte SD @todo
-  conf.ssid       = "congres";
-  conf.password   = "sufca!2019!dsiun";
-  conf.IDPoubelle = "TEST_2";
-  conf.InitialisationUsine = false;
-  conf.calibrationFactor   = -7050;
+  // Lecture du fichier de paramétrage Wifi
+  // et initialisation du ssid et du password WIFI
+  if ( !SD_Read_Wifi( conf )) {
+    AfficheErreur("ERR lectureConfigurationFromSD> Impossible de lire la conf WIFI.");
+  }
+
+
+  // Lecture du fichier de configuration du programme
+  if ( !SD_Read_Config( conf )) {
+    AfficheErreur("ERR lectureConfigurationFromSD> Impossible de lire les settings.");
+  }
 
   return conf;
 }

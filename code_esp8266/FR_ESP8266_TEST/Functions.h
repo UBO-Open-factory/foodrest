@@ -9,6 +9,15 @@
 #define CLK  D2
 HX711 scale;
 float calibration_factor = configLocale.calibrationFactor;
+
+
+
+
+
+
+
+
+
 //---------------------------------------------------------------------------------------
 /**
    capteur RTC pcf8523
@@ -23,6 +32,34 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
 #define led_v D5 //led indicateur visuel vert
 #define pin_batt A0 //ESP8266 analog PIN = A0, ici niveau_battrie(pin_batt)
 
+
+
+// -------------------------------------------------------------------------------------
+/**
+   Connnection WIFI.
+   Renvoie true false si la connection est possible (false sinon)
+*/
+boolean connectionWifi() {
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(configLocale.ssid, configLocale.password);
+  
+  TraceDebug("Connection au réseau WIFI en cours ");
+  int compteur = 0;
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+
+    // Si la connection WIFI échoue au bout 20 secondes, on Affiche l'erreur.
+    if ( compteur++ > 200) {
+      AfficheErreur("");
+      AfficheErreur("ERR (setup)> Connection au WIFI impossible avec les paramétres :");
+      AfficheErreur(configLocale.ssid);
+      AfficheErreur(configLocale.password);
+      return false;
+    }
+  }
+  return true;
+}
 
 
 

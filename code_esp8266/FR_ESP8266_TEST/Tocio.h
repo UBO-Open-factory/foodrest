@@ -1,10 +1,11 @@
 #include <ESP8266WiFi.h>
 
 // @see : https://github.com/espressif/arduino-esp32/blob/ef99cd7fe7778719c92d6f8df0f10d3f0f7aa35e/libraries/WiFiClientSecure/src/WiFiClientSecure.h
+// Documentaiton : https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/readme.html#
 #include <WiFiClientSecure.h>
 
 // Use the web site https://www.grc.com/fingerprints.htm to the fingerprint from  your web site
-const char* fingerprint = "2A:12:65:E0:C9:41:C3:77:58:23:9F:02:EA:49:7F:84:D1:90:DE:50";
+// const char* fingerprint = "2A:12:65:E0:C9:41:C3:77:58:23:9F:02:EA:49:7F:84:D1:90:DE:50";
 
 const String url  = "/cad/foodrest/backoffice/mesure/add/";
 
@@ -72,31 +73,22 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
     WiFiClientSecure client;
     const String host = "uboopenfactory.univ-brest.fr";
 
-    
+
     // Don't validate the certificat (and avoid fingerprint).
     client.setInsecure();
 
-    // Validate the fingerprint
-    /*
-    if (client.verify(fingerprint, host)) {
-      Serial.println("certificate matches");
-    } else {
-      Serial.println("certificate doesn't match");
-    }
-    */
-
     const int port = 443;
-    if (!client.connect(host, port)) { 
-      Serial.println("connection failed");
+    if (!client.connect(host, port)) {
+      AfficheErreur("connection failed");
       return "connection failed (host:" + String(host) + ", port:" + String(port) + ")";
     }
 
     // Send data to the client with a GET method
     String request = url + configLocale.IDPoubelle + "/" + data;
-    Serial.println("sendDataInHTTPSRequest> Request : " + String(request) );
+    TraceDebug("sendDataInHTTPSRequest> Request : " + String(request) );
 
-        // Send data to the client with a GET method
-    Serial.println("Request : " + url + "/" + data);
+    // Send data to the client with a GET method
+    TraceDebug("Request : " + url + "/" + data);
     client.println("GET " + request + " HTTP/1.1");
     client.println("Host: " + host);
     client.println("Accept: */*");
@@ -104,18 +96,6 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
     client.println("Connection: close");
     client.println(); // end HTTP request header
 
-    
-/*
-    //client.println("GET " + request + " HTTP/1.1");
-    client.print(String("GET ") + url + " HTTP/1.1\r\n" +
-                 "Host: " + host + "\r\n" +
-                 "User-Agent: BuildFailureDetectorESP8266\r\n" +
-                 "Connection: close\r\n\r\n");
-    client.println("Accept: * /*");
-    client.println("User-Agent: ESP8266/NodeMCU 0.9");
-    client.println("Connection: close");
-    client.println(); // end HTTP request header
-*/
 
     // Read server respons
     String retour = "";
@@ -143,12 +123,12 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
     // Fin de la connection
     if (!client.connected()) {
       // if the server's disconnected, stop the client:
-      Serial.println("disconnected");
+      TraceDebug("disconnected");
       client.stop();
     }
     return "ok";
 
   } else {
-    return "Connection WIFI impossible : WiFi.status() = " + String(WiFi.status());
+    return "Connection WIFI impossible : WiFi.status() = " + String(WiFi.status() + "Voir : https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/readme.html#check-return-codes" );
   }
 }

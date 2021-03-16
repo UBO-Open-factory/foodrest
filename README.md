@@ -30,6 +30,13 @@ dans le répertoire **Librairies**.
 Il suffi donc de les prendre et de les glisser dans le répertoire Arduino/librairies 
 (Sous windows : C:\Users\<user>\Documents\Arduino\libraries en remplacant <user> par votre nom d'utilisateur windows.
 
+
+### SDConfigFile
+La librairie **SDConfigFile** est la librairie disponible sur le [dépot Git](https://github.com/bneedhamia/sdconfigfile)
+
+Cette librairie est également disponible dans le répertoire du projet (répertoire /Librairies/SDConfigFile ).
+
+
 ### WiFiClientSecure
 La librairie **WiFiClientSecure** est la librairie disponible sur le [dépot Git](https://github.com/espressif/arduino-esp32/tree/master/libraries/WiFiClientSecure)
 
