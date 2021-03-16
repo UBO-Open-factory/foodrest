@@ -48,4 +48,4 @@ Cette librairie est également disponible dans le répertoire du projet (répert
 Installation des cartes NodeMCU TODO
 
 Sélection de la carte 
-![Utilisation de la carte Firebeetle dans Arduino](./Doc/Arduino_Conf_NodeMCU?raw=true "Utilisation de la carte Firebeetle dans Arduino")
+![Utilisation de la carte Firebeetle dans Arduino](./Doc/Arduino_Conf_NodeMCU.png?raw=true "Utilisation de la carte Firebeetle dans Arduino")
