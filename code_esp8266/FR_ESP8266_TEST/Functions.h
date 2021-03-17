@@ -55,8 +55,7 @@ boolean connectionWifi() {
 
     // Si la connection WIFI échoue au bout 20 secondes, on Affiche l'erreur.
     if ( compteur++ > 200) {
-      AfficheErreur("");
-      AfficheErreur("ERR (setup)> Connection au WIFI impossible avec les paramétres :");
+      AfficheErreur("ERR (connectionWifi)> Connection au WIFI impossible avec les paramétres :");
       AfficheErreur(configLocale.ssid);
       AfficheErreur(configLocale.password);
       return false;

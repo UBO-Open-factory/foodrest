@@ -82,7 +82,7 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
 
     const int port = 443;
     if (!client.connect(host, port)) {
-      AfficheErreur("connection failed");
+      AfficheErreur("ERR (sendDataInHTTPSRequest)> connection failed");
       return "connection failed (host:" + String(host) + ", port:" + String(port) + ")";
     }
 

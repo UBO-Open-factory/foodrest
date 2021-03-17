@@ -67,7 +67,7 @@ boolean SD_Read_Config(Configuration &myConfig) {
     // le fichier n'existe pas, on le créé à vide
   } else {
 
-    AfficheErreur("ERR SD_Read_Config > Fichier settings.txt introuvable. Creation d'un vierge qu'il faut initialiser.");
+    AfficheErreur("ERR (SD_Read_Config)> Fichier settings.txt introuvable. Creation d'un vierge qu'il faut initialiser.");
 
     // Ouverture du fichier en écriture
     File myFile = SD.open("settings_tempo.txt", FILE_WRITE);
@@ -136,7 +136,7 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
     // le fichier n'existe pas, on le créé à vide
   } else {
 
-    AfficheErreur("ERR SD_Read_Wifi > Fichier wifi.txt introuvable. Creation d'un vierge qu'il faut initialiser.");
+    AfficheErreur("ERR (SD_Read_Wifi)> Fichier wifi.txt introuvable. Creation d'un vierge qu'il faut initialiser.");
 
     // Ouverture du fichier en écriture
     File myFile = SD.open("wifi_tempo.txt", FILE_WRITE);

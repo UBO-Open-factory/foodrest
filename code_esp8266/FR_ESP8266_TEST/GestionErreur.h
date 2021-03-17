@@ -13,5 +13,7 @@ void AfficheErreur(String chaine) {
    Affiche une ligne pour le debug (si c'est autorisé).
 */
 void TraceDebug(String chaine) {
-  Serial.println(chaine);
+  if( configLocale.AfficheTraceDebug ) {
+    Serial.println(chaine);
+  }
 }
