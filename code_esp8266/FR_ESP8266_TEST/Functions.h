@@ -1,9 +1,8 @@
 #include <Wire.h>
 #include <SPI.h>
 
-/**
-   capteur CZL635_20 [poids(kg/lbs)]
-*/
+
+// capteur CZL635_20 [poids(kg/lbs)]
 #include "HX711.h"
 #define DOUT  D3
 #define CLK  D2
@@ -11,25 +10,12 @@ HX711 scale;
 float calibration_factor = configLocale.calibrationFactor;
 
 
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------------------
-/**
-   capteur RTC pcf8523
-*/
+// capteur RTC pcf8523
 // Date and time functions using a PCF8523 RTC connected via I2C and Wire lib
 #include "RTClib.h"
 RTC_PCF8523 rtc;
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-//---------------------------------------------------------------------------------------
 
-#define led_r D4 //led indicateur visuel rouge
-#define led_v D5 //led indicateur visuel vert
+//---------------------------------------------------------------------------------------
 #define pin_batt A0 //ESP8266 analog PIN = A0, ici niveau_battrie(pin_batt)
 
 
@@ -37,7 +23,7 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
 // -------------------------------------------------------------------------------------
 /**
    Connnection WIFI.
-   Renvoie true si la connection WIFI est possible (false sinon)
+   Renvoie true si la connection est possible (false sinon)
 */
 boolean connectionWifi() {
   // Extinction de la LED rouge ________________________ ROUGE ON
@@ -52,7 +38,7 @@ boolean connectionWifi() {
     // Allumage/Extinction de la LED rouge _______________ ROUGE TOOGLE
     redLedState = !redLedState;
     digitalWrite(RED_LED_PIN, redLedState);
-    
+
     delay(500);
     Serial.print(".");
 
@@ -61,7 +47,7 @@ boolean connectionWifi() {
       AfficheErreur("ERR (connectionWifi)> Connection au WIFI impossible avec les paramétres :");
       AfficheErreur(configLocale.ssid);
       AfficheErreur(configLocale.password);
-      
+
       // Extinction de la LED rouge ________________________ ROUGE OFF
       digitalWrite(RED_LED_PIN, LOW);
       return false;
@@ -150,7 +136,7 @@ void rtc_setup_pcf8523() {
    librairie adafruit RTClib
 */
 String rtc_getTimestamp() {
-
+  rtc.start();
   DateTime now = rtc.now();
   /*
       Serial.print(now.year(), DEC);
