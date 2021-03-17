@@ -9,6 +9,7 @@ typedef struct {
   String password = "";
   String IDPoubelle = "";
   boolean InitialisationUsine = false;
+  boolean AfficheTraceDebug = false;
   int calibrationFactor;
 } Configuration;
 
@@ -32,13 +33,13 @@ Configuration lectureConfigurationFromSD() {
   // Lecture du fichier de paramétrage Wifi
   // et initialisation du ssid et du password WIFI
   if ( !SD_Read_Wifi( conf )) {
-    AfficheErreur("ERR lectureConfigurationFromSD> Impossible de lire la conf WIFI.");
+    Serial.println("ERR lectureConfigurationFromSD> Impossible de lire la conf WIFI.");
   }
 
 
   // Lecture du fichier de configuration du programme
   if ( !SD_Read_Config( conf )) {
-    AfficheErreur("ERR lectureConfigurationFromSD> Impossible de lire les settings.");
+    Serial.println("ERR lectureConfigurationFromSD> Impossible de lire les settings.");
   }
 
   return conf;

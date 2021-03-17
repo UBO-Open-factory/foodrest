@@ -42,10 +42,14 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
 boolean connectionWifi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(configLocale.ssid, configLocale.password);
-  
+
   TraceDebug("Connection au réseau WIFI en cours ");
   int compteur = 0;
   while (WiFi.status() != WL_CONNECTED) {
+    // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE TOOGLE
+    redLedState = !redLedState;
+    digitalWrite(RED_LED_PIN, redLedState);
+    
     delay(500);
     Serial.print(".");
 
@@ -90,68 +94,49 @@ void setup_CZL635_20() {
 
 //---------------------------------------------------------------------------------------
 /**
-      setup_RTC du code exemple adafruit pcf8523
+      Mise à l'heure de la RTC.
+      Si elle à été reinitilisée, on l'initialise à l'heure et la date de compilation du programme.
+
+           The PCF8523 can be calibrated for:
+            - Aging adjustment
+            - Temperature compensation
+            - Accuracy tuning
+     The offset mode to use, once every two hours or once every minute.
+     The offset Offset value from -64 to +63. See the Application Note for calculation of offset values.
+     https://www.nxp.com/docs/en/application-note/AN11247.pdf
+     The deviation in parts per million can be calculated over a period of observation. Both the drift (which can be negative)
+     and the observation period must be in seconds. For accuracy the variation should be observed over about 1 week.
+     Note: any previous calibration should cancelled prior to any new observation period.
+     Example - RTC gaining 43 seconds in 1 week
+
+    float drift = 43; // seconds plus or minus over oservation period - set to 0 to cancel previous calibration.
+    float period_sec = (7 * 86400);  // total obsevation period in seconds (86400 = seconds in 1 day:  7 days = (7 * 86400) seconds )
+    float deviation_ppm = (drift / period_sec * 1000000); //  deviation in parts per million (μs)
+    float drift_unit = 4.34; // use with offset mode PCF8523_TwoHours
+    float drift_unit = 4.069; //For corrections every min the drift_unit is 4.069 ppm (use with offset mode PCF8523_OneMinute)
+    int offset = round(deviation_ppm / drift_unit);
+    rtc.calibrate(PCF8523_TwoHours, offset); // Un-comment to perform calibration once drift (seconds) and observation period (seconds) are correct
+    rtc.calibrate(PCF8523_TwoHours, 0); // Un-comment to cancel previous calibration
+
+     Serial.print("Offset is "); Serial.println(offset); // Print to control offset
 */
-void setup_rtc_pcf8523 () {
+void rtc_setup_pcf8523() {
 
-#ifndef ESP8266
-  while (!Serial); // wait for serial port to connect. Needed for native USB
-#endif
-
+  // Si la RTC n'est pas trouvée
   if (! rtc.begin()) {
-    Serial.println("Couldn't find RTC");
-    Serial.flush();
+    AfficheErreur("ERR (setup_rtc_pcf8523)> Couldn't find RTC");
     abort();
   }
 
   if (! rtc.initialized() || rtc.lostPower()) {
-    Serial.println("RTC is NOT initialized, let's set the time!");
+    TraceDebug("RTC is NOT initialized, let's set the time to the date & time this sketch was compiled !");
+
     // When time needs to be set on a new device, or after a power loss, the
     // following line sets the RTC to the date & time this sketch was compiled
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-    // This line sets the RTC with an explicit date & time, for example to set
-    // January 21, 2014 at 3am you would call:
-    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
-    //
-    // Note: allow 2 seconds after inserting battery or applying external power
-    // without battery before calling adjust(). This gives the PCF8523's
-    // crystal oscillator time to stabilize. If you call adjust() very quickly
-    // after the RTC is powered, lostPower() may still return true.
   }
 
-  // When time needs to be re-set on a previously configured device, the
-  // following line sets the RTC to the date & time this sketch was compiled
-  // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  // This line sets the RTC with an explicit date & time, for example to set
-  // January 21, 2014 at 3am you would call:
-  // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
-
-  // When the RTC was stopped and stays connected to the battery, it has
-  // to be restarted by clearing the STOP bit. Let's do this to ensure
-  // the RTC is running.
   rtc.start();
-
-  // The PCF8523 can be calibrated for:
-  //        - Aging adjustment
-  //        - Temperature compensation
-  //        - Accuracy tuning
-  // The offset mode to use, once every two hours or once every minute.
-  // The offset Offset value from -64 to +63. See the Application Note for calculation of offset values.
-  // https://www.nxp.com/docs/en/application-note/AN11247.pdf
-  // The deviation in parts per million can be calculated over a period of observation. Both the drift (which can be negative)
-  // and the observation period must be in seconds. For accuracy the variation should be observed over about 1 week.
-  // Note: any previous calibration should cancelled prior to any new observation period.
-  // Example - RTC gaining 43 seconds in 1 week
-  float drift = 43; // seconds plus or minus over oservation period - set to 0 to cancel previous calibration.
-  float period_sec = (7 * 86400);  // total obsevation period in seconds (86400 = seconds in 1 day:  7 days = (7 * 86400) seconds )
-  float deviation_ppm = (drift / period_sec * 1000000); //  deviation in parts per million (μs)
-  float drift_unit = 4.34; // use with offset mode PCF8523_TwoHours
-  // float drift_unit = 4.069; //For corrections every min the drift_unit is 4.069 ppm (use with offset mode PCF8523_OneMinute)
-  int offset = round(deviation_ppm / drift_unit);
-  // rtc.calibrate(PCF8523_TwoHours, offset); // Un-comment to perform calibration once drift (seconds) and observation period (seconds) are correct
-  // rtc.calibrate(PCF8523_TwoHours, 0); // Un-comment to cancel previous calibration
-
-  // Serial.print("Offset is "); Serial.println(offset); // Print to control offset
 }
 
 //---------------------------------------------------------------------------------------
@@ -160,7 +145,7 @@ void setup_rtc_pcf8523 () {
    @return integer
    librairie adafruit RTClib
 */
-String rtc_timestamp() {
+String rtc_getTimestamp() {
 
   DateTime now = rtc.now();
   /*
@@ -218,8 +203,8 @@ String mesure_poid() {
     }
   */
 }
-//---------------------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------------------------------
 /**
    Renvoie le niveau de la batterie (de 0 à 1024).
    @return integer
@@ -228,23 +213,42 @@ int niveau_battrie() {
   // Lecture de la valeur analogique sur la pin de la batterie
   // int nv_batt = analogRead(pin_batt);
   int nv_batt = 1234;
-  
+
   return nv_batt;
 }
 
 
 
-//---------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------
 /**
- * Permet de calibrer les capteurs.
+   Permet de calibrer les capteurs.
 */
 void calibrageUsine() {
-  // Calibration de la ballance
-  setup_CZL635_20();
-
   // Calibration de la RTC
-  setup_rtc_pcf8523();
+  rtc_setup_pcf8523();
+  
+  // Calibration de la ballance
+  //setup_CZL635_20();
+}
 
-  // On rentre en mode deep sleep
-  // TODO
+
+// ---------------------------------------------------------------------------------------------------
+/**
+   Ecriture d'une ligne dans le fichier des mesures sur la carte SD.
+   chaine : La chaine de caractère à écrire dans le fichier.
+*/
+void SD_write_Mesure(String chaine) {
+  File dataFile = SD.open(configLocale.IDPoubelle + "-mesures.csv", FILE_WRITE);
+
+  // Si on a réussi à ouvrir le fichier en écriture
+  if (dataFile) {
+    // Ecriture de la ligne dans le fichier
+    dataFile.println(chaine);
+
+    // Fermeture du fichier
+    dataFile.close();
+
+  } else {
+    AfficheErreur("ERR (write_Mesure)> Impossible d'ouvir le fichier en écriture sur la carte SD.");
+  }
 }

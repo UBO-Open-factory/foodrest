@@ -1,6 +1,14 @@
 /**
    Gestion des mesures de la poubelle connectée.
 */
+/* Cablage des LED */
+const int RED_LED_PIN = 0;   // pin sur laquelle est connecté la LED rouge
+int redLedState       = LOW;  // L'état courant de la LED ROUGE
+
+/* Pour savoir si on a du WIFI ou non */
+boolean ConnectionWifiEnabled = true;
+
+
 
 // Librairie de gestion des erreurs
 #include "GestionErreur.h"
@@ -18,11 +26,15 @@ Configuration configLocale;
 
 
 // ************************************************************************************
-boolean ConnectionWifiEnabled = true;
 void setup() {
+  pinMode(RED_LED_PIN, OUTPUT);
   // initialisation de la liaison série (pour le moniteur)
   Serial.begin(115200);
   TraceDebug("OK, let's go");
+
+  // Extinction de la LED rouge ----------------------------------------------------------- ROUGE OFF
+  digitalWrite(RED_LED_PIN, LOW);
+
 
   // Initialisation de la carte SD --------------------------------------------------------
   init_SDCard();
@@ -40,56 +52,108 @@ void setup() {
     Serial.println(configLocale.calibrationFactor);
   */
 
-  // On fait un calibrage usine car la variable est positionnée à TRUE dans le fichier
+  // On fait un calibrage usine car la variable est positionnée à TRUE dans le fichier ----
   // de config.
   if ( configLocale.InitialisationUsine ) {
+    TraceDebug("On entre en mode calibration d'usine.");
     calibrageUsine();
+
+    // Mode normal ------------------------------------------------------------------------
+  } else {
+
+
+
+    // Connection au WIFI
+    ConnectionWifiEnabled = connectionWifi();
+
+    // On a réussi à se connecter au WIFI
+    if ( ConnectionWifiEnabled ) {
+      // Extinction de la LED rouge ----------------------------------------------------------- ROUGE OFF
+      digitalWrite(RED_LED_PIN, LOW);
+
+      TraceDebug("Voila, c'est fait.");
+      TraceDebug("IP : " + WiFi.localIP().toString() );
+      TraceDebug("MAC address: " + WiFi.macAddress() );
+
+    } else {
+      // Allumage de la LED rouge ------------------------------------------------------------- ROUGE ON
+      digitalWrite(RED_LED_PIN, HIGH);
+    }
+
+    // Initialisation de la balance
+    //setup_CZL635_20();
   }
-
-
-
-  // Connection au WIFI
-  ConnectionWifiEnabled = connectionWifi();
-  if ( ConnectionWifiEnabled ) {
-    TraceDebug("Voila, c'est fait.");
-    TraceDebug("MAC address: "+ WiFi.macAddress() );
-  }
-
-  // Initialisation de la balance
-  //setup_CZL635_20();
-
-  // Initialisation de l'horloge
-  setup_rtc_pcf8523();
-
 }
 
 
 
 // ************************************************************************************
 void loop() {
-  // Concatenation des mesures .............................
+
+
+  // Lecture des mesures ---------------------------------------------------------------------------
   String Mesures = "";
 
-  // timestamp0 is the 'Timestamp' value from your sensor 'RTC_Timestamp' (as float)
-  Mesures.concat(rtc_timestamp());
+  // TIMESTAMP
+  String timeStamp = rtc_getTimestamp();
+  Mesures.concat(timeStamp);
 
-  // poid1 is the 'Poid' value from your sensor 'CZL635-20' (as float)
+
+  // POID
   //Mesures.concat(formatString( mesure_poid(), "-5.0"));
-  Mesures.concat(mesure_poid());
+  // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE ON
+  digitalWrite(RED_LED_PIN, HIGH);
 
-  // valeur analogique(0 a 1023)2 is the 'Valeur analogique(0 à 1023)' value from your sensor 'CAN (1024)' (as float)
-  Mesures.concat(formatString(niveau_battrie(), "4.0"));
+  String poid = mesure_poid();
+  Mesures.concat(poid);
 
-  // Envoie des données vers TOCIO .........................
+  // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE OFF
+  digitalWrite(RED_LED_PIN, LOW);
+
+
+  // FORCE DU WIFI
+  String rssi = String(WiFi.RSSI());
+
+
+  // BATTERIE
+  int niveauBatteri = niveau_battrie();
+  Mesures.concat(formatString(niveauBatteri, "4.0"));
+
+
+  // Envoie des données vers TOCIO ------------------------------------------------------------
+  String retour;
   if ( ConnectionWifiEnabled ) {
-    String retour = sendDataInHTTPSRequest( Mesures, configLocale );
+    // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE ON
+    digitalWrite(RED_LED_PIN, HIGH);
+
+    retour = sendDataInHTTPSRequest( Mesures, configLocale );
+
+    // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE OFF
+    digitalWrite(RED_LED_PIN, LOW);
+
     if ( retour != "ok") {
-      Serial.println("*** ERREUR lors de l'envoie de la requette *********");
-      Serial.println(retour);
+      AfficheErreur("ERR (main)> ERREUR lors de l'envoie vers TOCIO. L'erreur renvoyée est :");
+      TraceDebug(retour);
+
     } else  {
-      Serial.println("Envoie réussi");
+      TraceDebug("Envoie réussi");
     }
   }
+
+
+
+  // Ecriture dans le fichier -----------------------------------------------------------------
+  // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE ON
+  digitalWrite(RED_LED_PIN, HIGH);
+
+  Mesures = configLocale.IDPoubelle + "," + timeStamp + "," + poid + "," + String(niveauBatteri) + "," + rssi + "," + retour;
+  SD_write_Mesure(Mesures);
+  TraceDebug("Ecriture dans le fichier");
+  TraceDebug("Mesures: " + Mesures);
+  
+  // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE OFF
+  digitalWrite(RED_LED_PIN, LOW);
+
 
 
   // Pause .................................................

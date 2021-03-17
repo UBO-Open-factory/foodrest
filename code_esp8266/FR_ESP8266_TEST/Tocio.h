@@ -4,9 +4,12 @@
 // Documentaiton : https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/readme.html#
 #include <WiFiClientSecure.h>
 
-// Use the web site https://www.grc.com/fingerprints.htm to the fingerprint from  your web site
-// const char* fingerprint = "2A:12:65:E0:C9:41:C3:77:58:23:9F:02:EA:49:7F:84:D1:90:DE:50";
+/*
+ Use the web site https://www.grc.com/fingerprints.htm to the fingerprint from  your web site
+ const char* fingerprint = "2A:12:65:E0:C9:41:C3:77:58:23:9F:02:EA:49:7F:84:D1:90:DE:50";
+*/
 
+// URL pour stocker le smesures dans le Back Office de TOCIO.
 const String url  = "/cad/foodrest/backoffice/mesure/add/";
 
 // --------------------------------------------------------------------------------
@@ -110,11 +113,11 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
 
     // Extraction du message d'erreur dans le retour JSON
     // 'error' est toujours renvoyé, même si le message est vide
-    retour = retour.substring(retour.indexOf("\"error") + 8 );
+    retour = retour.substring(retour.indexOf("\"error") + 9, retour.indexOf("}") );
 
 
     // Si on trouve le mot success dans la trame, c'est que l'insertion a bien été faite.
-    // 'success' est renvoyé qu'ne cas de succés, s'il n'apparait pas, il faut donc renvoyer le message d'erreur
+    // 'success' est renvoyé qu'en cas de succés, s'il n'apparait pas, il faut donc renvoyer le message d'erreur
     if ( retour.indexOf("\"success") == -1 ) {
       return retour;
     }

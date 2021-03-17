@@ -53,6 +53,10 @@ boolean SD_Read_Config(Configuration &myConfig) {
       } else if (cfg.nameIs("InitialisationUsine")) {
         myConfig.InitialisationUsine = cfg.getBooleanValue();    // Get boolean
 
+        // Lecture si on doit afficher les trace dans le terminal serie
+      } else if (cfg.nameIs("AfficheTraceDebug")) {
+        myConfig.AfficheTraceDebug = cfg.getBooleanValue();    // Get boolean
+        
         // Lecture de la valeur de calibration de la ballance
       } else if (cfg.nameIs("calibrationFactor")) {
         myConfig.calibrationFactor = cfg.getIntValue(); // Get integer
@@ -77,6 +81,10 @@ boolean SD_Read_Config(Configuration &myConfig) {
 
     myFile.println("// Pour pouvoir faire la calibrage d'usine ce paramètre doit être à true (false par défault).");
     myFile.println("InitialisationUsine=false");
+    myFile.println();
+    
+    myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branché à un PC.");
+    myFile.println("AfficheTraceDebug=true");
     myFile.println();
 
     myFile.println("// Calibrage de la ballance (doit être une valeur entière positive ou négative).");
@@ -145,26 +153,4 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
   // clean up
   cfg.end();
   return true;
-}
-
-
-// ---------------------------------------------------------------------------------------------------
-/**
-   Ecriture d'une ligne dans le fichier des mesures sur la carte SD.
-   chaine : La chaine de caractère à écrire dans le fichier.
-*/
-void SD_write_Mesure(String chaine) {
-  File dataFile = SD.open("LOG.txt", FILE_WRITE);
-
-  // Si on a réussi à ouvrir le fichier en écriture
-  if (dataFile) {
-    // Ecriture de la ligne dans le fichier
-    dataFile.println(chaine);
-
-    // Fermeture du fichier
-    dataFile.close();
-
-  } else {
-    AfficheErreur("ERR (write_Mesure)> Impossible d'ouvir le fichier en écriture sur la carte SD.");
-  }
 }
