@@ -100,12 +100,11 @@ void loop() {
 
 
   // POID
-  //Mesures.concat(formatString( mesure_poid(), "-5.0"));
   // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE ON
   digitalWrite(RED_LED_PIN, HIGH);
 
-  String poid = mesure_poid();
-  Mesures.concat(poid);
+  int poid = mesure_poid();
+  Mesures.concat(formatString(poid, "-5.0"));
 
   // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE OFF
   digitalWrite(RED_LED_PIN, LOW);
@@ -146,7 +145,7 @@ void loop() {
   // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE ON
   digitalWrite(RED_LED_PIN, HIGH);
 
-  Mesures = configLocale.IDPoubelle + "," + timeStamp + "," + poid + "," + String(niveauBatteri) + "," + rssi + "," + retour;
+  Mesures = configLocale.IDPoubelle + "," + timeStamp + "," + String(poid) + "," + String(niveauBatteri) + "," + rssi + "," + retour;
   SD_write_Mesure(Mesures);
   TraceDebug("Ecriture dans le fichier");
   TraceDebug("Mesures: " + Mesures);

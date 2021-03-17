@@ -49,7 +49,7 @@ boolean connectionWifi() {
     // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE TOOGLE
     redLedState = !redLedState;
     digitalWrite(RED_LED_PIN, redLedState);
-    
+
     delay(500);
     Serial.print(".");
 
@@ -180,9 +180,7 @@ String rtc_getTimestamp() {
    mesure capteur de poid
    balence CZL635_20
 */
-String mesure_poid() {
-
-  return "+55555";
+int mesure_poid() {
   /*
     scale.set_scale(calibration_factor); //Adjust to this calibration factor
 
@@ -202,6 +200,7 @@ String mesure_poid() {
         calibration_factor -= 10;
     }
   */
+  return random(99999);
 }
 
 // ---------------------------------------------------------------------------------------------------
@@ -226,7 +225,7 @@ int niveau_battrie() {
 void calibrageUsine() {
   // Calibration de la RTC
   rtc_setup_pcf8523();
-  
+
   // Calibration de la ballance
   //setup_CZL635_20();
 }
