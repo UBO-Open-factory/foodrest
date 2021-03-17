@@ -5,6 +5,10 @@
 const int RED_LED_PIN = 0;   // pin sur laquelle est connecté la LED rouge
 int redLedState       = LOW;  // L'état courant de la LED ROUGE
 
+
+/* Pour faire clignoter la LED en fonction de l'erreur */
+int delaiClignottementLED = 0;
+
 /* Pour savoir si on a du WIFI ou non */
 boolean ConnectionWifiEnabled;
 
@@ -19,7 +23,7 @@ typedef struct {
   boolean AfficheTraceDebug = false;    // Cette valeur sera lue à partir du fichier des settings.
   int calibrationFactor;
 } Configuration;
-Configuration configLocale; // Initialisation de la configuraiton locale
+Configuration configLocale; // Initialisation de la configuration locale
 
 // Librairie de gestion des erreurs
 #include "GestionErreur.h"
@@ -44,124 +48,139 @@ void setup() {
   Serial.begin(115200);
   TraceDebug("OK, let's go");
 
-  // Extinction de la LED rouge ----------------------------------------------------------- ROUGE OFF
+  // Extinction de la LED rouge ____________________ ROUGE OFF
   digitalWrite(RED_LED_PIN, LOW);
 
 
-  // Initialisation de la carte SD --------------------------------------------------------
-  init_SDCard();
-
-
-
-  // Lecture de la config à partir du fichier sur la carte SD -----------------------------
-  // ( renseigne le ssid, password, poid, IDPoubelle, etc... )
-  configLocale = lectureConfigurationFromSD();
-  /*
-    Serial.println("configLocale : ");
-    Serial.println(configLocale.ssid);
-    Serial.println(configLocale.password);
-    Serial.println(configLocale.IDPoubelle);
-    Serial.println(configLocale.calibrationFactor);
-  */
-
-  // On fait un calibrage usine car la variable est positionnée à TRUE dans le fichier ----
-  // de config.
-  if ( configLocale.InitialisationUsine ) {
-    TraceDebug("On entre en mode calibration d'usine.");
-    calibrageUsine();
-
-
-    // Lecture des mesures ---------------------------------------------------------------------------
-    // (on est en mode normal, pas de paramétrage usine à faire)
+  // Initialisation de la carte SD ---------------------------------------------------------------------
+  // Si n'on arrive pas à initiliser la carte SD
+  if ( ! SD_initCard() ) {
+    AfficheErreur("ERR (main)> Lecture carte SD impossible!");
+    AfficheErreur("Veuillez insérer une carte SD et relancer le programme.");
+    delaiClignottementLED = 150;  // Pour l'affichage dans la boucle principale
+    
   } else {
 
-    String Mesures = "";
-
-    // TIMESTAMP
-    String timeStamp = rtc_getTimestamp();
-    Mesures.concat(timeStamp);
 
 
-    // POID
-    // Allumage/Extinction de la LED rouge ____________________ ROUGE ON
-    digitalWrite(RED_LED_PIN, HIGH);
-
-    int poid = mesure_poid();
-    Mesures.concat(formatString(poid, "-5.0"));
-
-    // Allumage/Extinction de la LED rouge ____________________ ROUGE OFF
-    digitalWrite(RED_LED_PIN, LOW);
-
-    // FORCE DU WIFI
-    int rssi = 0;
-    String retourTOCIO = "";
-
-    // BATTERIE
-    int niveauBatteri = niveau_battrie();
-    Mesures.concat(formatString(niveauBatteri, "4.0"));
+    // Lecture de la config à partir du fichier sur la carte SD ---------------------------------------
+    // ( renseigne le ssid, password, poid, IDPoubelle, etc... )
+    configLocale = CONF_lectureConfigurationFromSD();
 
 
+    // On fait un calibrage usine car la variable est positionnée à TRUE dans le fichier --------------
+    // de settings
+    if ( configLocale.InitialisationUsine ) {
+      TraceDebug("On entre en mode calibration d'usine.");
+      calibrageUsine();
+
+      // Lecture des mesures ---------------------------------------------------------------------------
+      // (on est en mode normal, pas de paramétrage usine à faire)
+    } else {
+
+      String Mesures = "";
+
+      // TIMESTAMP
+      String timeStamp = rtc_getTimestamp();
+      Mesures.concat(timeStamp);
 
 
+      // POID
+      // Allumage/Extinction de la LED rouge ____________________ ROUGE ON
+      digitalWrite(RED_LED_PIN, HIGH);
 
-    // Connection au WIFI ----------------------------------------------------------------------------
-    ConnectionWifiEnabled = connectionWifi();
+      int poid = mesure_poid();
+      Mesures.concat(formatString(poid, "-5.0"));
 
-    // On a réussi à se connecter au WIFI
-    if ( ConnectionWifiEnabled ) {
-      // Extinction de la LED rouge __________________________ ROUGE OFF
+      // Allumage/Extinction de la LED rouge ____________________ ROUGE OFF
       digitalWrite(RED_LED_PIN, LOW);
 
-      TraceDebug("Voila, c'est fait.");
-      TraceDebug("IP : " + WiFi.localIP().toString() );
-      TraceDebug("MAC address: " + WiFi.macAddress() );
+      // FORCE DU WIFI
+      int rssi = 0;
+      String retourTOCIO = "";
 
-      rssi = WiFi.RSSI();
+      // BATTERIE
+      int niveauBatteri = niveau_battrie();
+      Mesures.concat(formatString(niveauBatteri, "4.0"));
 
 
 
-      // Envoie des données vers TOCIO ------------------------------------------------------------
+
+
+      // Connection au WIFI ----------------------------------------------------------------------------
+      ConnectionWifiEnabled = connectionWifi();
+
+      // On a réussi à se connecter au WIFI
       if ( ConnectionWifiEnabled ) {
-        // Allumage/Extinction de la LED rouge _______________ ROUGE ON
-        digitalWrite(RED_LED_PIN, HIGH);
-
-        retourTOCIO = sendDataInHTTPSRequest( Mesures, configLocale );
-
-        // Allumage/Extinction de la LED rouge _______________ ROUGE OFF
+        // Extinction de la LED rouge __________________________ ROUGE OFF
         digitalWrite(RED_LED_PIN, LOW);
 
-        if ( retourTOCIO != "ok") {
-          AfficheErreur("ERR (main)> ERREUR lors de l'envoie vers TOCIO. L'erreur renvoyée est :");
-          TraceDebug(retourTOCIO);
+        TraceDebug("Voila, c'est fait.");
+        TraceDebug("IP : " + WiFi.localIP().toString() );
+        TraceDebug("MAC address: " + WiFi.macAddress() );
 
-        } else  {
-          TraceDebug("Envoie réussi");
+        rssi = WiFi.RSSI();
+
+
+
+        // Envoie des données vers TOCIO ------------------------------------------------------------
+        if ( ConnectionWifiEnabled ) {
+          // Allumage/Extinction de la LED rouge _______________ ROUGE ON
+          digitalWrite(RED_LED_PIN, HIGH);
+
+          retourTOCIO = sendDataInHTTPSRequest( Mesures, configLocale );
+
+          // Allumage/Extinction de la LED rouge _______________ ROUGE OFF
+          digitalWrite(RED_LED_PIN, LOW);
+
+          if ( retourTOCIO != "ok") {
+            AfficheErreur("ERR (main)> ERREUR lors de l'envoie vers TOCIO. L'erreur renvoyée est :");
+            TraceDebug(retourTOCIO);
+
+          } else  {
+            TraceDebug("Envoie réussi");
+          }
         }
+
+        // Pas de connection au Wifi
+      } else {
+        
+        // Allumage de la LED rouge ___________________________ ROUGE ON
+        delaiClignottementLED = 1000;
+        digitalWrite(RED_LED_PIN, HIGH);
       }
 
-      // Pas de connection au Wifi
-    } else {
-      // Allumage de la LED rouge ___________________________ ROUGE ON
+      // Ecriture dans le fichier -----------------------------------------------------------------
+      // Allumage de la LED rouge _____________________________ ROUGE ON
       digitalWrite(RED_LED_PIN, HIGH);
+
+      Mesures = configLocale.IDPoubelle + "," + timeStamp + "," + String(poid) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
+      SD_write_Mesure(Mesures);
+      TraceDebug("Ecriture dans le fichier");
+      TraceDebug("Mesures: " + Mesures);
+
+      // Allumage/Extinction de la LED rouge _________________ ROUGE OFF
+      digitalWrite(RED_LED_PIN, LOW);
     }
-    
-    // Ecriture dans le fichier -----------------------------------------------------------------
-    // Allumage/Extinction de la LED rouge __________________ ROUGE ON
-    digitalWrite(RED_LED_PIN, HIGH);
-
-    Mesures = configLocale.IDPoubelle + "," + timeStamp + "," + String(poid) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
-    SD_write_Mesure(Mesures);
-    TraceDebug("Ecriture dans le fichier");
-    TraceDebug("Mesures: " + Mesures);
-
-    // Allumage/Extinction de la LED rouge _________________ ROUGE OFF
-    digitalWrite(RED_LED_PIN, LOW);
   }
+
+
+  // Deep sleep ----------------------------------------------------------------------------------
+
 }
 
 
 
 // ************************************************************************************
+/**
+   Si on arrive dans cette boucle c'est qu'il y a un problème car lorsque tout se passe bien
+   on fini en deep sleep.
+   L'affichage du problème se fait par le clignottement de la LED plus ou moins rapide.
+*/
 void loop() {
+  delay( delaiClignottementLED );
 
+  // Allumage/Extinction de la LED rouge ___________________________ ROUGE TOOGLE
+  redLedState = !redLedState;
+  digitalWrite(RED_LED_PIN, redLedState);
 }

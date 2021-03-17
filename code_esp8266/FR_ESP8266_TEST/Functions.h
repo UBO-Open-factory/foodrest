@@ -37,19 +37,22 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
 // -------------------------------------------------------------------------------------
 /**
    Connnection WIFI.
-   Renvoie true false si la connection est possible (false sinon)
+   Renvoie true si la connection WIFI est possible (false sinon)
 */
 boolean connectionWifi() {
+  // Extinction de la LED rouge ________________________ ROUGE ON
+  digitalWrite(RED_LED_PIN, HIGH);
+
   WiFi.mode(WIFI_STA);
   WiFi.begin(configLocale.ssid, configLocale.password);
 
   TraceDebug("Connection au réseau WIFI en cours ");
   int compteur = 0;
   while (WiFi.status() != WL_CONNECTED) {
-    // Allumage/Extinction de la LED rouge ----------------------------------------------------------- ROUGE TOOGLE
+    // Allumage/Extinction de la LED rouge _______________ ROUGE TOOGLE
     redLedState = !redLedState;
     digitalWrite(RED_LED_PIN, redLedState);
-
+    
     delay(500);
     Serial.print(".");
 
@@ -58,6 +61,9 @@ boolean connectionWifi() {
       AfficheErreur("ERR (connectionWifi)> Connection au WIFI impossible avec les paramétres :");
       AfficheErreur(configLocale.ssid);
       AfficheErreur(configLocale.password);
+      
+      // Extinction de la LED rouge ________________________ ROUGE OFF
+      digitalWrite(RED_LED_PIN, LOW);
       return false;
     }
   }
@@ -85,9 +91,8 @@ void setup_CZL635_20() {
   scale.tare(); //Reset the scale to 0
 
   long zero_factor = scale.read_average(); //Get a baseline reading
-  Serial.print("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
-  Serial.println(zero_factor);
-
+  TraceDebug("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
+  TraceDebug(String(zero_factor));
 }
 
 

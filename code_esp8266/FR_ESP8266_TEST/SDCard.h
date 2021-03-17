@@ -16,7 +16,7 @@ const uint8_t CONFIG_LINE_LENGTH = 127;
 /**
    Initialisaiton de la carte SD.
 */
-boolean init_SDCard() {
+boolean SD_initCard() {
 
   // La pin CS de la carte doit être branchée sur le 3.3 V de la carte, peut importe la
   // valeur qui lui est attribuée ici.
@@ -45,18 +45,14 @@ boolean SD_Read_Config(Configuration &myConfig) {
     // Lecture de la config du fichier
     while (cfg.readNextSetting()) {
 
-      // Lecture de l'ID de la poubelle
-      if (cfg.nameIs("IDPoubelle")) {
-        myConfig.IDPoubelle = cfg.copyValue();      // Get String
-
-        // Lecture du fait si on doit faire un calibrage usine du programme
-      } else if (cfg.nameIs("InitialisationUsine")) {
+      // Lecture du fait si on doit faire un calibrage usine du programme
+      if (cfg.nameIs("InitialisationUsine")) {
         myConfig.InitialisationUsine = cfg.getBooleanValue();    // Get boolean
 
         // Lecture si on doit afficher les trace dans le terminal serie
       } else if (cfg.nameIs("AfficheTraceDebug")) {
         myConfig.AfficheTraceDebug = cfg.getBooleanValue();    // Get boolean
-        
+
         // Lecture de la valeur de calibration de la ballance
       } else if (cfg.nameIs("calibrationFactor")) {
         myConfig.calibrationFactor = cfg.getIntValue(); // Get integer
@@ -73,16 +69,12 @@ boolean SD_Read_Config(Configuration &myConfig) {
     File myFile = SD.open("settings_tempo.txt", FILE_WRITE);
     myFile.println("// Ceci est le fichier de configuration pour l'application.");
     myFile.println("// Il faut renommer ce fichier avec le nom settings.txt");
-
-    myFile.println();
-    myFile.println("// Identifiant de la poubelle tel que défini dans le Back Office TOCIO.");
-    myFile.println("IDPoubelle=TEST2");
     myFile.println();
 
     myFile.println("// Pour pouvoir faire la calibrage d'usine ce paramètre doit être à true (false par défault).");
     myFile.println("InitialisationUsine=false");
     myFile.println();
-    
+
     myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branché à un PC.");
     myFile.println("AfficheTraceDebug=true");
     myFile.println();
@@ -116,9 +108,12 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
 
     // Lecture de la config du fichier
     while (cfg.readNextSetting()) {
+      // Lecture de l'ID de la poubelle
+      if (cfg.nameIs("IDPoubelle")) {
+        myConfig.IDPoubelle = cfg.copyValue();      // Get String
 
-      // Lecture du SSID
-      if (cfg.nameIs("ssid")) {
+        // Lecture du SSID
+      } else if (cfg.nameIs("ssid")) {
 
         // Get value as string
         myConfig.ssid = cfg.copyValue();
@@ -143,10 +138,12 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
     myFile.println("// Ceci est le fichier de configuration pour les accès WIFI.");
     myFile.println("// Il faut renommer ce fichier avec le nom wifi.txt");
 
+    myFile.println("// Identifiant de la poubelle tel que défini dans le Back Office TOCIO.");
+    myFile.println("IDPoubelle=TEST2");
     myFile.println();
+    myFile.println("// Configuration WIFI");
     myFile.println("ssid=LeNomDuReseauWifi");
     myFile.println("mdp=MotDePassWifi");
-
     return false;
   }
 

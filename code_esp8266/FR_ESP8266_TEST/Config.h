@@ -14,7 +14,7 @@
    wifi.txt -> Les paramètres de connection au réseau WIFI.
    params.txt -> Les paramètres de config de la carte.
 */
-Configuration lectureConfigurationFromSD() {
+Configuration CONF_lectureConfigurationFromSD() {
   // Définition d'une structure pour la configuration
   Configuration conf;
 
