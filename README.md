@@ -30,7 +30,6 @@ dans le répertoire **Librairies**.
 Il suffi donc de les prendre et de les glisser dans le répertoire Arduino/librairies 
 (Sous windows : C:\Users\<user>\Documents\Arduino\libraries en remplacant <user> par votre nom d'utilisateur windows.
 
-
 ### SDConfigFile
 La librairie **SDConfigFile** est la librairie disponible sur le [dépot Git](https://github.com/bneedhamia/sdconfigfile)
 
@@ -53,6 +52,20 @@ La librairie **HX711** utilisée est celle disponible sur le [Arduino core for E
 
 Cette librairie est également disponible dans le répertoire du projet (répertoire /Librairies/HX711 ).
 
+## Dépendance des librairies utilisées
+Les librairies doivent être incluses les unes par rapport au autres dans l'ordre suivant :
+* globalVariable.h
+* GestionErreur.h
+* Config.h
+  * SDCard.h
+    * SPI.h
+	* SD.h
+    * SDConfigFile.h
+* Tocio.h
+  * ESP8266WiFi.h
+  *  WiFiClientSecure.h
+* Balance.h
+* Functions.h
 
 # Configuration de Arduino
 Installation des cartes NodeMCU TODO
