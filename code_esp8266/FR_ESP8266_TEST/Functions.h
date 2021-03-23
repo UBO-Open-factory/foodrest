@@ -1,22 +1,11 @@
 #include <Wire.h>
 #include <SPI.h>
 
-
-// capteur CZL635_20 [poids(kg/lbs)]
-#include "HX711.h"
-#define DOUT  D3
-#define CLK  D2
-HX711 scale;
-float calibration_factor = configLocale.calibrationFactor;
-
-
 // capteur RTC pcf8523
 // Date and time functions using a PCF8523 RTC connected via I2C and Wire lib
 #include "RTClib.h"
 RTC_PCF8523 rtc;
 
-//---------------------------------------------------------------------------------------
-#define pin_batt A0 //ESP8266 analog PIN = A0, ici niveau_battrie(pin_batt)
 
 
 
@@ -56,30 +45,6 @@ boolean connectionWifi() {
   return true;
 }
 
-
-
-
-//---------------------------------------------------------------------------------------
-/**
-   setup capteur CZL635_20
-*/
-void setup_CZL635_20() {
-  /*
-    Serial.println("HX711 calibration sketch");
-    Serial.println("Remove all weight from scale");
-    Serial.println("After readings begin, place known weight on scale");
-    Serial.println("Press + or a to increase calibration factor");
-    Serial.println("Press - or z to decrease calibration factor");
-  */
-
-  scale.begin(DOUT, CLK); //definition des pin
-  scale.set_scale();
-  scale.tare(); //Reset the scale to 0
-
-  long zero_factor = scale.read_average(); //Get a baseline reading
-  TraceDebug("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
-  TraceDebug(String(zero_factor));
-}
 
 
 //---------------------------------------------------------------------------------------
@@ -138,36 +103,44 @@ void rtc_setup_pcf8523() {
 String rtc_getTimestamp() {
   rtc.begin();
   rtc.start();
-  
+
   DateTime now = rtc.now();
-  Serial.print(now.year(), DEC);
-  Serial.print('/');
-  Serial.print(now.month(), DEC);
-  Serial.print('/');
-  Serial.print(now.day(), DEC);
-  Serial.print(" (");
-  //Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-  Serial.print(") ");
-  Serial.print(now.hour(), DEC);
-  Serial.print(':');
-  Serial.print(now.minute(), DEC);
-  Serial.print(':');
-  Serial.print(now.second(), DEC);
-  Serial.println();
-  Serial.print(" since midnight 1/1/1970 = ");
-  Serial.print(now.unixtime());
-  Serial.print("s = ");
-  Serial.print(now.unixtime() / 86400L);
-  Serial.println("d");
-  Serial.println();
   /*
-        return String(now.unixtime());
+    Serial.print(now.year(), DEC);
+    Serial.print('/');
+    Serial.print(now.month(), DEC);
+    Serial.print('/');
+    Serial.print(now.day(), DEC);
+    Serial.print(" (");
+    //Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+    Serial.print(") ");
+    Serial.print(now.hour(), DEC);
+    Serial.print(':');
+    Serial.print(now.minute(), DEC);
+    Serial.print(':');
+    Serial.print(now.second(), DEC);
+    Serial.println();
+    Serial.print(" since midnight 1/1/1970 = ");
+    Serial.print(now.unixtime());
+    Serial.print("s = ");
+    Serial.print(now.unixtime() / 86400L);
+    Serial.println("d");
+    Serial.println();
   */
-  
-  String date = String(now.day(), DEC) + "-" + String(now.month(), DEC) + "-" + String(now.year(), DEC);
-  String heure = String(now.hour(), DEC) + ":" + String(now.minute(), DEC) + ":" + String(now.second(), DEC);
+  return String(now.unixtime());
+/*
+  char jour[3]; sprintf(jour, "%02i", now.day());
+  char mois[3]; sprintf(mois, "%02i", now.month());
+  String date = String(jour) + "-" + String(mois) + "-" + String(now.year() );
+
+
+  char hour[3]; sprintf(hour, "%02i", now.hour());
+  char minute[3]; sprintf(minute, "%02i", now.minute());
+  char second[3]; sprintf(second, "%02i", now.second());
+  String heure = String(hour) + ":" + String(minute) + ":" + String(second);
 
   return date + heure;
+  */
 }
 
 
@@ -178,10 +151,10 @@ String rtc_getTimestamp() {
 */
 int mesure_poid() {
   /*
-    scale.set_scale(calibration_factor); //Adjust to this calibration factor
+    balance.set_balance(calibration_factor); //Adjust to this calibration factor
 
     Serial.print("Reading: ");
-    Serial.print(scale.get_units(), 1);
+    Serial.print(balance.get_units(), 1);
     Serial.print(" lbs"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
     Serial.print(" calibration_factor: ");
     Serial.print(calibration_factor);
@@ -223,7 +196,7 @@ void calibrageUsine() {
   rtc_setup_pcf8523();
 
   // Calibration de la ballance
-  //setup_CZL635_20();
+  CZL635_setup();
 }
 
 

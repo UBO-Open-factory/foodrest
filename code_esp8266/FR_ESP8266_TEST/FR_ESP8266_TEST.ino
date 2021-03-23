@@ -16,8 +16,12 @@
 // Librairies pour le fonctionnement avec le Back office de TOCIO
 #include "Tocio.h"
 
+// Librairie de gestion de la balance
+#include "balance.h"
+
 // Librairies contenant les fonctions pour lire les mesures physiques.
 #include "Functions.h"
+
 
 
 
@@ -31,6 +35,13 @@ void setup() {
 
   // Extinction de la LED rouge ____________________ ROUGE OFF
   digitalWrite(RED_LED_PIN, LOW);
+
+
+  // Initialisaiton de la balance ---------------------------------------------------------------------
+  balance.begin(BALANCE_DOUT, BALANCE_CLK);
+  balance.set_scale();
+
+  
 
 
   // Initialisation de la carte SD ---------------------------------------------------------------------

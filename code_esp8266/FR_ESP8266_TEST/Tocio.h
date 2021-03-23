@@ -9,8 +9,7 @@
  const char* fingerprint = "2A:12:65:E0:C9:41:C3:77:58:23:9F:02:EA:49:7F:84:D1:90:DE:50";
 */
 
-// URL pour stocker le smesures dans le Back Office de TOCIO.
-const String url  = "/cad/foodrest/backoffice/mesure/add/";
+
 
 // --------------------------------------------------------------------------------
 // Formattage d'une chaine de caractères "chaine" selon le format "formattage".
@@ -126,7 +125,6 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
     // Fin de la connection
     if (!client.connected()) {
       // if the server's disconnected, stop the client:
-      TraceDebug("disconnected");
       client.stop();
     }
     return "ok";

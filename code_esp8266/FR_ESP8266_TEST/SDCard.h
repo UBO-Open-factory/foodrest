@@ -20,12 +20,60 @@ boolean SD_initCard() {
 
   // La pin CS de la carte doit être branchée sur le 3.3 V de la carte, peut importe la
   // valeur qui lui est attribuée ici.
-  if (!SD.begin(0)) { // Fausse valeur, pour que la fonction SD.bgin() puisse passer
+  if (!SD.begin(0)) { // Fausse valeur, pour que la fonction SD.begin() puisse passer
     AfficheErreur("ERR (init_SDCard)> Initialisation carte SD impossible.");
     return false;
   }
   return true;
 }
+
+
+
+// ---------------------------------------------------------------------------------------------------
+/**
+   Permet d'écrire en toute lettres TRUE ou FLASE en ffdonction de la valeur du boolean passé en paramètre.
+*/
+String _convertionBoolean(boolean value) {
+  if ( value ) {
+    return "true";
+  } else {
+    return "false";
+  }
+}
+
+
+
+// ---------------------------------------------------------------------------------------------------
+/**
+   Ecriture du fichier de configuration avec les valeurs de la configuration locale.
+
+*/
+void SD_WriteSettings(Configuration &myConfig) {
+
+  // Ouverture du fichier en écriture
+  File myFile = SD.open("settings.txt", FILE_WRITE);
+  myFile.println("// Ceci est le fichier de configuration pour l'application.");
+  myFile.println();
+
+  myFile.println("// Pour pouvoir faire la calibrage d'usine ce paramètre doit être à true (false par défault).");
+  myFile.println("InitialisationUsine=" + _convertionBoolean(myConfig.InitialisationUsine) );
+  myFile.println();
+
+  myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.");
+  myFile.println("AfficheTraceDebug=" + _convertionBoolean(myConfig.AfficheTraceDebug) );
+  myFile.println();
+
+  myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.");
+  myFile.println("ValeurDeTarage=" + String(myConfig.valeurDeTarage) );
+  myFile.println();
+
+  myFile.println("// Calibrage de la balance (doit être une valeur entière positive ou négative).");
+  myFile.println("calibrationFactor=" + String(myConfig.calibrationFactor) );
+}
+
+
+
+
 
 // ---------------------------------------------------------------------------------------------------
 /**
@@ -53,9 +101,13 @@ boolean SD_Read_Config(Configuration &myConfig) {
       } else if (cfg.nameIs("AfficheTraceDebug")) {
         myConfig.AfficheTraceDebug = cfg.getBooleanValue();    // Get boolean
 
-        // Lecture de la valeur de calibration de la ballance
+        // Lecture de la valeur de calibration de la balance
       } else if (cfg.nameIs("calibrationFactor")) {
         myConfig.calibrationFactor = cfg.getIntValue(); // Get integer
+
+        // Lecture de la valeur de tarage de la balance
+      } else if (cfg.nameIs("valeurDeTarage")) {
+        myConfig.valeurDeTarage = cfg.getIntValue(); // Get integer
       }
     }
 
@@ -63,25 +115,9 @@ boolean SD_Read_Config(Configuration &myConfig) {
     // le fichier n'existe pas, on le créé à vide
   } else {
 
+    // Ecriture d'un fichier de config vierge
     AfficheErreur("ERR (SD_Read_Config)> Fichier settings.txt introuvable. Creation d'un vierge qu'il faut initialiser.");
-
-    // Ouverture du fichier en écriture
-    File myFile = SD.open("settings_tempo.txt", FILE_WRITE);
-    myFile.println("// Ceci est le fichier de configuration pour l'application.");
-    myFile.println("// Il faut renommer ce fichier avec le nom settings.txt");
-    myFile.println();
-
-    myFile.println("// Pour pouvoir faire la calibrage d'usine ce paramètre doit être à true (false par défault).");
-    myFile.println("InitialisationUsine=false");
-    myFile.println();
-
-    myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branché à un PC.");
-    myFile.println("AfficheTraceDebug=true");
-    myFile.println();
-
-    myFile.println("// Calibrage de la ballance (doit être une valeur entière positive ou négative).");
-    myFile.println("calibrationFactor=0000");
-
+    SD_WriteSettings(myConfig);
     return false;
   }
 
@@ -89,6 +125,8 @@ boolean SD_Read_Config(Configuration &myConfig) {
   cfg.end();
   return true;
 }
+
+
 
 // ---------------------------------------------------------------------------------------------------
 /**
