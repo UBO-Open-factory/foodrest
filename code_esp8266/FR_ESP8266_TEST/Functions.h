@@ -26,7 +26,7 @@ RTC_PCF8523 rtc;
    Renvoie true si la connection est possible (false sinon)
 */
 boolean connectionWifi() {
-  // Allumage de la LED rouge ________________________ ROUGE ON
+  // Extinction de la LED rouge ________________________ ROUGE ON
   digitalWrite(RED_LED_PIN, HIGH);
 
   WiFi.mode(WIFI_STA);
@@ -38,8 +38,9 @@ boolean connectionWifi() {
     // Allumage/Extinction de la LED rouge _______________ ROUGE TOOGLE
     redLedState = !redLedState;
     digitalWrite(RED_LED_PIN, redLedState);
-    Serial.print(".");
+
     delay(500);
+    Serial.print(".");
 
     // Si la connection WIFI échoue au bout 20 secondes, on Affiche l'erreur.
     if ( compteur++ > 200) {
@@ -48,7 +49,7 @@ boolean connectionWifi() {
       AfficheErreur(configLocale.password);
 
       // Extinction de la LED rouge ________________________ ROUGE OFF
-      digitalWrite(RED_LED_PIN, LOW);
+      digitalWrite(RED_LED_PIN, HIGH);
       return false;
     }
   }
@@ -119,11 +120,12 @@ void rtc_setup_pcf8523() {
 
   if (! rtc.initialized() || rtc.lostPower()) {
     TraceDebug("RTC is NOT initialized, let's set the time to the date & time this sketch was compiled !");
+
+    // When time needs to be set on a new device, or after a power loss, the
+    // following line sets the RTC to the date & time this sketch was compiled
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   }
 
-  // When time needs to be set on a new device, or after a power loss, the
-  // following line sets the RTC to the date & time this sketch was compiled
-  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   rtc.start();
 }
 
@@ -134,32 +136,38 @@ void rtc_setup_pcf8523() {
    librairie adafruit RTClib
 */
 String rtc_getTimestamp() {
+  rtc.begin();
   rtc.start();
+  
   DateTime now = rtc.now();
+  Serial.print(now.year(), DEC);
+  Serial.print('/');
+  Serial.print(now.month(), DEC);
+  Serial.print('/');
+  Serial.print(now.day(), DEC);
+  Serial.print(" (");
+  //Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+  Serial.print(") ");
+  Serial.print(now.hour(), DEC);
+  Serial.print(':');
+  Serial.print(now.minute(), DEC);
+  Serial.print(':');
+  Serial.print(now.second(), DEC);
+  Serial.println();
+  Serial.print(" since midnight 1/1/1970 = ");
+  Serial.print(now.unixtime());
+  Serial.print("s = ");
+  Serial.print(now.unixtime() / 86400L);
+  Serial.println("d");
+  Serial.println();
   /*
-      Serial.print(now.year(), DEC);
-      Serial.print('/');
-      Serial.print(now.month(), DEC);
-      Serial.print('/');
-      Serial.print(now.day(), DEC);
-      Serial.print(" (");
-      Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      Serial.print(") ");
-      Serial.print(now.hour(), DEC);
-      Serial.print(':');
-      Serial.print(now.minute(), DEC);
-      Serial.print(':');
-      Serial.print(now.second(), DEC);
-      Serial.println();
-      Serial.print(" since midnight 1/1/1970 = ");
-      Serial.print(now.unixtime());
-      Serial.print("s = ");
-      Serial.print(now.unixtime() / 86400L);
-      Serial.println("d");
-      Serial.println();
+        return String(now.unixtime());
   */
+  
+  String date = String(now.day(), DEC) + "-" + String(now.month(), DEC) + "-" + String(now.year(), DEC);
+  String heure = String(now.hour(), DEC) + ":" + String(now.minute(), DEC) + ":" + String(now.second(), DEC);
 
-  return String(now.unixtime());
+  return date + heure;
 }
 
 
