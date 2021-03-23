@@ -2,8 +2,8 @@
    Gestion des mesures de la poubelle connectée.
 */
 /* Cablage des LED */
-const int RED_LED_PIN = 0;   // pin sur laquelle est connecté la LED rouge
-int redLedState       = LOW;  // L'état courant de la LED ROUGE
+const int RED_LED_PIN = 2;   // pin sur laquelle est connecté la LED rouge
+boolean redLedState       = LOW;  // L'état courant de la LED ROUGE
 
 
 /* Pour faire clignoter la LED en fonction de l'erreur */
@@ -44,6 +44,7 @@ Configuration configLocale; // Initialisation de la configuration locale
 void setup() {
   pinMode(RED_LED_PIN, OUTPUT);
 
+
   // initialisation de la liaison série (pour le moniteur)
   Serial.begin(115200);
   TraceDebug("OK, let's go");
@@ -58,7 +59,7 @@ void setup() {
     AfficheErreur("ERR (main)> Lecture carte SD impossible!");
     AfficheErreur("Veuillez insérer une carte SD et relancer le programme.");
     delaiClignottementLED = 150;  // Pour l'affichage dans la boucle principale
-    
+
   } else {
 
 
@@ -144,7 +145,7 @@ void setup() {
 
         // Pas de connection au Wifi
       } else {
-        
+
         // Allumage de la LED rouge ___________________________ ROUGE ON
         delaiClignottementLED = 1000;
         digitalWrite(RED_LED_PIN, HIGH);

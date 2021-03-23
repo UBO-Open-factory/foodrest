@@ -26,7 +26,7 @@ RTC_PCF8523 rtc;
    Renvoie true si la connection est possible (false sinon)
 */
 boolean connectionWifi() {
-  // Extinction de la LED rouge ________________________ ROUGE ON
+  // Allumage de la LED rouge ________________________ ROUGE ON
   digitalWrite(RED_LED_PIN, HIGH);
 
   WiFi.mode(WIFI_STA);
@@ -38,9 +38,8 @@ boolean connectionWifi() {
     // Allumage/Extinction de la LED rouge _______________ ROUGE TOOGLE
     redLedState = !redLedState;
     digitalWrite(RED_LED_PIN, redLedState);
-
-    delay(500);
     Serial.print(".");
+    delay(500);
 
     // Si la connection WIFI échoue au bout 20 secondes, on Affiche l'erreur.
     if ( compteur++ > 200) {
@@ -120,12 +119,11 @@ void rtc_setup_pcf8523() {
 
   if (! rtc.initialized() || rtc.lostPower()) {
     TraceDebug("RTC is NOT initialized, let's set the time to the date & time this sketch was compiled !");
-
-    // When time needs to be set on a new device, or after a power loss, the
-    // following line sets the RTC to the date & time this sketch was compiled
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   }
 
+  // When time needs to be set on a new device, or after a power loss, the
+  // following line sets the RTC to the date & time this sketch was compiled
+  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   rtc.start();
 }
 
