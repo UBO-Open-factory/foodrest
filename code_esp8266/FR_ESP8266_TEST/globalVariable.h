@@ -11,11 +11,6 @@ int redLedState       = LOW;  // L'état courant de la LED ROUGE
 int delaiClignottementLED = 0;
 
 
-/* Pour savoir si on a du WIFI ou non */
-boolean ConnectionWifiEnabled;
-
-
-
 // Déclaration d'une structure allant contenir la configuration du programme.
 typedef struct {
   String ssid = "";
