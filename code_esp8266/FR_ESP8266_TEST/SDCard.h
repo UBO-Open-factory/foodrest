@@ -41,6 +41,14 @@ String _convertionBoolean(boolean value) {
 }
 
 
+// ---------------------------------------------------------------------------------------------------
+/**
+ * Suppression (préventive) du fichier de settings.
+ * Pour pouvoir sauver une valeur dans le fichier, il est nécessaire de le supprimer et de le réecrire entièrement.
+ */
+void SD_EraseSettings(){
+  SD.remove("settings.txt");
+}
 
 // ---------------------------------------------------------------------------------------------------
 /**
@@ -52,9 +60,6 @@ void SD_WriteSettings(Configuration &myConfig) {
   // Ouverture du fichier en écriture
   File myFile = SD.open("settings.txt", FILE_WRITE);
   if (myFile) {
-    // Supprime le fichier
-    SD.remove("settings.txt");
-
     // Ecrit les données dans le fichier.
     myFile.println("// Ceci est le fichier de configuration pour l'application.");
     myFile.println();
