@@ -65,6 +65,8 @@ Les librairies doivent être incluses les unes par rapport au autres dans l'ordr
   * ESP8266WiFi.h
   *  WiFiClientSecure.h
 * Balance.h
+* RTC.h
+  * RTClib.h
 * Functions.h
 
 # Configuration de Arduino
