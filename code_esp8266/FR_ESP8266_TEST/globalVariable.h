@@ -23,7 +23,7 @@ int redLedState       = LOW;  // L'état courant de la LED ROUGE
 
 /* BATTERIE *********************************************************************************** */
 //ESP8266 analog PIN = A0, ici niveau_battrie(pin_batt)
-#define pin_batt A0 
+#define pin_batt A0
 
 
 

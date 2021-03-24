@@ -87,7 +87,7 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
 
     // Send data to the client with a GET method
     String request = url + configLocale.IDPoubelle + "/" + data;
-    TraceDebug("sendDataInHTTPSRequest> Request : " + String(request) );
+    TraceDebug( String(request) );
 
     // Send data to the client with a GET method
     TraceDebug("Request : " + url + "/" + data);
