@@ -165,9 +165,13 @@ void setup() {
 
 
       // Deep sleep ----------------------------------------------------------------------------------
-      TraceDebug("Passage en DeepSleep");
-      // digitalWrite(GND_C_EN, LOW);
-      // ESP.deepSleep(0);
+      // On passe en deepSleep, uniquement si on est pas en mode DEBUG
+      if ( configLocale.AfficheTraceDebug ) {
+        TraceDebug("Passage en DeepSleep");
+      } else {
+        digitalWrite(GND_C_EN, LOW);
+        ESP.deepSleep(0);
+      }
     }
   }
 

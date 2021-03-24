@@ -26,5 +26,5 @@ void AfficheErreur(String chaine) {
   }
   }
 */
-#define TraceDebug(message) Serial.print("DEBUG("); Serial.print(__FILE__); Serial.print(" "); Serial.print(__func__); Serial.print(","); Serial.print(__LINE__); Serial.print(")>"); Serial.println(message);
-
+#define TraceDebug(message) \
+  if( configLocale.AfficheTraceDebug ) {Serial.print("DEBUG("); Serial.print(__FILE__); Serial.print(" "); Serial.print(__func__); Serial.print(","); Serial.print(__LINE__); Serial.print(")>"); Serial.println(message);}
