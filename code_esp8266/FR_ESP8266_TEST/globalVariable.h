@@ -4,7 +4,7 @@
 /* BALANCE *********************************************************************************** */
 // lignes connectées à la balance
 #define BALANCE_CLK  2
-#define BALANCE_DOUT  12
+#define BALANCE_DAT  10
 
 // variables à étalonner avant la production
 int GLOBAL_nb_echantillons_tarage = 30;

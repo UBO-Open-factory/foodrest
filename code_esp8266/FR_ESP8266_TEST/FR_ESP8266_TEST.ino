@@ -38,7 +38,7 @@ void setup() {
 
 
   // Initialisaiton de la balance ---------------------------------------------------------------------
-  balance.begin(BALANCE_DOUT, BALANCE_CLK);
+  balance.begin(BALANCE_DAT, BALANCE_CLK);
   balance.set_scale();
 
   

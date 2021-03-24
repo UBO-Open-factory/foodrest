@@ -52,23 +52,31 @@ void SD_WriteSettings(Configuration &myConfig) {
 
   // Ouverture du fichier en écriture
   File myFile = SD.open("settings.txt", FILE_WRITE);
-  myFile.println("// Ceci est le fichier de configuration pour l'application.");
-  myFile.println();
+  if (myFile) {
+    // Supprime le fichier
+    SD.remove("settings.txt");
 
-  myFile.println("// Pour pouvoir faire la calibrage d'usine ce paramètre doit être à true (false par défault).");
-  myFile.println("InitialisationUsine=" + _convertionBoolean(myConfig.InitialisationUsine) );
-  myFile.println();
+    // Ecrit les données dans le fichier.
+    myFile.println("// Ceci est le fichier de configuration pour l'application.");
+    myFile.println();
 
-  myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.");
-  myFile.println("AfficheTraceDebug=" + _convertionBoolean(myConfig.AfficheTraceDebug) );
-  myFile.println();
+    myFile.println("// Pour pouvoir faire la calibrage d'usine ce paramètre doit être à true (false par défault).");
+    myFile.println("InitialisationUsine=" + _convertionBoolean(myConfig.InitialisationUsine) );
+    myFile.println();
 
-  myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.");
-  myFile.println("ValeurDeTarage=" + String(myConfig.valeurDeTarage) );
-  myFile.println();
+    myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.");
+    myFile.println("AfficheTraceDebug=" + _convertionBoolean(myConfig.AfficheTraceDebug) );
+    myFile.println();
 
-  myFile.println("// Calibrage de la balance (doit être une valeur entière positive ou négative).");
-  myFile.println("calibrationFactor=" + String(myConfig.calibrationFactor) );
+    myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.");
+    myFile.println("ValeurDeTarage=" + String(myConfig.valeurDeTarage) );
+    myFile.println();
+
+    myFile.println("// Calibrage de la balance (doit être une valeur entière positive ou négative).");
+    myFile.println("calibrationFactor=" + String(myConfig.calibrationFactor) );
+  } else {
+    AfficheErreur("ERREUR : SDCard.h SD_WriteSettings> Impossible d'ouvrir le fichier 'settings.txt' sur la carte SD pour écrire dedans");
+  }
 }
 
 

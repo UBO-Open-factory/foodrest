@@ -15,16 +15,6 @@
 //
 //*********************************************************************
 //
-//        Cablage
-//                  FireBeetle  =>  Load Cell Amp
-//                      3V3     =>    Vdd
-//                      3V3     =>    Vcc
-//                      IO2/D5  =>    CLK
-//                      IO12/D9 =>    DAT
-//                      GND     =>    GND
-//
-//*********************************************************************
-//
 //        Nécessite la bibliothèque HX711.h
 //
 //*********************************************************************
@@ -34,9 +24,6 @@
 // bibliothèque pour la balance
 #include "HX711.h"
 HX711 balance;
-
-// float configLocale.calibrationFactor = configLocale.configLocale.calibrationFactor;
-
 
 
 
@@ -108,7 +95,7 @@ void CZL635_setup() {
   Serial.println("         le poids doit être exprimé en grammes et sans unités ni décimale");
   Serial.println("          ex. : 1965  pour 1965 grammes");
   Serial.println("");
-  int nb_essais = 0;
+  int nb_essais = 1;
   int nb_max_essais = 20;
   while (!Serial.available());
   String xx = Serial.readString();
@@ -116,15 +103,14 @@ void CZL635_setup() {
   bool fin_calcul = false;
   while (!fin_calcul) {
     float diff = pesee_balance() - poids_a_atteindre;
-    Serial.print("Différence mesurée : ");
+    Serial.print("Différence mesurée " + String(nb_essais) + "/" + String( nb_max_essais) + " : ");
     Serial.println(diff);
     if (abs(diff) < GLOBAL_precision_calibration) {
       break;
     } else {
       configLocale.calibrationFactor = configLocale.calibrationFactor + 0.2 * (diff / abs(diff));
     }
-    nb_essais += 1;
-    if (nb_essais > nb_max_essais) {
+    if (nb_essais ++ > nb_max_essais) {
       Serial.println("Echec de la procédure de calibration");
       Serial.println("Pressez une touche pour recommencer.");
       while (!Serial.available());
