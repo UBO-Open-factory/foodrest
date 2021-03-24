@@ -93,7 +93,9 @@ int niveau_battrie() {
 */
 void calibrageUsine() {
   // Calibration de la RTC
-  rtc_setup_pcf8523();
+  if(  connectionWifi() ) {
+    rtc_setup_pcf8523();
+  }
 
   // Calibration de la ballance
   CZL635_setup();

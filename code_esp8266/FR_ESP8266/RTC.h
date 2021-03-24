@@ -11,12 +11,15 @@ RTC_PCF8523 rtc;
 
 // Define NTP Client to get time ******************************************************************************************************
 #include <NTPClient.h>
+#include <WiFiUdp.h>
+
+
 
 
 //---------------------------------------------------------------------------------------
 /**
       Mise à l'heure de la RTC.
-      Si elle à été reinitilisée, on l'initialise à l'heure et la date de compilation du programme.
+      Si elle à été reinitilisée, on l'initialise avec le serveur de temps pool.ntp.org
 
            The PCF8523 can be calibrated for:
             - Aging adjustment
@@ -49,25 +52,38 @@ void rtc_setup_pcf8523() {
     abort();
   }
 
-  if (! rtc.initialized() || rtc.lostPower()) {
-    TraceDebug("RTC is NOT initialized, let's set the time to the date & time this sketch was compiled !");
+  // When time needs to be set on a new device, or after a power loss, the
+  // following line sets the RTC to the date & time this sketch was compiled
+  //    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  Serial.println("");
+  Serial.println("");
+  Serial.println("****************************************************");
+  Serial.println("*     FOOD REST : Initialisation de l'horloge      *");
+  Serial.println("****************************************************");
+  Serial.println("");
+  Serial.println("Connection au serveur de temps...");
 
-    // When time needs to be set on a new device, or after a power loss, the
-    // following line sets the RTC to the date & time this sketch was compiled
-    //    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  // On va chercher l'heure sur le serveur de temps
+  WiFiUDP ntpUDP;
+  NTPClient timeClient(ntpUDP, "pool.ntp.org");
+  timeClient.begin();
+  timeClient.setTimeOffset(3600); // Heure de Paris GMT +1 (in secondes)
+  timeClient.update();
+  delay(1000);
+  Serial.println("OK.");
 
-    // On va chercher l'heure sur le serveur de temps
-    WiFiUDP ntpUDP;
-    NTPClient timeClient(ntpUDP, "pool.ntp.org");
+  String formattedTime = timeClient.getFormattedTime();
 
-    timeClient.begin();
-    timeClient.setTimeOffset(3600); // GMT +1 (in secondes)
+  // Get a Time structure for days, month and year
+  unsigned long epochTime = timeClient.getEpochTime();
+  struct tm *ptm    = gmtime ((time_t *)&epochTime);
+  String currentDate = String(ptm->tm_mday) + "/" + String(ptm->tm_mon + 1) + "/" + String(ptm->tm_year + 1900);
 
-    timeClient.update();
+  Serial.println("Il est : " + formattedTime);
+  Serial.println("Nous sommes le : " + currentDate);
 
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  }
-
+  // Mise à l'heure de la RTC
+  rtc.adjust(DateTime(timeClient.getEpochTime()));
   rtc.start();
 }
 
