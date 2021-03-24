@@ -88,7 +88,7 @@ void setup() {
       // Allumage/Extinction de la LED rouge ____________________ ROUGE ON
       digitalWrite(RED_LED_PIN, HIGH);
 
-      int poid = mesure_poid();
+      float poid = BALANCE_pesee_balance();
       Mesures.concat(formatString(poid, "-5.0"));
 
       // Allumage/Extinction de la LED rouge ____________________ ROUGE OFF

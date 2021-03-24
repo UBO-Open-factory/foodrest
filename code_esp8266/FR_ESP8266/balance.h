@@ -32,25 +32,13 @@ HX711 balance;
 /**
    Renvoie le poid mesuré en grammes.
 */
-float pesee_balance() {
+float BALANCE_pesee_balance() {
   // Adjust to this calibration factor
   balance.set_scale(configLocale.calibrationFactor);
   return balance.get_units(GLOBAL_nb_echantillons_mesure);
 }
 
 
-
-
-// ---------------------------------------------------------------------------------------------------
-void mesure_du_poids_sur_la_balance() {
-  //Adjust to this calibration factor
-  balance.set_scale(configLocale.calibrationFactor);
-  Serial.println("");
-  Serial.print("Poids mesuré : ");
-  Serial.print(pesee_balance(), 1);
-  Serial.println(" g");
-  Serial.println("");
-}
 
 
 
@@ -108,7 +96,7 @@ void CZL635_setup() {
   bool fin_calcul = false;
 
   while (!fin_calcul) {
-    float diff = pesee_balance() - poids_a_atteindre;
+    float diff = BALANCE_pesee_balance() - poids_a_atteindre;
     Serial.print("Différence mesurée " + String(nb_essais) + "/" + String(GLOBAL_nb_essais_calibration) + " : ");
     Serial.println(diff);
     if (abs(diff) < GLOBAL_precision_calibration) {
@@ -139,7 +127,7 @@ void CZL635_setup() {
   Serial.println(configLocale.calibrationFactor);
   Serial.println("");
   Serial.print("Le poids actuellement dans la balance est de : ");
-  Serial.print(pesee_balance());
+  Serial.print(BALANCE_pesee_balance());
   Serial.println("g");
   Serial.println("");
 
@@ -184,7 +172,11 @@ void CZL635_setup() {
   Serial.println("");
   Serial.println("Pressez 'x' pour quitter le programme détalonnage.");
   while (true) {
-    mesure_du_poids_sur_la_balance();
+    balance.set_scale(configLocale.calibrationFactor);
+    Serial.print("Poids mesuré : ");
+    Serial.print(BALANCE_pesee_balance(), 1);
+    Serial.println(" g");
+
     if (Serial.available()) {
       char cc = Serial.read();
       if (cc == 'x' or cc == 'X') {

@@ -42,36 +42,6 @@ boolean connectionWifi() {
 
 
 
-
-
-// --------------------------------------------------------------------------------------
-/**
-   mesure capteur de poid
-   balence CZL635_20
-*/
-int mesure_poid() {
-  /*
-    balance.set_balance(calibration_factor); //Adjust to this calibration factor
-
-    Serial.print("Reading: ");
-    Serial.print(balance.get_units(), 1);
-    Serial.print(" lbs"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
-    Serial.print(" calibration_factor: ");
-    Serial.print(calibration_factor);
-    Serial.println();
-
-    if (Serial.available())
-    {
-      char temp = Serial.read();
-      if (temp == '+' || temp == 'a')
-        calibration_factor += 10;
-      else if (temp == '-' || temp == 'z')
-        calibration_factor -= 10;
-    }
-  */
-  return random(99999);
-}
-
 // ---------------------------------------------------------------------------------------------------
 /**
    Renvoie le niveau de la batterie (de 0 à 1024).
