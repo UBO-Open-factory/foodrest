@@ -159,9 +159,13 @@ void setup() {
       // Allumage/Extinction de la LED rouge _________________ ROUGE OFF
       digitalWrite(RED_LED_PIN, LOW);
 
+      // Juste pour afficher une simulation du deepSleep sur la LED
+      delaiClignottementLED = 2000;
+
 
 
       // Deep sleep ----------------------------------------------------------------------------------
+      TraceDebug("Passage en DeepSleep");
       // digitalWrite(GND_C_EN, LOW);
       // ESP.deepSleep(0);
     }
