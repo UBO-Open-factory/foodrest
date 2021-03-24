@@ -29,7 +29,12 @@ HX711 balance;
 
 
 // ---------------------------------------------------------------------------------------------------
+/**
+   Renvoie le poid mesuré en grammes.
+*/
 float pesee_balance() {
+  // Adjust to this calibration factor
+  balance.set_scale(configLocale.calibrationFactor);
   return balance.get_units(GLOBAL_nb_echantillons_mesure);
 }
 
@@ -39,7 +44,7 @@ float pesee_balance() {
 // ---------------------------------------------------------------------------------------------------
 void mesure_du_poids_sur_la_balance() {
   //Adjust to this calibration factor
-  balance.set_scale(configLocale.calibrationFactor); 
+  balance.set_scale(configLocale.calibrationFactor);
   Serial.println("");
   Serial.print("Poids mesuré : ");
   Serial.print(pesee_balance(), 1);
@@ -96,21 +101,22 @@ void CZL635_setup() {
   Serial.println("          ex. : 1965  pour 1965 grammes");
   Serial.println("");
   int nb_essais = 1;
-  int nb_max_essais = 20;
+
   while (!Serial.available());
   String xx = Serial.readString();
   float poids_a_atteindre = xx.toFloat();
   bool fin_calcul = false;
+
   while (!fin_calcul) {
     float diff = pesee_balance() - poids_a_atteindre;
-    Serial.print("Différence mesurée " + String(nb_essais) + "/" + String( nb_max_essais) + " : ");
+    Serial.print("Différence mesurée " + String(nb_essais) + "/" + String(GLOBAL_nb_essais_calibration) + " : ");
     Serial.println(diff);
     if (abs(diff) < GLOBAL_precision_calibration) {
       break;
     } else {
-      configLocale.calibrationFactor = configLocale.calibrationFactor + 0.2 * (diff / abs(diff));
+      configLocale.calibrationFactor = configLocale.calibrationFactor + GLOBAL_increment_fc * (diff / abs(diff));
     }
-    if (nb_essais ++ > nb_max_essais) {
+    if (nb_essais ++ > GLOBAL_nb_essais_calibration) {
       Serial.println("Echec de la procédure de calibration");
       Serial.println("Pressez une touche pour recommencer.");
       while (!Serial.available());
@@ -155,14 +161,15 @@ void CZL635_setup() {
   Serial.println(configLocale.calibrationFactor, 1);
   Serial.print("                       Tare : ");
   Serial.println(configLocale.valeurDeTarage);
-  
-  
+
+
   // Sauvegarde du configurationFactor
   //      configLocale.calibrationFactor
   //      configLocale.valeurDeTarage
   configLocale.InitialisationUsine = false; // Pour ne pas refaire la configuration d'usine.
+  SD_EraseSettings();
   SD_WriteSettings( configLocale );
-  
+
 
   Serial.println("OK");
   Serial.println("");

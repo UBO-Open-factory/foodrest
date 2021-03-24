@@ -16,9 +16,11 @@
 #define BALANCE_DAT  10
 
 // variables à étalonner avant la production
-int GLOBAL_nb_echantillons_tarage = 30;
-int GLOBAL_nb_echantillons_mesure = 30;
-float GLOBAL_precision_calibration = 0.3;
+int GLOBAL_nb_echantillons_tarage = 20;
+int GLOBAL_nb_echantillons_mesure = 20;
+float GLOBAL_precision_calibration = 0.1;
+float GLOBAL_increment_fc=0.05;
+int GLOBAL_nb_essais_calibration = 50;
 
 
 
@@ -49,8 +51,8 @@ typedef struct {
   String IDPoubelle = "";   // Cette valeur sera lue à partir du fichier de config WIFI
   boolean InitialisationUsine = false;  // Cette valeur sera lue à partir du fichier des settings.
   boolean AfficheTraceDebug = false;    // Cette valeur sera lue à partir du fichier des settings.
-  int calibrationFactor = 0;      // Cette valeur sera lue à partir du fichier des settings.
-  float valeurDeTarage = 0;       // Cette valeur sera lue à partir du fichier des settings.
+  float calibrationFactor = 110;      // Cette valeur sera lue à partir du fichier des settings.
+  float valeurDeTarage = 1;       // Cette valeur sera lue à partir du fichier des settings.
 } Configuration;
 Configuration configLocale; // Initialisation de la configuration locale
 
