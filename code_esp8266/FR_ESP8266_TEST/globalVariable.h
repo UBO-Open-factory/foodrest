@@ -1,11 +1,15 @@
 /**
  * Variables globales.
  */
+/* BALANCE *********************************************************************************** */
+// lignes connectées à la balance
+#define BALANCE_CLK  2
+#define BALANCE_DAT  10
 
 #include <SPI.h>
 
 
- 
+
 /* BALANCE *********************************************************************************** */
 // lignes connectées à la balance
 #define BALANCE_CLK  2

@@ -43,7 +43,7 @@ void setup() {
   balance.begin(BALANCE_DAT, BALANCE_CLK);
   balance.set_scale();
 
-  
+
 
 
   // Initialisation de la carte SD ---------------------------------------------------------------------
