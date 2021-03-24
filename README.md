@@ -55,10 +55,10 @@ Cette librairie est également disponible dans le répertoire du projet (répert
 ## Dépendance des librairies utilisées
 Les librairies doivent être incluses les unes par rapport au autres dans l'ordre suivant :
 * globalVariable.h
+  * SPI.h
 * GestionErreur.h
 * Config.h
   * SDCard.h
-    * SPI.h
 	* SD.h
     * SDConfigFile.h
 * Tocio.h
