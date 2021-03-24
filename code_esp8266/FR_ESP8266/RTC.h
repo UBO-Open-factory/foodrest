@@ -1,13 +1,18 @@
 /**
- * Toutes les fonctions concernant la RTC.
- */
+   Toutes les fonctions concernant la RTC.
+*/
 #include <Wire.h>
 
 // capteur RTC pcf8523
 // Date and time functions using a PCF8523 RTC connected via I2C and Wire lib
-#include "RTClib.h"
+#include <RTClib.h>
 RTC_PCF8523 rtc;
- 
+
+
+// Define NTP Client to get time ******************************************************************************************************
+#include <NTPClient.h>
+
+
 //---------------------------------------------------------------------------------------
 /**
       Mise à l'heure de la RTC.
@@ -49,6 +54,17 @@ void rtc_setup_pcf8523() {
 
     // When time needs to be set on a new device, or after a power loss, the
     // following line sets the RTC to the date & time this sketch was compiled
+    //    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+
+    // On va chercher l'heure sur le serveur de temps
+    WiFiUDP ntpUDP;
+    NTPClient timeClient(ntpUDP, "pool.ntp.org");
+
+    timeClient.begin();
+    timeClient.setTimeOffset(3600); // GMT +1 (in secondes)
+
+    timeClient.update();
+
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   }
 
@@ -92,17 +108,17 @@ String rtc_getTimestamp() {
     Serial.println();
   */
   return String(now.unixtime());
-/*
-  char jour[3]; sprintf(jour, "%02i", now.day());
-  char mois[3]; sprintf(mois, "%02i", now.month());
-  String date = String(jour) + "-" + String(mois) + "-" + String(now.year() );
+  /*
+    char jour[3]; sprintf(jour, "%02i", now.day());
+    char mois[3]; sprintf(mois, "%02i", now.month());
+    String date = String(jour) + "-" + String(mois) + "-" + String(now.year() );
 
 
-  char hour[3]; sprintf(hour, "%02i", now.hour());
-  char minute[3]; sprintf(minute, "%02i", now.minute());
-  char second[3]; sprintf(second, "%02i", now.second());
-  String heure = String(hour) + ":" + String(minute) + ":" + String(second);
+    char hour[3]; sprintf(hour, "%02i", now.hour());
+    char minute[3]; sprintf(minute, "%02i", now.minute());
+    char second[3]; sprintf(second, "%02i", now.second());
+    String heure = String(hour) + ":" + String(minute) + ":" + String(second);
 
-  return date + heure;
+    return date + heure;
   */
 }
