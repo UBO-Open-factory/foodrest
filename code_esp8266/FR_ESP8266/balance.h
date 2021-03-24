@@ -22,7 +22,7 @@
 
 
 // bibliothèque pour la balance
-#include "HX711.h"
+#include <HX711.h>
 HX711 balance;
 
 

@@ -30,6 +30,8 @@
 // ************************************************************************************
 void setup() {
   pinMode(RED_LED_PIN, OUTPUT);
+  pinMode(GND_C_EN, OUTPUT);
+  digitalWrite(GND_C_EN, HIGH);
 
   // initialisation de la liaison série (pour le moniteur)
   Serial.begin(115200);
@@ -160,7 +162,8 @@ void setup() {
 
 
       // Deep sleep ----------------------------------------------------------------------------------
-      // ESP.deepsleep(0);
+      // digitalWrite(GND_C_EN, LOW);
+      // ESP.deepSleep(0);
     }
   }
 

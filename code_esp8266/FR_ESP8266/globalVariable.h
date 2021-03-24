@@ -1,14 +1,7 @@
 /**
  * Variables globales.
  */
-/* BALANCE *********************************************************************************** */
-// lignes connectées à la balance
-#define BALANCE_CLK  2
-#define BALANCE_DAT  10
-
 #include <SPI.h>
-
-
 
 /* BALANCE *********************************************************************************** */
 // lignes connectées à la balance
@@ -35,7 +28,7 @@ int redLedState       = LOW;  // L'état courant de la LED ROUGE
 /* BATTERIE *********************************************************************************** */
 //ESP8266 analog PIN = A0, ici niveau_battrie(pin_batt)
 #define pin_batt A0
-
+#define GND_C_EN 13
 
 
 
