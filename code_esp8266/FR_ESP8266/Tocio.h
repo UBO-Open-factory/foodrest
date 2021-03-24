@@ -90,7 +90,6 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
     TraceDebug( String(request) );
 
     // Send data to the client with a GET method
-    TraceDebug("Request : " + url + "/" + data);
     client.println("GET " + request + " HTTP/1.1");
     client.println("Host: " + host);
     client.println("Accept: */*");

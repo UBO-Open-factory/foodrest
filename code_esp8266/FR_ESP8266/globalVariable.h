@@ -7,14 +7,7 @@
 // lignes connectées à la balance
 #define BALANCE_CLK  2
 #define BALANCE_DAT  10
-
-// variables à étalonner avant la production
 int GLOBAL_nb_echantillons_tarage = 20;
-int GLOBAL_nb_echantillons_mesure = 20;
-float GLOBAL_precision_calibration = 0.1;
-float GLOBAL_increment_fc=0.05;
-int GLOBAL_nb_essais_calibration = 50;
-
 
 
  /* Cablage des LED *************************************************************************** */

@@ -35,7 +35,12 @@ HX711 balance;
 float BALANCE_pesee_balance() {
   // Adjust to this calibration factor
   balance.set_scale(configLocale.calibrationFactor);
-  return balance.get_units(GLOBAL_nb_echantillons_mesure);
+
+  // Mesure du poid absolu ( sur un échantillonnage de 20 mesures)
+  float poid = balance.get_units(20);
+
+  // Supprime la valeur de tarage du poid mesuré
+  return poid + configLocale.valeurDeTarage;
 }
 
 
@@ -94,17 +99,21 @@ void CZL635_setup() {
   String xx = Serial.readString();
   float poids_a_atteindre = xx.toFloat();
   bool fin_calcul = false;
+  int nbEssaisCalibration = 50;
 
   while (!fin_calcul) {
     float diff = BALANCE_pesee_balance() - poids_a_atteindre;
-    Serial.print("Différence mesurée " + String(nb_essais) + "/" + String(GLOBAL_nb_essais_calibration) + " : ");
+    Serial.print("Différence mesurée " + String(nb_essais) + "/" + String(nbEssaisCalibration) + " : ");
     Serial.println(diff);
-    if (abs(diff) < GLOBAL_precision_calibration) {
+    
+    // Précision de la calibration.
+    if (abs(diff) < 0.1) {
       break;
     } else {
-      configLocale.calibrationFactor = configLocale.calibrationFactor + GLOBAL_increment_fc * (diff / abs(diff));
+      // 0.05 = facteur d'incrémentation
+      configLocale.calibrationFactor = configLocale.calibrationFactor + 0.05 * (diff / abs(diff));
     }
-    if (nb_essais ++ > GLOBAL_nb_essais_calibration) {
+    if (nb_essais ++ > nbEssaisCalibration) {
       Serial.println("Echec de la procédure de calibration");
       Serial.println("Pressez une touche pour recommencer.");
       while (!Serial.available());

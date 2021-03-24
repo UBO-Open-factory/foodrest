@@ -73,7 +73,7 @@ void SD_WriteSettings(Configuration &myConfig) {
     myFile.println();
 
     myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.");
-    myFile.println("ValeurDeTarage=" + String(myConfig.valeurDeTarage) );
+    myFile.println("valeurDeTarage=" + String(myConfig.valeurDeTarage) );
     myFile.println();
 
     myFile.println("// Calibrage de la balance (doit être une valeur entière positive ou négative).");
