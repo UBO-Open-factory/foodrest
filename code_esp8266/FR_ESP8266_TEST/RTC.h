@@ -3,7 +3,6 @@
  */
 #include <Wire.h>
 
-
 // capteur RTC pcf8523
 // Date and time functions using a PCF8523 RTC connected via I2C and Wire lib
 #include "RTClib.h"
