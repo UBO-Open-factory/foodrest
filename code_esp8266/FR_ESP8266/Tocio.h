@@ -7,6 +7,8 @@
 /*
  Use the web site https://www.grc.com/fingerprints.htm to the fingerprint from  your web site
  const char* fingerprint = "2A:12:65:E0:C9:41:C3:77:58:23:9F:02:EA:49:7F:84:D1:90:DE:50";
+ du code
+ mon code corrige je sais pas quoi mais il est super important
 */
 
 

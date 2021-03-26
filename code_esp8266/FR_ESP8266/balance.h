@@ -18,7 +18,6 @@
 //        Nécessite la bibliothèque HX711.h
 //
 //*********************************************************************
-//
 
 
 // bibliothèque pour la balance
