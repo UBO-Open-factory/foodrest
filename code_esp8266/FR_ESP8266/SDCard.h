@@ -184,7 +184,7 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
     AfficheErreur("ERR (SD_Read_Wifi)> Fichier wifi.txt introuvable. Creation d'un vierge qu'il faut initialiser.");
 
     // Ouverture du fichier en écriture
-    File myFile = SD.open("wifi.txt", FILE_WRITE);
+    File myFile = SD.open("wifi_tempo.txt", FILE_WRITE);
     myFile.println("// Ceci est le fichier de configuration pour les accès WIFI.");
     myFile.println("// Il faut renommer ce fichier avec le nom wifi.txt");
 
