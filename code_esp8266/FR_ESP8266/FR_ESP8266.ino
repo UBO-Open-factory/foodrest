@@ -34,7 +34,8 @@ void setup() {
   digitalWrite(GND_C_EN, HIGH);
 
   // initialisation de la liaison série (pour le moniteur)
-  Serial.begin(115200);
+  Serial.begin(9600);
+  delay(500);
   TraceDebug("OK, let's go");
 
   // Extinction de la LED rouge ____________________ ROUGE OFF
@@ -45,7 +46,7 @@ void setup() {
   balance.begin(BALANCE_DAT, BALANCE_CLK);
   balance.set_scale();
 
-
+  
 
 
   // Initialisation de la carte SD ---------------------------------------------------------------------
