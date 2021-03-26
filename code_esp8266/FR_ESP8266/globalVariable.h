@@ -5,8 +5,8 @@
 
 /* BALANCE *********************************************************************************** */
 // lignes connectées à la balance
-#define BALANCE_CLK  2
-#define BALANCE_DAT  10
+#define BALANCE_CLK  10
+#define BALANCE_DAT  2
 int GLOBAL_nb_echantillons_tarage = 20;
 
 
