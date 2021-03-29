@@ -21,6 +21,9 @@
 // Librairie de gestion de la balance
 #include "RTC.h"
 
+// Librairie de gestion de la saisie de l'ID de la balance
+#include "IDpoubelle.h"
+
 // Librairies contenant les fonctions pour lire les mesures physiques.
 #include "Functions.h"
 
