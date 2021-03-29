@@ -62,8 +62,11 @@ int niveau_battrie() {
    Permet de calibrer les capteurs.
 */
 void calibrageUsine() {
+  // Saisie de l'identifiant de la poubelle
+  IDPoubelle_setup();
+
   // Calibration de la RTC
-  if(  connectionWifi() ) {
+  if (  connectionWifi() ) {
     rtc_setup_pcf8523();
   }
 

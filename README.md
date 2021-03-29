@@ -71,6 +71,7 @@ Les librairies doivent être incluses les unes par rapport au autres dans l'ordr
   * RTClib.h
   * NTPClient.h
   * WiFiUDP.h
+* IDpoubelle.h
 * Functions.h
 
 # Configuration de Arduino
