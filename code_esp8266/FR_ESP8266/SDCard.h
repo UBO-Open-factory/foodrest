@@ -43,16 +43,24 @@ String _convertionBoolean(boolean value) {
 
 // ---------------------------------------------------------------------------------------------------
 /**
- * Suppression (préventive) du fichier de settings.
- * Pour pouvoir sauver une valeur dans le fichier, il est nécessaire de le supprimer et de le réecrire entièrement.
- */
-void SD_EraseSettings(){
+   Suppression (préventive) du fichier de settings.
+   Pour pouvoir sauver une valeur dans le fichier, il est nécessaire de le supprimer et de le réecrire entièrement.
+*/
+void SD_EraseSettings() {
   SD.remove("settings.txt");
+}
+// ---------------------------------------------------------------------------------------------------
+/**
+   Suppression (préventive) du fichier de configuration WIFI.
+   Pour pouvoir sauver une valeur dans le fichier, il est nécessaire de le supprimer et de le réecrire entièrement.
+*/
+void SD_EraseWifiFile() {
+  SD.remove("wifi_tempo.txt");
 }
 
 // ---------------------------------------------------------------------------------------------------
 /**
-   Ecriture du fichier de configuration avec les valeurs de la configuration locale.
+   Ecriture du fichier de settings avec les valeurs de la configuration locale.
 
 */
 void SD_WriteSettings(Configuration &myConfig) {
@@ -78,6 +86,32 @@ void SD_WriteSettings(Configuration &myConfig) {
 
     myFile.println("// Calibrage de la balance (doit être une valeur entière positive ou négative).");
     myFile.println("calibrationFactor=" + String(myConfig.calibrationFactor) );
+  } else {
+    AfficheErreur("ERREUR : SDCard.h SD_WriteSettings> Impossible d'ouvrir le fichier 'settings.txt' sur la carte SD pour écrire dedans");
+  }
+}
+
+// ---------------------------------------------------------------------------------------------------
+/**
+   Ecriture du fichier de paramètrage WIFI avec les valeurs de la configuration locale.
+
+*/
+void SD_WriteWifi(Configuration &myConfig) {
+
+  // Ouverture du fichier en écriture
+  File myFile = SD.open("wifi_tempo.txt", FILE_WRITE);
+  if (myFile) {
+    // Ouverture du fichier en écriture
+    // File myFile = SD.open("wifi_tempo.txt", FILE_WRITE);
+    myFile.println("// Ceci est le fichier de configuration pour les accès WIFI.");
+    myFile.println("// Il faut renommer ce fichier avec le nom wifi.txt");
+    myFile.println();
+    myFile.println("// Identifiant de la poubelle tel que défini dans le Back Office TOCIO.");
+    myFile.println("IDPoubelle=" + String(myConfig.IDPoubelle) );
+    myFile.println();
+    myFile.println("// Configuration WIFI");
+    myFile.println("ssid=LeNomDuReseauWifi");
+    myFile.println("mdp=MotDePassWifi");
   } else {
     AfficheErreur("ERREUR : SDCard.h SD_WriteSettings> Impossible d'ouvrir le fichier 'settings.txt' sur la carte SD pour écrire dedans");
   }
@@ -183,17 +217,12 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
 
     AfficheErreur("ERR (SD_Read_Wifi)> Fichier wifi.txt introuvable. Creation d'un vierge qu'il faut initialiser.");
 
-    // Ouverture du fichier en écriture
-    File myFile = SD.open("wifi_tempo.txt", FILE_WRITE);
-    myFile.println("// Ceci est le fichier de configuration pour les accès WIFI.");
-    myFile.println("// Il faut renommer ce fichier avec le nom wifi.txt");
+    // Effacement préventif du fichier wifi
+    SD_EraseWifiFile();
 
-    myFile.println("// Identifiant de la poubelle tel que défini dans le Back Office TOCIO.");
-    myFile.println("IDPoubelle=TEST2");
-    myFile.println();
-    myFile.println("// Configuration WIFI");
-    myFile.println("ssid=LeNomDuReseauWifi");
-    myFile.println("mdp=MotDePassWifi");
+    // Ecriture du fichier
+    SD_WriteWifi(myConfig);
+
     return false;
   }
 
