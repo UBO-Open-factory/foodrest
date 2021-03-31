@@ -71,10 +71,10 @@ Lancez l’IDE Arduino et ouvrez les préférences depuis le menu Fichier. Sur m
 ![Ajout de Carte Node MCU dans l'IDE](../Doc/Arduino_1.png?raw=true "IDE")
 Dans le champ de saisie, collez l’adresse internet suivante puis validez
 ```
-https://dl.espressif.com/dl/package_esp32_index.json
+https://git.oschina.net/dfrobot/FireBeetle-ESP32/raw/master/package_esp32_index.json
 ```
 > Si vous avez déjà des définitions de cartes, vouys pouvez les cumuler en les les séparatn par des virgules.
-> Par exemple, dans mon cas j'ai : http://arduino.esp8266.com/stable/package_esp8266com_index.json,https://dl.espressif.com/dl/package_esp32_index.json
+> Par exemple, dans mon cas j'ai : http://arduino.esp8266.com/stable/package_esp8266com_index.json,https://git.oschina.net/dfrobot/FireBeetle-ESP32/raw/master/package_esp32_index.json
 
 Maintenant, allez dans le menu Outils > Type de Cartes > Gestionnaire de carte.
 Dans le champ de recherche, saisissez esp8266 pour trouver les nouvelles cartes à installer. Si les cartes n’apparaissent pas, vérifiez dans les préférences que l’URL est correcte. vérifiez également la connexion Internet. Cliquer sur Installer
