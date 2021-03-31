@@ -37,7 +37,7 @@ void setup() {
   digitalWrite(GND_C_EN, HIGH);
 
   // initialisation de la liaison série (pour le moniteur)
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(500);
   TraceDebug("OK, let's go");
 
@@ -173,7 +173,11 @@ void setup() {
       if ( configLocale.AfficheTraceDebug ) {
         TraceDebug("Passage en DeepSleep");
       } else {
+        // Sortie "propre"
         digitalWrite(GND_C_EN, LOW);
+        WiFi.disconnect();
+
+        // Slip profond, enfin je crois :-)
         ESP.deepSleep(0);
       }
     }
