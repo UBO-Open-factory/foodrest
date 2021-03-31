@@ -15,15 +15,6 @@ En Rouge, ce qu'il faut encore affiner.
 ![Algorythme](./Doc/Algorythme.png?raw=true "Algorythme")
 
 # Installations
-## Driver de la FireBeetle.
-La carte [FireBeetle ESP8266](https://wiki.dfrobot.com/FireBeetle_ESP8266_IOT_Microcontroller_SKU__DFR0489) utilisée nécessite l'installation d'un driver spécifique.
-* [Télécharger](https://github.com/Arduinolibrary/DFRobot_FireBeetle_ESP8266_DFR0489/raw/master/CH340%20Driver.zip) du driver à partir du Dépot Git Arduinolibrary / DFRobot_FireBeetle_ESP8266_DFR0489
-* Décompresser l'archive ZIP dans un répertoire.
-* Double-cliquer sur le fichier **setup.exe**
-* Même si vous ne l’avez jamais installé, il faut commencer par cliquer sur **désinstaller** !
-* Cliquer sur **installer**
-La carte FireBeetle peut maintenant être branchée sur un port USB et reconnu sur votre PC par Arduino.
-
 ## Librairies Arduino utilisées
 Plusieures librairies tierces sont utilisées dans le projet, pour faciliter l'intégration elles sont toutes mises 
 dans le répertoire **Librairies**. 
@@ -75,13 +66,16 @@ Les librairies doivent être incluses les unes par rapport au autres dans l'ordr
 * Functions.h
 
 # Configuration de Arduino
-## Installation des cartes Node MCU dans l'IDe Arduino
+## Installation des cartes ESP32 dans l'IDe Arduino
 Lancez l’IDE Arduino et ouvrez les préférences depuis le menu Fichier. Sur macOS, allez dans le menu Arduino puis Préférences… Cliquez sur l’icône indiquée par la flèche rouge sur la photo ci-dessous.
 ![Ajout de Carte Node MCU dans l'IDE](../Doc/Arduino_1.png?raw=true "IDE")
 Dans le champ de saisie, collez l’adresse internet suivante puis validez
 ```
-https://arduino.esp8266.com/stable/package_esp8266com_index.json
+https://dl.espressif.com/dl/package_esp32_index.json
 ```
+> Si vous avez déjà des définitions de cartes, vouys pouvez les cumuler en les les séparatn par des virgules.
+> Par exemple, dans mon cas j'ai : http://arduino.esp8266.com/stable/package_esp8266com_index.json,https://dl.espressif.com/dl/package_esp32_index.json
+
 Maintenant, allez dans le menu Outils > Type de Cartes > Gestionnaire de carte.
 Dans le champ de recherche, saisissez esp8266 pour trouver les nouvelles cartes à installer. Si les cartes n’apparaissent pas, vérifiez dans les préférences que l’URL est correcte. vérifiez également la connexion Internet. Cliquer sur Installer
 ![Import de la carte Node MCU dans l'IDE](../Doc/Arduino_2.png?raw=true "Import")
