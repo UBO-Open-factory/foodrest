@@ -82,10 +82,10 @@ https://dl.espressif.com/dl/package_esp32_index.json
 
 Maintenant, allez dans le menu Outils > Type de Cartes > Gestionnaire de carte.
 Dans le champ de recherche, saisissez ESP32 pour trouver les nouvelles cartes à installer. Si les cartes n’apparaissent pas, vérifiez dans les préférences que l’URL est correcte. vérifiez également la connexion Internet. Cliquer sur Installer
-![Import de la carte Node MCU dans l'IDE](../Doc/Arduino_2.png?raw=true "Import")
+![Import de la carte Node MCU dans l'IDE](./Doc/Arduino_2.png?raw=true "Import")
 
 L’installation terminée, fermez le gestionnaire de carte et ouvrez de nouveau le menu Outils > Type de Carte. 
 Vous avez maintenant une nouvelle section appelée ESP32 Boards (2.7.4)
 
 ## Sélection de la carte 
-![Utilisation de la carte Firebeetle dans Arduino](../Doc/Arduino_Conf_NodeMCU2.png?raw=true "Utilisation de la carte Firebeetle dans Arduino")
+![Utilisation de la carte Firebeetle dans Arduino](./Doc/Arduino_Conf_NodeMCU2.png?raw=true "Utilisation de la carte Firebeetle dans Arduino")
