@@ -85,20 +85,46 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
     client.println("GET " + request + " HTTP/1.1");
     client.println("Host: " + String(host));
     client.println("Accept: */*");
+    client.println("User-Agent: ESP32/FireBeetle");
     client.println("Connection: close");
     client.println(); // end HTTP request header
-
+    TraceDebug( "Envoie OK" );
 
     // Read server respons
     String retour = "";
+    String currentLine = "";
+    boolean startRecording = false;
     while (client.connected()) {
       if (client.available()) {
-        // read an incoming byte from the server and print it to serial monitor:
-        char c = client.read();
-        // Serial.print(c);
-        retour.concat( String (c) );
+        char c = client.read(); // read a byte, then
+        // Serial.write(c);        // print it out the serial monitor
+        if (c == '\n') {        // the byte is a newline character
+          // if the current line is blank, you got
+          // two newline characters in a row.
+          // that's the end of the client HTTP request,
+          if (currentLine.length() == 0) {
+            if( startRecording ) {
+              break;
+            }
+            // HTTP header if finish, we can start to record respons from server
+            startRecording = true;
+            
+          } else {
+            // if we got a newline, then clear currentLine
+            currentLine = "";
+          }
+        } else if (c != '\r') {
+          // if we got anything else but a CR character,
+          // add it to the end of the currentLine
+          currentLine += c;
+        }
+        if (startRecording) {
+          retour += c;
+        }
       }
     }
+    // Fin de la connection
+    client.stop();
 
     // Extraction du message d'erreur dans le retour JSON
     // 'error' est toujours renvoyé, même si le message est vide
@@ -112,11 +138,8 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
     }
 
 
-    // Fin de la connection
-    if (!client.connected()) {
-      // if the server's disconnected, stop the client:
-      client.stop();
-    }
+
+
     return "ok";
 
   } else {
