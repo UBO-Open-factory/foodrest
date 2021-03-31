@@ -1,5 +1,7 @@
-#include <SD.h>
 #include <SDConfigFile.h>
+#include "FS.h"
+#include "SPI.h"
+
 
 /*
     Length of the longest line expected in the config file.
@@ -16,13 +18,20 @@ const uint8_t CONFIG_LINE_LENGTH = 127;
    Initialisaiton de la carte SD.
 */
 boolean SD_initCard() {
-
   // La pin CS de la carte doit être branchée sur le 3.3 V de la carte, peut importe la
   // valeur qui lui est attribuée ici.
   if (!SD.begin(0)) { // Fausse valeur, pour que la fonction SD.begin() puisse passer
     AfficheErreur("ERR (init_SDCard)> Initialisation carte SD impossible.");
     return false;
   }
+
+  // Détection si on a une carte SD insérée
+  if (SD.cardType() == CARD_NONE) {
+    Serial.println("No SD card attached");
+    AfficheErreur("ERR (init_SDCard)> Aucune Carte SD insérée.");
+    return false;
+  }
+
   return true;
 }
 
@@ -47,7 +56,7 @@ String _convertionBoolean(boolean value) {
    Pour pouvoir sauver une valeur dans le fichier, il est nécessaire de le supprimer et de le réecrire entièrement.
 */
 void SD_EraseSettings() {
-  SD.remove("settings.txt");
+  SD.remove("/settings.txt");
 }
 // ---------------------------------------------------------------------------------------------------
 /**
@@ -55,7 +64,7 @@ void SD_EraseSettings() {
    Pour pouvoir sauver une valeur dans le fichier, il est nécessaire de le supprimer et de le réecrire entièrement.
 */
 void SD_EraseWifiFile() {
-  SD.remove("wifi_tempo.txt");
+  SD.remove("/wifi_tempo.txt");
 }
 
 // ---------------------------------------------------------------------------------------------------
@@ -64,9 +73,10 @@ void SD_EraseWifiFile() {
 
 */
 void SD_WriteSettings(Configuration &myConfig) {
+  const char* fileName = "/settings.txt";
 
   // Ouverture du fichier en écriture
-  File myFile = SD.open("settings.txt", FILE_WRITE);
+  File myFile = SD.open(fileName, FILE_WRITE);
   if (myFile) {
     // Ecrit les données dans le fichier.
     myFile.println("// Ceci est le fichier de configuration pour l'application.");
@@ -87,7 +97,7 @@ void SD_WriteSettings(Configuration &myConfig) {
     myFile.println("// Calibrage de la balance (doit être une valeur entière positive ou négative).");
     myFile.println("calibrationFactor=" + String(myConfig.calibrationFactor) );
   } else {
-    AfficheErreur("ERREUR : SDCard.h SD_WriteSettings> Impossible d'ouvrir le fichier 'settings.txt' sur la carte SD pour écrire dedans");
+    AfficheErreur("ERREUR : SDCard.h SD_WriteSettings> Impossible d'ouvrir le fichier '" + String(fileName) + "' sur la carte SD pour écrire dedans");
   }
 }
 
@@ -97,9 +107,10 @@ void SD_WriteSettings(Configuration &myConfig) {
 
 */
 void SD_WriteWifi(Configuration &myConfig) {
+  const char* fileName = "/wifi_tempo.txt";
 
   // Ouverture du fichier en écriture
-  File myFile = SD.open("wifi_tempo.txt", FILE_WRITE);
+  File myFile = SD.open(fileName, FILE_WRITE);
   if (myFile) {
     // Ouverture du fichier en écriture
     // File myFile = SD.open("wifi_tempo.txt", FILE_WRITE);
@@ -113,7 +124,7 @@ void SD_WriteWifi(Configuration &myConfig) {
     myFile.println("ssid=LeNomDuReseauWifi");
     myFile.println("mdp=MotDePassWifi");
   } else {
-    AfficheErreur("ERREUR : SDCard.h SD_WriteSettings> Impossible d'ouvrir le fichier 'settings.txt' sur la carte SD pour écrire dedans");
+    AfficheErreur("ERREUR : SDCard.h SD_WriteSettings> Impossible d'ouvrir le fichier '" + String(fileName) + "' sur la carte SD pour écrire dedans");
   }
 }
 
@@ -129,12 +140,13 @@ void SD_WriteWifi(Configuration &myConfig) {
    Renvoie true si la config est lue, false sinon.
 */
 boolean SD_Read_Config(Configuration &myConfig) {
+  const char* fileName = "/settings.txt";
 
   // Le fichier de configuration
   SDConfigFile cfg;
 
   //Si le fichier existe on le lit
-  if (cfg.begin("settings.txt", CONFIG_LINE_LENGTH)) {
+  if (cfg.begin(fileName, CONFIG_LINE_LENGTH)) {
 
     // Lecture de la config du fichier
     while (cfg.readNextSetting()) {
@@ -162,7 +174,7 @@ boolean SD_Read_Config(Configuration &myConfig) {
   } else {
 
     // Ecriture d'un fichier de config vierge
-    AfficheErreur("ERR (SD_Read_Config)> Fichier settings.txt introuvable. Creation d'un vierge qu'il faut initialiser.");
+    AfficheErreur("ERR (SD_Read_Config)> Fichier " + String(fileName) + " introuvable. Creation d'un vierge qu'il faut initialiser.");
     SD_WriteSettings(myConfig);
     return false;
   }
@@ -182,13 +194,13 @@ boolean SD_Read_Config(Configuration &myConfig) {
    Renvoie true si la conifg est lue, false sinon.
 */
 boolean SD_Read_Wifi(Configuration &myConfig) {
-
+  const char* fileName = "/wifi.txt";
 
   // Le fichier de configuration
   SDConfigFile cfg;
 
   //Si le fichier existe on le lit
-  if (cfg.begin("wifi.txt", CONFIG_LINE_LENGTH)) {
+  if (cfg.begin(fileName, CONFIG_LINE_LENGTH)) {
 
     // Lecture de la config du fichier
     while (cfg.readNextSetting()) {
@@ -215,7 +227,7 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
     // le fichier n'existe pas, on le créé à vide
   } else {
 
-    AfficheErreur("ERR (SD_Read_Wifi)> Fichier wifi.txt introuvable. Creation d'un vierge qu'il faut initialiser.");
+    AfficheErreur("ERR (SD_Read_Wifi)> Fichier "+String(fileName) +" introuvable. Creation d'un vierge qu'il faut initialiser.");
 
     // Effacement préventif du fichier wifi
     SD_EraseWifiFile();

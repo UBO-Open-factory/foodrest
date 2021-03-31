@@ -50,8 +50,10 @@ Les librairies doivent être incluses les unes par rapport au autres dans l'ordr
 * GestionErreur.h
 * Config.h
   * SDCard.h
-	* SD.h
-    * SDConfigFile.h
+	* SDConfigFile.h
+		* SD.h
+	* FS.h
+	* SPI.h
 * Tocio.h
   * WiFiClientSecure.h
     * WiFi.h
@@ -65,7 +67,7 @@ Les librairies doivent être incluses les unes par rapport au autres dans l'ordr
 * IDpoubelle.h
 * Functions.h
   * Wire.h
-  * SPI.h
+  
 
 # Configuration de Arduino
 ## Installation des cartes ESP32 dans l'IDe Arduino
@@ -75,7 +77,7 @@ Dans le champ de saisie, collez l’adresse internet suivante puis validez
 ```
 https://dl.espressif.com/dl/package_esp32_index.json
 ```
-> Si vous avez déjà des définitions de cartes, vouys pouvez les cumuler en les les séparatn par des virgules.
+> Si vous avez déjà des définitions de cartes, vous pouvez les cumuler en les les séparant par des virgules.
 > Par exemple, dans mon cas j'ai : http://arduino.esp8266.com/stable/package_esp8266com_index.json,https://dl.espressif.com/dl/package_esp32_index.json
 
 Maintenant, allez dans le menu Outils > Type de Cartes > Gestionnaire de carte.

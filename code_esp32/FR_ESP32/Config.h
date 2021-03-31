@@ -20,13 +20,13 @@ Configuration CONF_lectureConfigurationFromSD() {
 
   // Lecture du fichier de configuration du programme
   if ( !SD_Read_Config( conf )) {
-    Serial.println("ERR (lectureConfigurationFromSD)> Impossible de lire les settings.");
+    AfficheErreur("ERREUR : Impossible de lire les settings.");
   }
   
   // Lecture du fichier de paramétrage Wifi
   // et initialisation du ssid et du password WIFI
   if ( !SD_Read_Wifi( conf )) {
-    Serial.println("ERR (lectureConfigurationFromSD)> Impossible de lire la conf WIFI.");
+    AfficheErreur("ERREUR : Impossible de lire la conf WIFI.");
   }
 
   return conf;
