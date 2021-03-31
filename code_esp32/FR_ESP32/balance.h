@@ -59,10 +59,8 @@ void CZL635_setup() {
   Serial.println("*************************************************");
   Serial.println("*     FOOD REST : calibration de la balance     *");
   Serial.println("*************************************************");
-  Serial.println("");
-  Serial.println("");
-  Serial.println("lorsque le programme vous demandera de presser une touche");
-  Serial.println("       Pressez une touche puis la touche [Enter].");
+  Serial.println("Lorsque le programme vous demandera de presser une touche");
+  Serial.println("Pressez une touche puis la touche [Enter].");
   Serial.println("");
   Serial.println("");
 
@@ -70,7 +68,6 @@ void CZL635_setup() {
   Serial.println("**************************************************");
   Serial.println("*     ETAPE 1/5 : tarage de la balance           *");
   Serial.println("**************************************************");
-  Serial.println("");
   Serial.println("1 - Assurez-vous que la poubelle est compètement vide");
   Serial.println("2 - Equipez la poubelle d'un sac");
   Serial.println("3 - puis pressez une touche");
@@ -86,7 +83,6 @@ void CZL635_setup() {
   Serial.println("**************************************************");
   Serial.println("*     ETAPE 2/5 : calibration de la balance      *");
   Serial.println("**************************************************");
-  Serial.println("");
   Serial.println("1 - Placez un poids connu dans la poubelle,");
   Serial.println("2 - Refermez le couvercle et ");
   Serial.println("3 - Saisissez le poids inséré dans la balance.");
