@@ -75,7 +75,7 @@ void SD_EraseWifiFile() {
 void SD_WriteSettings(Configuration &myConfig) {
   const char* fileName = "/settings.txt";
 
-  // Ouverture du fichier en écriture
+  // Ouverture du fichier en écriture (et réiniitialisation)
   File myFile = SD.open(fileName, FILE_WRITE);
   if (myFile) {
     // Ecrit les données dans le fichier.
@@ -109,11 +109,10 @@ void SD_WriteSettings(Configuration &myConfig) {
 void SD_WriteWifi(Configuration &myConfig) {
   const char* fileName = "/wifi_tempo.txt";
 
-  // Ouverture du fichier en écriture
+  // Ouverture du fichier en écriture (et réinitialisation)
   File myFile = SD.open(fileName, FILE_WRITE);
   if (myFile) {
     // Ouverture du fichier en écriture
-    // File myFile = SD.open("wifi_tempo.txt", FILE_WRITE);
     myFile.println("// Ceci est le fichier de configuration pour les accès WIFI.");
     myFile.println("// Il faut renommer ce fichier avec le nom wifi.txt");
     myFile.println();
@@ -252,7 +251,8 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
    chaine : La chaine de caractère à écrire dans le fichier.
 */
 void SD_writeMesure(String IDPoubelle, String chaine) {
-  File dataFile = SD.open("/" + IDPoubelle + "-mesures.csv", FILE_WRITE);
+  // Ouverture du fichier en ajout
+  File dataFile = SD.open("/" + IDPoubelle + "-mesures.csv", FILE_APPEND);
 
   // Si on a réussi à ouvrir le fichier en écriture
   if (dataFile) {
@@ -272,11 +272,11 @@ void SD_writeMesure(String IDPoubelle, String chaine) {
 /**
    Ecriture des entetes du fichier CSV des mesures.
 
-   Renvoie false si init impossible sinon le nom du fichier.
+   Renvoie "" si init impossible sinon le nom du fichier.
 */
 String SD_writeEntesMesure() {
   String fileName = "/" + configLocale.IDPoubelle + "-mesures.csv";
-  File dataFile = SD.open(fileName, FILE_WRITE);
+  File dataFile = SD.open(fileName, FILE_APPEND);
 
   // Si on a réussi à ouvrir le fichier en écriture
   if (dataFile) {
