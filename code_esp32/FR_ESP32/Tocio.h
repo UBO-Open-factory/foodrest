@@ -1,14 +1,6 @@
-#include <ESP8266WiFi.h>
-
 // @see : https://github.com/espressif/arduino-esp32/blob/ef99cd7fe7778719c92d6f8df0f10d3f0f7aa35e/libraries/WiFiClientSecure/src/WiFiClientSecure.h
-// Documentaiton : https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/readme.html#
+// #include "lib/WiFiClientSecure/src/WiFiClientSecure.h"
 #include <WiFiClientSecure.h>
-
-/*
- Use the web site https://www.grc.com/fingerprints.htm to the fingerprint from  your web site
- const char* fingerprint = "2A:12:65:E0:C9:41:C3:77:58:23:9F:02:EA:49:7F:84:D1:90:DE:50";
-*/
-
 
 
 // --------------------------------------------------------------------------------
@@ -73,7 +65,7 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
 
     //  Create an https client
     WiFiClientSecure client;
-    const String host = "uboopenfactory.univ-brest.fr";
+    const char* host = "uboopenfactory.univ-brest.fr";
 
 
     // Don't validate the certificat (and avoid fingerprint).
@@ -91,9 +83,8 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
 
     // Send data to the client with a GET method
     client.println("GET " + request + " HTTP/1.1");
-    client.println("Host: " + host);
+    client.println("Host: " + String(host));
     client.println("Accept: */*");
-    client.println("User-Agent: ESP8266/NodeMCU 0.9");
     client.println("Connection: close");
     client.println(); // end HTTP request header
 

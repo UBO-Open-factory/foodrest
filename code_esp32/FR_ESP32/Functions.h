@@ -13,6 +13,7 @@ boolean connectionWifi() {
   // Extinction de la LED rouge ________________________ ROUGE ON
   digitalWrite(RED_LED_PIN, HIGH);
 
+  // station mode: the ESP32 connects to an access point
   WiFi.mode(WIFI_STA);
   WiFi.begin(configLocale.ssid, configLocale.password);
 
