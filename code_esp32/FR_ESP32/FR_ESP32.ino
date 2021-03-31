@@ -156,8 +156,8 @@ void setup() {
       digitalWrite(RED_LED_PIN, HIGH);
 
       Mesures = configLocale.IDPoubelle + "," + timeStamp + "," + String(poid) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
-      SD_write_Mesure(Mesures);
-      TraceDebug("Ecriture dans le fichier");
+      SD_writeMesure(configLocale.IDPoubelle, Mesures);
+      TraceDebug("Ecriture dans le fichier CSV");
       TraceDebug("Mesures: " + Mesures);
 
       // Allumage/Extinction de la LED rouge _________________ ROUGE OFF
@@ -172,6 +172,7 @@ void setup() {
       // On passe en deepSleep, uniquement si on est pas en mode DEBUG
       if ( configLocale.AfficheTraceDebug ) {
         TraceDebug("Passage en DeepSleep");
+        
       } else {
         // Sortie "propre"
         digitalWrite(GND_C_EN, LOW);

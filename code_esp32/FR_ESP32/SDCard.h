@@ -242,3 +242,53 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
   cfg.end();
   return true;
 }
+
+
+// ---------------------------------------------------------------------------------------------------
+/**
+   Ecriture d'une ligne dans le fichier des mesures sur la carte SD.
+   
+   IDPoubelle : L'identificatn de la poubelle tel que défini dans le BO TOCIO.
+   chaine : La chaine de caractère à écrire dans le fichier.
+*/
+void SD_writeMesure(String IDPoubelle, String chaine) {
+  File dataFile = SD.open("/" + IDPoubelle + "-mesures.csv", FILE_WRITE);
+
+  // Si on a réussi à ouvrir le fichier en écriture
+  if (dataFile) {
+    // Ecriture de la ligne dans le fichier
+    dataFile.println(chaine);
+
+    // Fermeture du fichier
+    dataFile.close();
+
+  } else {
+    AfficheErreur("ERR (write_Mesure)> Impossible d'ouvir le fichier en écriture sur la carte SD.");
+  }
+}
+
+
+// ---------------------------------------------------------------------------------------------------
+/**
+   Ecriture des entetes du fichier CSV des mesures.
+
+   Renvoie false si init impossible sinon le nom du fichier.
+*/
+String SD_writeEntesMesure() {
+  String fileName = "/" + configLocale.IDPoubelle + "-mesures.csv";
+  File dataFile = SD.open(fileName, FILE_WRITE);
+
+  // Si on a réussi à ouvrir le fichier en écriture
+  if (dataFile) {
+    // Ecriture de la ligne dans le fichier
+    dataFile.println("IDPoubelle,Date,Poids,Niveau batterie,RSSI,Réception TOCIO");
+
+    // Fermeture du fichier
+    dataFile.close();
+    return fileName;
+
+  } else {
+    AfficheErreur("ERR (write_Mesure)> Impossible d'ouvir le fichier en écriture sur la carte SD.");
+    return "";
+  }
+}

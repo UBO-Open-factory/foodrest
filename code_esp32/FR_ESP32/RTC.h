@@ -60,7 +60,6 @@ void rtc_setup_pcf8523() {
   Serial.println("****************************************************");
   Serial.println("*     FOOD REST : Initialisation de l'horloge      *");
   Serial.println("****************************************************");
-  Serial.println("");
   Serial.println("Connection au serveur de temps...");
 
   // On va chercher l'heure sur le serveur de temps de L'UBO

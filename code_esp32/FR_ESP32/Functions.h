@@ -72,25 +72,3 @@ void calibrageUsine() {
   // Calibration de la ballance
   CZL635_setup();
 }
-
-
-// ---------------------------------------------------------------------------------------------------
-/**
-   Ecriture d'une ligne dans le fichier des mesures sur la carte SD.
-   chaine : La chaine de caractère à écrire dans le fichier.
-*/
-void SD_write_Mesure(String chaine) {
-  File dataFile = SD.open(configLocale.IDPoubelle + "-mesures.csv", FILE_WRITE);
-
-  // Si on a réussi à ouvrir le fichier en écriture
-  if (dataFile) {
-    // Ecriture de la ligne dans le fichier
-    dataFile.println(chaine);
-
-    // Fermeture du fichier
-    dataFile.close();
-
-  } else {
-    AfficheErreur("ERR (write_Mesure)> Impossible d'ouvir le fichier en écriture sur la carte SD.");
-  }
-}
