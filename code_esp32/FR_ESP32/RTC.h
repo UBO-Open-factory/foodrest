@@ -63,21 +63,35 @@ void rtc_setup_pcf8523() {
   Serial.println("");
   Serial.println("Connection au serveur de temps...");
 
-  // On va chercher l'heure sur le serveur de temps
+  // On va chercher l'heure sur le serveur de temps de L'UBO
   WiFiUDP ntpUDP;
-  NTPClient timeClient(ntpUDP, "pool.ntp.org");
+  NTPClient timeClient(ntpUDP, "chronos.univ-brest.fr");
   timeClient.begin();
-  timeClient.setTimeOffset(3600); // Heure de Paris GMT +1 (in secondes)
+  timeClient.setTimeOffset(7200); // Heure de Paris GMT +2 (in secondes)
   timeClient.update();
-  delay(1000);
-  Serial.println("OK.");
 
-  String formattedTime = timeClient.getFormattedTime();
 
   // Get a Time structure for days, month and year
   unsigned long epochTime = timeClient.getEpochTime();
   struct tm *ptm    = gmtime ((time_t *)&epochTime);
   String currentDate = String(ptm->tm_mday) + "/" + String(ptm->tm_mon + 1) + "/" + String(ptm->tm_year + 1900);
+
+  // Si on a pas reussi a lire l'heure du serveur de temps
+  if ( currentDate == "1/1/1970" ) {
+    AfficheErreur("ERR (setup_rtc_pcf8523)> Impossible de lire l'heure sur le serveur chronos.univ-brest.fr, on essaie sur pool.ntp.org");
+    timeClient.end();
+    timeClient.setPoolServerName("pool.ntp.org");
+
+    timeClient.begin();
+    timeClient.setTimeOffset(7200); // Heure de Paris GMT +2 (in secondes)
+    timeClient.update();
+    
+    epochTime = timeClient.getEpochTime();
+    ptm    = gmtime ((time_t *)&epochTime);
+    currentDate = String(ptm->tm_mday) + "/" + String(ptm->tm_mon + 1) + "/" + String(ptm->tm_year + 1900);
+  }
+
+  String formattedTime = timeClient.getFormattedTime();
 
   Serial.println("Il est : " + formattedTime);
   Serial.println("Nous sommes le : " + currentDate);
