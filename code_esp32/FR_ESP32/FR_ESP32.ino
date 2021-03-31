@@ -57,7 +57,7 @@ void setup() {
   if ( ! SD_initCard() ) {
     AfficheErreur("ERR (main)> Lecture carte SD impossible!");
     AfficheErreur("Veuillez insérer une carte SD et relancer le programme.");
-    delaiClignottementLED = 150;  // Pour l'affichage dans la boucle principale
+    delaiClignottementLED = 70;  // Pour l'affichage dans la boucle principale
 
   } else {
 
@@ -155,7 +155,7 @@ void setup() {
       // Allumage de la LED rouge _____________________________ ROUGE ON
       digitalWrite(RED_LED_PIN, HIGH);
 
-      Mesures = configLocale.IDPoubelle + "," + timeStamp + "," + String(poid) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
+      Mesures = configLocale.IDPoubelle + "," + rtc_getDate() + "," + String(poid) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
       SD_writeMesure(configLocale.IDPoubelle, Mesures);
       TraceDebug("Ecriture dans le fichier CSV");
       TraceDebug("Mesures: " + Mesures);

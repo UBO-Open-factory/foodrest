@@ -7,5 +7,6 @@ Ce projet présente le code Arduino pour un [ESP32](https://github.com/UBO-Open-
 Etat | Signification
 --- |:---
 Fixe | Ne pas ouvrir le couvercle, calcul en cour.
+Clignottment très rapide | Carte SD manquante
 Clignottment rapide | Problème de connection WIFI
 Clignottment lent | (Mode debug uniquement) Simulation du Deepsleep.
