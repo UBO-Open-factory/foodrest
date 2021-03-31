@@ -84,7 +84,7 @@ void rtc_setup_pcf8523() {
     timeClient.begin();
     timeClient.setTimeOffset(7200); // Heure de Paris GMT +2 (in secondes)
     timeClient.update();
-    
+
     epochTime = timeClient.getEpochTime();
     ptm    = gmtime ((time_t *)&epochTime);
     currentDate = String(ptm->tm_mday) + "/" + String(ptm->tm_mon + 1) + "/" + String(ptm->tm_year + 1900);
@@ -106,7 +106,6 @@ void rtc_setup_pcf8523() {
 //---------------------------------------------------------------------------------------
 /**
    Renvoie le timestamp actuel sous forme de chaine de 10 caractères.
-   @return integer
    librairie adafruit RTClib
 */
 String rtc_getTimestamp() {
@@ -137,17 +136,29 @@ String rtc_getTimestamp() {
     Serial.println();
   */
   return String(now.unixtime());
-  /*
-    char jour[3]; sprintf(jour, "%02i", now.day());
-    char mois[3]; sprintf(mois, "%02i", now.month());
-    String date = String(jour) + "-" + String(mois) + "-" + String(now.year() );
+}
 
 
-    char hour[3]; sprintf(hour, "%02i", now.hour());
-    char minute[3]; sprintf(minute, "%02i", now.minute());
-    char second[3]; sprintf(second, "%02i", now.second());
-    String heure = String(hour) + ":" + String(minute) + ":" + String(second);
+//---------------------------------------------------------------------------------------
+/**
+   Renvoie la date et l'heure sous forme de chaine de caractères.
+   @return integer
+   librairie adafruit RTClib
+*/
+String rtc_getDate() {
+  rtc.begin();
+  rtc.start();
 
-    return date + heure;
-  */
+  DateTime now = rtc.now();
+  char jour[3]; sprintf(jour, "%02i", now.day());
+  char mois[3]; sprintf(mois, "%02i", now.month());
+  String date = String(jour) + "-" + String(mois) + "-" + String(now.year() );
+
+
+  char hour[3]; sprintf(hour, "%02i", now.hour());
+  char minute[3]; sprintf(minute, "%02i", now.minute());
+  char second[3]; sprintf(second, "%02i", now.second());
+  String heure = String(hour) + ":" + String(minute) + ":" + String(second);
+
+  return date + " " + heure;
 }
