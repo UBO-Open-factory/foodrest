@@ -12,7 +12,7 @@ int GLOBAL_nb_echantillons_tarage = 20;
 
  /* Cablage des LED *************************************************************************** */
 // pin sur laquelle est connecté la LED rouge
-#define RED_LED_PIN 5
+#define LED_PESEE_PIN 5
 int redLedState     = LOW;  // L'état courant de la LED ROUGE
 
 

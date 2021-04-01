@@ -32,20 +32,22 @@
 
 // ************************************************************************************
 void setup() {
-  pinMode(RED_LED_PIN, OUTPUT);
+// initialisation de la liaison série (pour le moniteur)
+  Serial.begin(115200);
+  delay(500);  // attente pour l'init de la liaison serie
+  
+  pinMode(LED_PESEE_PIN, OUTPUT);
   pinMode(GND_C_EN, OUTPUT);
+  pinMode(MASQUE_RESET,OUTPUT);
+
+  digitalWrite(LED_PESEE_PIN, LOW);  // init de la led pesee à 0 au démarage
   digitalWrite(GND_C_EN, HIGH);
 
-  pinMode(MASQUE_RESET,OUTPUT);
   digitalWrite(MASQUE_RESET,LOW);   // interdit le RESET lorsque le capot est ouvert
 
-  // initialisation de la liaison série (pour le moniteur)
-  Serial.begin(115200);
-  delay(500);
-  TraceDebug("OK, let's go");
-
+  
   // Extinction de la LED rouge ____________________ ROUGE OFF
-  digitalWrite(RED_LED_PIN, LOW);
+  digitalWrite(LED_PESEE_PIN, LOW);
 
 
   // Initialisaiton de la balance ---------------------------------------------------------------------
@@ -75,6 +77,25 @@ void setup() {
     // de settings
     if ( configLocale.InitialisationUsine ) {
       TraceDebug("On entre en mode calibration d'usine.");
+
+
+
+      // Afichage d'un message d'attente pour laisser le temps au port USB de "capter" la balance
+      while (true) {
+        Serial.println ("Veuillez presser une touche pour entrer dans le mode usine...");
+        if (Serial.available()){  
+          while (Serial.available()){
+            Serial.read();          
+          }
+          break;
+        }
+        delay(1000);
+      }
+
+
+
+
+      
       calibrageUsine();
 
 
@@ -93,13 +114,13 @@ void setup() {
 
       // POID
       // Allumage/Extinction de la LED rouge ____________________ ROUGE ON
-      digitalWrite(RED_LED_PIN, HIGH);
+      digitalWrite(LED_PESEE_PIN, HIGH);
 
       float poid = BALANCE_pesee_balance();
       Mesures.concat(formatString(poid, "-5.0"));
 
       // Allumage/Extinction de la LED rouge ____________________ ROUGE OFF
-      digitalWrite(RED_LED_PIN, LOW);
+      digitalWrite(LED_PESEE_PIN, LOW);
 
       // FORCE DU WIFI
       int rssi = 0; // Sera mis à jour lorsque la connecction sera faite
@@ -117,7 +138,7 @@ void setup() {
       // On a réussi à se connecter au WIFI
       if ( connectionWifi() ) {
         // Extinction de la LED rouge __________________________ ROUGE OFF
-        digitalWrite(RED_LED_PIN, LOW);
+        digitalWrite(LED_PESEE_PIN, LOW);
 
         TraceDebug("Voila, c'est fait.");
         TraceDebug("IP : " + WiFi.localIP().toString() );
@@ -128,12 +149,12 @@ void setup() {
 
         // Envoie des données vers TOCIO ------------------------------------------------------------
         // Allumage/Extinction de la LED rouge _______________ ROUGE ON
-        digitalWrite(RED_LED_PIN, HIGH);
+        digitalWrite(LED_PESEE_PIN, HIGH);
 
         retourTOCIO = sendDataInHTTPSRequest( Mesures, configLocale );
 
         // Allumage/Extinction de la LED rouge _______________ ROUGE OFF
-        digitalWrite(RED_LED_PIN, LOW);
+        digitalWrite(LED_PESEE_PIN, LOW);
 
         if ( retourTOCIO != "ok") {
           AfficheErreur("ERR (main)> ERREUR lors de l'envoie vers TOCIO. L'erreur renvoyée est :");
@@ -151,12 +172,12 @@ void setup() {
 
         // Allumage de la LED rouge ___________________________ ROUGE ON
         delaiClignottementLED = 1000;
-        digitalWrite(RED_LED_PIN, HIGH);
+        digitalWrite(LED_PESEE_PIN, HIGH);
       }
 
       // Ecriture dans le fichier ----------------------------------------------------------------------
       // Allumage de la LED rouge _____________________________ ROUGE ON
-      digitalWrite(RED_LED_PIN, HIGH);
+      digitalWrite(LED_PESEE_PIN, HIGH);
 
       Mesures = configLocale.IDPoubelle + "," + rtc_getDate() + "," + String(poid) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
       SD_writeMesure(configLocale.IDPoubelle, Mesures);
@@ -164,7 +185,7 @@ void setup() {
       TraceDebug("Mesures: " + Mesures);
 
       // Allumage/Extinction de la LED rouge _________________ ROUGE OFF
-      digitalWrite(RED_LED_PIN, LOW);
+      digitalWrite(LED_PESEE_PIN, LOW);
 
       // Juste pour afficher une simulation du deepSleep sur la LED
       delaiClignottementLED = 2000;
@@ -209,5 +230,5 @@ void loop() {
 
   // Allumage/Extinction de la LED rouge ____________________ ROUGE TOOGLE
   redLedState = !redLedState;
-  digitalWrite(RED_LED_PIN, redLedState);
+  digitalWrite(LED_PESEE_PIN, redLedState);
 }
