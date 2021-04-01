@@ -17,12 +17,15 @@ int redLedState     = LOW;  // L'état courant de la LED ROUGE
 
 
 
+ /* Autorisation du reset *************************************************************************** */
+#define MASQUE_RESET 13
+
 
 
 /* BATTERIE *********************************************************************************** */
 //ESP8266 analog PIN = A0, ici niveau_battrie(pin_batt)
 #define pin_batt A0
-#define GND_C_EN 13
+#define GND_C_EN 25
 
 
 

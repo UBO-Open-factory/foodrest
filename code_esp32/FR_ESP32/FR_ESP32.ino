@@ -36,6 +36,9 @@ void setup() {
   pinMode(GND_C_EN, OUTPUT);
   digitalWrite(GND_C_EN, HIGH);
 
+  pinMode(MASQUE_RESET,OUTPUT);
+  digitalWrite(MASQUE_RESET,LOW);   // interdit le RESET lorsque le capot est ouvert
+
   // initialisation de la liaison série (pour le moniteur)
   Serial.begin(115200);
   delay(500);
@@ -169,18 +172,25 @@ void setup() {
 
 
       // Deep sleep ----------------------------------------------------------------------------------
-      // On passe en deepSleep, uniquement si on est pas en mode DEBUG
-      if ( configLocale.AfficheTraceDebug ) {
-        TraceDebug("Passage en DeepSleep");
-        
-      } else {
-        // Sortie "propre"
-        digitalWrite(GND_C_EN, LOW);
-        WiFi.disconnect();
 
+      // Sortie "propre"
+      // reconfigure les E/S pour autoriser le reset et couper l'alim des périphériques et coupe le Wifi      
+      digitalWrite(MASQUE_RESET,HIGH); // autorise le RESET lorsque le capot est ouvert
+      digitalWrite(GND_C_EN, LOW);
+      // On passe en deepSleep, uniquement si on est pas en mode DEBUG
+
+      
+      if ( configLocale.AfficheTraceDebug ) {
+        WiFi.disconnect();
+        TraceDebug("Passage en DeepSleep");
+      } else {
         // Slip profond, enfin je crois :-)
-        ESP.deepSleep(0);
+        esp_deep_sleep_start() ;
       }
+
+
+ 
+      
     }
   }
 
