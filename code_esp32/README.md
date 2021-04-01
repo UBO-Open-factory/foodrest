@@ -72,7 +72,7 @@ Les librairies doivent être incluses les unes par rapport au autres dans l'ordr
 # Configuration de Arduino
 ## Installation des cartes ESP32 dans l'IDe Arduino
 Lancez l’IDE Arduino et ouvrez les préférences depuis le menu Fichier. Sur macOS, allez dans le menu Arduino puis Préférences… Cliquez sur l’icône indiquée par la flèche rouge sur la photo ci-dessous.
-![Ajout de Carte Node MCU dans l'IDE](../Doc/Arduino_1.png?raw=true "IDE")
+![Ajout de Carte Node MCU dans l'IDE](./Doc/Arduino_1.png?raw=true "IDE")
 Dans le champ de saisie, collez l’adresse internet suivante puis validez
 ```
 https://dl.espressif.com/dl/package_esp32_index.json
