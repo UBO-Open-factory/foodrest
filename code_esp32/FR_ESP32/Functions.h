@@ -9,7 +9,7 @@
 */
 boolean connectionWifi() {
   // Extinction de la LED rouge ________________________ ROUGE ON
-  digitalWrite(RED_LED_PIN, HIGH);
+  digitalWrite(LED_PESEE_PIN, HIGH);
 
   // station mode: the ESP32 connects to an access point
   WiFi.mode(WIFI_STA);
@@ -20,7 +20,7 @@ boolean connectionWifi() {
   while (WiFi.status() != WL_CONNECTED) {
     // Allumage/Extinction de la LED rouge _______________ ROUGE TOOGLE
     redLedState = !redLedState;
-    digitalWrite(RED_LED_PIN, redLedState);
+    digitalWrite(LED_PESEE_PIN, redLedState);
 
     delay(500);
     Serial.print(".");
@@ -32,7 +32,7 @@ boolean connectionWifi() {
       AfficheErreur(configLocale.password);
 
       // Extinction de la LED rouge ________________________ ROUGE OFF
-      digitalWrite(RED_LED_PIN, HIGH);
+      digitalWrite(LED_PESEE_PIN, HIGH);
       return false;
     }
   }

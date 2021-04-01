@@ -74,7 +74,14 @@ void CZL635_setup() {
   while (!Serial.available());
   while (Serial.available()) Serial.read();
   Serial.print("Tarage en cours... ");
+  
+  //balance.set_scale(configLocale.calibrationFactor);
+  
   balance.tare(GLOBAL_nb_echantillons_tarage);
+
+  Serial.print ("Tare : ");
+  Serial.println (balance.get_tare());
+  
   Serial.println("OK");
   Serial.println("");
   Serial.println("");
