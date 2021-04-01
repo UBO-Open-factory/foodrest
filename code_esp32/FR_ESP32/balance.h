@@ -80,7 +80,7 @@ void CZL635_setup() {
   //balance.tare(GLOBAL_nb_echantillons_tarage);
   balance.tare(10);
 
-  Serial.print ("Tare : ");
+  Serial.print ("Tare (pour information) : ");
   float t_tare = balance.get_tare();
   Serial.println (t_tare);
   
@@ -99,76 +99,42 @@ void CZL635_setup() {
   Serial.println("          ex. : 1965  pour 1965 grammes");
   Serial.println("");
   int nb_essais = 1;
-
   while (!Serial.available());
   String xx = Serial.readString();
   float poids_a_atteindre = xx.toFloat();
-
   int nbEssaisCalibration = 50;
   balance.callibrate_scale(poids_a_atteindre,nbEssaisCalibration);
-
   float t_scale = balance.get_scale();
-
   Serial.print ("Scale : ");
   Serial.println (t_scale);
-
-  
-
-
-
-
-
-
   Serial.println("");
   Serial.println("Calibration terminée");
   Serial.println("");
   Serial.println("");
-
-
-
-  /*
+  
 
   // enregistrement des informations
   Serial.println("***************************************************");
   Serial.println("*     ETAPE 3/5 : enregistrement des informations *");
   Serial.println("***************************************************");
 
-
   Serial.print("La nouvelle valeur du facteur de calibration est : ");
-  Serial.println(configLocale.calibrationFactor);
+  Serial.println (t_scale);
+  //Serial.println(configLocale.calibrationFactor);
   Serial.println("");
   Serial.print("Le poids actuellement dans la balance est de : ");
   Serial.print(BALANCE_pesee_balance());
   Serial.println("g");
   Serial.println("");
 
-
-  // recalcul la tare
-  Serial.println("");
-  Serial.println("Enlevez le poids mis précédemment dans la balance.");
-  Serial.println("Puis pressez une touche.");
-  while (!Serial.available());
-  if (Serial.available()) Serial.read();
-  balance.set_scale(configLocale.calibrationFactor);
-  balance.tare(GLOBAL_nb_echantillons_tarage);
-  configLocale.valeurDeTarage = balance.get_tare();
-  Serial.println("");
-  Serial.println("La tare a été ajustée.");
-  Serial.println("");
-  Serial.println("Sauvegarde de ces deux paramètres sur la carte SD :");
-  Serial.print("     Facteur de calibration : ");
-  Serial.println(configLocale.calibrationFactor, 1);
-  Serial.print("                       Tare : ");
-  Serial.println(configLocale.valeurDeTarage);
-
-
   // Sauvegarde du configurationFactor
-  //      configLocale.calibrationFactor
-  //      configLocale.valeurDeTarage
+  configLocale.calibrationFactor = t_scale;
+  configLocale.valeurDeTarage = t_tare;
   configLocale.InitialisationUsine = false; // Pour ne pas refaire la configuration d'usine.
+  configLocale.AfficheTraceDebug = false;
+  
   SD_EraseSettings();
   SD_WriteSettings( configLocale );
-
 
   Serial.println("OK");
   Serial.println("");
@@ -176,8 +142,7 @@ void CZL635_setup() {
 
   Serial.println("");
   Serial.println("");
-
-  */
+ 
   Serial.println("***************************************************");
   Serial.println("*     ETAPE 4/5 : vérification des mesures        *");
   Serial.println("***************************************************");
@@ -185,7 +150,7 @@ void CZL635_setup() {
   Serial.println("");
   Serial.println("Pressez 'x' pour quitter le programme détalonnage.");
   while (true) {
-    //balance.set_scale(configLocale.calibrationFactor);
+    balance.set_scale(configLocale.calibrationFactor);
     Serial.print("Poids mesuré : ");
     Serial.print(BALANCE_pesee_balance(), 1);
     Serial.println(" g");

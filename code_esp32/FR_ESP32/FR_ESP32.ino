@@ -116,7 +116,15 @@ void setup() {
       // Allumage/Extinction de la LED rouge ____________________ ROUGE ON
       digitalWrite(LED_PESEE_PIN, HIGH);
 
-      float poid = BALANCE_pesee_balance();
+      
+      balance.set_scale(configLocale.calibrationFactor);
+      
+      float poid = BALANCE_pesee_balance()+(configLocale.valeurDeTarage /configLocale.calibrationFactor);
+
+
+      
+        
+      
       Mesures.concat(formatString(poid, "-5.0"));
 
       // Allumage/Extinction de la LED rouge ____________________ ROUGE OFF
