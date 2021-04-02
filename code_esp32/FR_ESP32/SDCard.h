@@ -175,6 +175,11 @@ boolean SD_Read_Config(Configuration &myConfig) {
     // Ecriture d'un fichier de config vierge
     AfficheErreur("ERR (SD_Read_Config)> Fichier " + String(fileName) + " introuvable. Creation d'un vierge qu'il faut initialiser.");
     SD_WriteSettings(myConfig);
+    // affiche erreur sur carte Wifi
+    code_erreur_normal = ERREUR_CARTE_SD;
+    Serial.println ("Fichiers de configuration inexistant");
+ 
+    
     return false;
   }
 
@@ -227,6 +232,9 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
   } else {
 
     AfficheErreur("ERR (SD_Read_Wifi)> Fichier "+String(fileName) +" introuvable. Creation d'un vierge qu'il faut initialiser.");
+   // affiche erreur sur carte Wifi
+    code_erreur_normal = ERREUR_CARTE_SD;
+    Serial.println ("Fichiers de configuration vide");
 
     // Effacement préventif du fichier wifi
     SD_EraseWifiFile();

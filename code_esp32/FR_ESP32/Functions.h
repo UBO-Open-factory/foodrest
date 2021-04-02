@@ -16,23 +16,21 @@ boolean connectionWifi() {
   WiFi.begin(configLocale.ssid, configLocale.password);
 
   TraceDebug("Connection au réseau WIFI en cours ");
-  int compteur = 0;
+  int compteur = 1;
   while (WiFi.status() != WL_CONNECTED) {
-    // Allumage/Extinction de la LED rouge _______________ ROUGE TOOGLE
-    redLedState = !redLedState;
-    digitalWrite(LED_PESEE_PIN, redLedState);
-
-    delay(500);
-    Serial.print(".");
+    delay(1000);
+    if (compteur%10 == 0 && compteur!=0) {
+      Serial.println("+");
+    } else {
+      Serial.print (".");
+    }
 
     // Si la connection WIFI échoue au bout 20 secondes, on Affiche l'erreur.
-    if ( compteur++ > 200) {
+    if ( compteur++ > 61) {
       AfficheErreur("ERR (connectionWifi)> Connection au WIFI impossible avec les paramétres :");
       AfficheErreur(configLocale.ssid);
       AfficheErreur(configLocale.password);
 
-      // Extinction de la LED rouge ________________________ ROUGE OFF
-      digitalWrite(LED_PESEE_PIN, HIGH);
       return false;
     }
   }
@@ -49,8 +47,7 @@ boolean connectionWifi() {
 int niveau_battrie() {
   // Lecture de la valeur analogique sur la pin de la batterie
   // int nv_batt = analogRead(pin_batt);
-  int nv_batt = 1234;
-
+  int nv_batt = analogRead(A0);
   return nv_batt;
 }
 

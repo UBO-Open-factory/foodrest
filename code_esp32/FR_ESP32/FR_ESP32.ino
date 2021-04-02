@@ -34,51 +34,57 @@
 void setup() {
 // initialisation de la liaison série (pour le moniteur)
   Serial.begin(115200);
-  delay(500);  // attente pour l'init de la liaison serie
+  delay(200);  // attente pour l'init de la liaison serie
   
+  // Orientation des E/S
   pinMode(LED_PESEE_PIN, OUTPUT);
   pinMode(GND_C_EN, OUTPUT);
   pinMode(MASQUE_RESET,OUTPUT);
 
-  digitalWrite(LED_PESEE_PIN, LOW);  // init de la led pesee à 0 au démarage
-  digitalWrite(GND_C_EN, HIGH);
+  // Prépositionement des E/S
+  digitalWrite(LED_PESEE_PIN, HIGH);    // allumage led "pesée en cours" 
+  digitalWrite(GND_C_EN, HIGH);         // alimentation des périphériques (RTC, balance carte SD)
+  digitalWrite(MASQUE_RESET,LOW);       // interdiction du RESET lorsque le capot est ouvert
 
-  digitalWrite(MASQUE_RESET,LOW);   // interdit le RESET lorsque le capot est ouvert
-
+  //Initialisation du code erreur en mode normal
+  code_erreur_normal = ERREUR_NO_ERREUR;
   
-  // Extinction de la LED rouge ____________________ ROUGE OFF
-  digitalWrite(LED_PESEE_PIN, LOW);
-
-
   // Initialisaiton de la balance ---------------------------------------------------------------------
   balance.begin(BALANCE_DAT, BALANCE_CLK);
   balance.set_scale();
 
-  
-
-
   // Initialisation de la carte SD ---------------------------------------------------------------------
-  // Si on n'arrive pas à initiliser la carte SD
+  // Si on n'arrive pas à initialiser la carte SD
   if ( ! SD_initCard() ) {
     AfficheErreur("ERR (main)> Lecture carte SD impossible!");
     AfficheErreur("Veuillez insérer une carte SD et relancer le programme.");
-    delaiClignottementLED = 70;  // Pour l'affichage dans la boucle principale
-
+    digitalWrite(GND_C_EN, LOW);      // coupe l'alimentation des périphériques
+    code_erreur_normal = ERREUR_CARTE_SD;
+    affichage_erreurs_mode_normale();
+    
   } else {
-
-
-
     // Lecture de la config à partir du fichier sur la carte SD ---------------------------------------
     // ( renseigne le ssid, password, poid, IDPoubelle, etc... )
     configLocale = CONF_lectureConfigurationFromSD();
 
 
+    // si un problème a été détecté sur la carte SD => erreur
+    if ( code_erreur_normal == ERREUR_CARTE_SD) {
+       affichage_erreurs_mode_normale();
+    }
+
+
+
+
+    
     // On fait un calibrage usine car la variable est positionnée à TRUE dans le fichier --------------
     // de settings
+
+
+
+    
     if ( configLocale.InitialisationUsine ) {
       TraceDebug("On entre en mode calibration d'usine.");
-
-
 
       // Afichage d'un message d'attente pour laisser le temps au port USB de "capter" la balance
       while (true) {
@@ -91,16 +97,10 @@ void setup() {
         }
         delay(1000);
       }
-
-
-
-
-      
       calibrageUsine();
 
 
-
-
+      
       // Lecture des mesures ---------------------------------------------------------------------------
       // (on est en mode normal, pas de paramétrage usine à faire)
     } else {
@@ -111,24 +111,11 @@ void setup() {
       String timeStamp = rtc_getTimestamp();
       Mesures.concat(timeStamp);
 
-
-      // POID
-      // Allumage/Extinction de la LED rouge ____________________ ROUGE ON
-      digitalWrite(LED_PESEE_PIN, HIGH);
-
-      
+      // POIDS
+      // pesée de la poubelle
       balance.set_scale(configLocale.calibrationFactor);
-      
       float poid = BALANCE_pesee_balance()+(configLocale.valeurDeTarage /configLocale.calibrationFactor);
-
-
-      
-        
-      
       Mesures.concat(formatString(poid, "-5.0"));
-
-      // Allumage/Extinction de la LED rouge ____________________ ROUGE OFF
-      digitalWrite(LED_PESEE_PIN, LOW);
 
       // FORCE DU WIFI
       int rssi = 0; // Sera mis à jour lorsque la connecction sera faite
@@ -136,17 +123,18 @@ void setup() {
 
       // BATTERIE
       int niveauBatteri = niveau_battrie();
+      Serial.print ("Niveau batterie : ");
+      Serial.println (niveauBatteri);
+      if (niveauBatteri < SEUIL_LOW_BAT) {
+        Serial.println ("Pas de Wifi...");
+        Serial.println ("code_erreur_normal = ERREUR_LOW_BAT");
+        code_erreur_normal = ERREUR_LOW_BAT;
+      }
       Mesures.concat(formatString(niveauBatteri, "4.0"));
-
-
-
-
 
       // Connection au WIFI ----------------------------------------------------------------------------
       // On a réussi à se connecter au WIFI
       if ( connectionWifi() ) {
-        // Extinction de la LED rouge __________________________ ROUGE OFF
-        digitalWrite(LED_PESEE_PIN, LOW);
 
         TraceDebug("Voila, c'est fait.");
         TraceDebug("IP : " + WiFi.localIP().toString() );
@@ -156,13 +144,7 @@ void setup() {
         rssi = WiFi.RSSI();
 
         // Envoie des données vers TOCIO ------------------------------------------------------------
-        // Allumage/Extinction de la LED rouge _______________ ROUGE ON
-        digitalWrite(LED_PESEE_PIN, HIGH);
-
         retourTOCIO = sendDataInHTTPSRequest( Mesures, configLocale );
-
-        // Allumage/Extinction de la LED rouge _______________ ROUGE OFF
-        digitalWrite(LED_PESEE_PIN, LOW);
 
         if ( retourTOCIO != "ok") {
           AfficheErreur("ERR (main)> ERREUR lors de l'envoie vers TOCIO. L'erreur renvoyée est :");
@@ -172,71 +154,36 @@ void setup() {
           TraceDebug("Envoie réussi");
         }
 
-
-
-
         // Pas de connection au Wifi --------------------------------------------------------------------
       } else {
-
-        // Allumage de la LED rouge ___________________________ ROUGE ON
-        delaiClignottementLED = 1000;
-        digitalWrite(LED_PESEE_PIN, HIGH);
+        Serial.println ("Pas de Wifi...");
+        Serial.println ("code_erreur_normal = ERREUR_WIFI");
+        code_erreur_normal = ERREUR_WIFI;
       }
 
       // Ecriture dans le fichier ----------------------------------------------------------------------
-      // Allumage de la LED rouge _____________________________ ROUGE ON
-      digitalWrite(LED_PESEE_PIN, HIGH);
 
       Mesures = configLocale.IDPoubelle + "," + rtc_getDate() + "," + String(poid) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
       SD_writeMesure(configLocale.IDPoubelle, Mesures);
       TraceDebug("Ecriture dans le fichier CSV");
       TraceDebug("Mesures: " + Mesures);
 
-      // Allumage/Extinction de la LED rouge _________________ ROUGE OFF
-      digitalWrite(LED_PESEE_PIN, LOW);
 
-      // Juste pour afficher une simulation du deepSleep sur la LED
-      delaiClignottementLED = 2000;
-
-
-
-      // Deep sleep ----------------------------------------------------------------------------------
-
-      // Sortie "propre"
-      // reconfigure les E/S pour autoriser le reset et couper l'alim des périphériques et coupe le Wifi      
-      digitalWrite(MASQUE_RESET,HIGH); // autorise le RESET lorsque le capot est ouvert
-      digitalWrite(GND_C_EN, LOW);
-      // On passe en deepSleep, uniquement si on est pas en mode DEBUG
-
-      
-      if ( configLocale.AfficheTraceDebug ) {
-        WiFi.disconnect();
-        TraceDebug("Passage en DeepSleep");
-      } else {
-        // Slip profond, enfin je crois :-)
-        esp_deep_sleep_start() ;
-      }
-
-
- 
       
     }
   }
+  // Sortie "propre"
+  digitalWrite(MASQUE_RESET,HIGH);  // autorise le RESET lorsque le capot est ouvert
+  digitalWrite(GND_C_EN, LOW);      // coupe l'alimentation des périphériques
+  digitalWrite(LED_PESEE_PIN, LOW); // extinction de la led "pesée en cours"
+  affichage_erreurs_mode_normale();
 
 }
 
 
 
-// ************************************************************************************
-/**
-   Si on arrive dans cette boucle c'est qu'il y a un problème car lorsque tout se passe bien
-   on fini en deep sleep.
-   L'affichage du problème se fait par le clignottement de la LED plus ou moins rapide.
-*/
 void loop() {
-  delay( delaiClignottementLED );
+  
 
-  // Allumage/Extinction de la LED rouge ____________________ ROUGE TOOGLE
-  redLedState = !redLedState;
-  digitalWrite(LED_PESEE_PIN, redLedState);
+  
 }
