@@ -37,7 +37,7 @@ float BALANCE_pesee_balance() {
   //balance.set_scale(configLocale.calibrationFactor);
 
   // Mesure du poid absolu ( sur un échantillonnage de 20 mesures)
-  return  balance.get_units(20);
+  return  balance.get_units(BALANCE_NB_ECHANTILLONS_PESEE);
 
   // Supprime la valeur de tarage du poid mesuré
   //return poid + configLocale.valeurDeTarage;
@@ -73,7 +73,7 @@ void CZL635_setup() {
   Serial.println("3 - puis pressez une touche");
   while (!Serial.available());
   while (Serial.available()) Serial.read();
-  Serial.print("Tarage en cours... ");
+  Serial.print("Tarage en cours. Cette opératino peut prendre plusieurs secondes... ");
   
   balance.set_scale(1);
   

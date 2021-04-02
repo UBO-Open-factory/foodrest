@@ -7,8 +7,8 @@
 // lignes connectées à la balance
 #define BALANCE_CLK  26
 #define BALANCE_DAT  27
-int GLOBAL_nb_echantillons_tarage = 20;
-
+#define BALANCE_NB_ECHANTILLONS_TARAGE 100   // passage de 20 à 100 => 
+#define BALANCE_NB_ECHANTILLONS_PESEE 50
 
  /* Cablage des LED *************************************************************************** */
 // pin sur laquelle est connecté la LED rouge
