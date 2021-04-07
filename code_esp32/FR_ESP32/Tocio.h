@@ -10,12 +10,11 @@
 String formatString(float p_valeur, String p_formattage) {
   int delimiterPosition, lenghtAvant;
   String data = "";  // The string we need to format
-  String chaine = String(p_valeur);
+  String chaine = String(abs(p_valeur));
 
   delimiterPosition = chaine.indexOf(".");  // Read the delimiter positon in "chaine".
   String avant = chaine.substring(0, delimiterPosition);
   String apres = chaine.substring(delimiterPosition + 1);
-
   delimiterPosition = p_formattage.indexOf(".");           // Read the delimiter position in "formattage".
   if ( p_formattage.substring(0, 1) == "-" ) {
     lenghtAvant = p_formattage.substring(1, delimiterPosition).toInt();
@@ -24,35 +23,35 @@ String formatString(float p_valeur, String p_formattage) {
   }
   int lenghtApres = p_formattage.substring(delimiterPosition + 1).toInt();
 
+  String temp = "";
+  for (int i = 0; i <= lenghtAvant; i++) {
+    temp = "0" + temp;
+  }
+  temp = temp + avant;
+  temp = temp.substring(temp.length() - lenghtAvant);
+
   // Si on a besoin d'un signe .................................
   if ( p_formattage.substring(0, 1) == "-" ) {
     if (p_valeur < 0) {
-      data.concat("-");
+      data = "-";
     } else {
-      data.concat("+");
+      data = "+";
     }
   }
+  // ajoute la partie entière
+  data = data + temp;
 
-  // Padding with 0 for the "avant" part ........................
-  String temp = "";
-  for (int i = 0; i <= lenghtAvant; i++) {
-    // Concatenation de tout les 0
-    temp.concat("0");
-  }
-  temp.concat(avant);
-  data.concat(temp.substring( temp.length() - lenghtAvant ));
-
-  // Formattage de la partie apres la virgule ....................
+  // formate la partie décimale
+  temp = apres;
   for (int i = 0; i <= apres.length(); i++) {
-    apres.concat("0");
+    temp = temp + "0";
   }
-  apres = apres.substring(0, lenghtApres);
-  data.concat(apres);
+  temp = temp.substring( 0, lenghtApres);
 
+  // ajoute la partie décimale
+  data = data + temp;
   return data;
 }
-
-
 
 // --------------------------------------------------------------------------------
 // Envoi au serveur TOCIO les mesures ("data") passées en paramètre.
@@ -103,12 +102,12 @@ String sendDataInHTTPSRequest(String data, Configuration configLocale) {
           // two newline characters in a row.
           // that's the end of the client HTTP request,
           if (currentLine.length() == 0) {
-            if( startRecording ) {
+            if ( startRecording ) {
               break;
             }
             // HTTP header if finish, we can start to record respons from server
             startRecording = true;
-            
+
           } else {
             // if we got a newline, then clear currentLine
             currentLine = "";
