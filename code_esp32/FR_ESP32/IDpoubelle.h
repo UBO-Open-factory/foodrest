@@ -22,10 +22,10 @@ void IDPoubelle_setup() {
   configLocale.IDPoubelle = Serial.readString();
 
   // Effacement préventif du fichier wifi
-  SD_EraseWifiFile();
+  SD_EraseSettings();
 
   // Ecriture du fichier
-  SD_WriteWifi(configLocale);
+  SD_WriteSettings(configLocale);
 
   // Création des entes du fichier CSV
   /**

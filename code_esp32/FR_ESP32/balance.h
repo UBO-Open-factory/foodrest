@@ -44,6 +44,16 @@ float BALANCE_pesee_balance() {
 }
 
 
+/*
+ * Tarage de la balance.
+ * Renvoie un float
+ * @return float
+ */
+float BALANCE_setTare() {
+  balance.set_scale(1);
+  balance.tare(BALANCE_NB_ECHANTILLONS_TARAGE);
+  return balance.get_tare();
+}
 
 
 
@@ -73,17 +83,16 @@ void CZL635_setup() {
   Serial.println("3 - puis pressez une touche");
   while (!Serial.available());
   while (Serial.available()) Serial.read();
-  Serial.print("Tarage en cours. Cette opératino peut prendre plusieurs secondes... ");
-  
-  balance.set_scale(1);
-  
-  //balance.tare(GLOBAL_nb_echantillons_tarage);
-  balance.tare(10);
+  Serial.print("Tarage en cours. Cette opération peut prendre plusieurs secondes... ");
+
+  float t_tare = BALANCE_setTare();
+
+
 
   Serial.print ("Tare (pour information) : ");
-  float t_tare = balance.get_tare();
+
   Serial.println (t_tare);
-  
+
   Serial.println("OK");
   Serial.println("");
   Serial.println("");
@@ -102,8 +111,7 @@ void CZL635_setup() {
   while (!Serial.available());
   String xx = Serial.readString();
   float poids_a_atteindre = xx.toFloat();
-  int nbEssaisCalibration = 50;
-  balance.callibrate_scale(poids_a_atteindre,nbEssaisCalibration);
+  balance.callibrate_scale(poids_a_atteindre, 50);  // 50 = nbEssaisCalibration
   float t_scale = balance.get_scale();
   Serial.print ("Scale : ");
   Serial.println (t_scale);
@@ -111,7 +119,7 @@ void CZL635_setup() {
   Serial.println("Calibration terminée");
   Serial.println("");
   Serial.println("");
-  
+
 
   // enregistrement des informations
   Serial.println("***************************************************");
@@ -132,7 +140,8 @@ void CZL635_setup() {
   configLocale.valeurDeTarage = t_tare;
   configLocale.InitialisationUsine = false; // Pour ne pas refaire la configuration d'usine.
   configLocale.AfficheTraceDebug = false;
-  
+  configLocale.poidOld = 0;   // dernière pesée pour le poids différentiel
+
   SD_EraseSettings();
   SD_WriteSettings( configLocale );
 
@@ -142,7 +151,7 @@ void CZL635_setup() {
 
   Serial.println("");
   Serial.println("");
- 
+
   Serial.println("***************************************************");
   Serial.println("*     ETAPE 4/5 : vérification des mesures        *");
   Serial.println("***************************************************");
@@ -176,4 +185,14 @@ void CZL635_setup() {
   while (!Serial.available());
   while (Serial.available()) Serial.read();
   ESP.restart();
+}
+
+
+/*
+   Renvoie une marge de tolerance pour considerer que la poubelle est vide
+   @param float poid : dernier poids mesuré
+   @return int : marge d'erreur
+ * */
+int BALANCE_getMargeErreurVidange(float poid) {
+  if (poid < 500) return 5; else return 20;
 }

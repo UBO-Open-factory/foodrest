@@ -90,12 +90,22 @@ void SD_WriteSettings(Configuration &myConfig) {
     myFile.println("AfficheTraceDebug=" + _convertionBoolean(myConfig.AfficheTraceDebug) );
     myFile.println();
 
-    myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.");
+    myFile.println("// Valeur de tarage de la balance.");
     myFile.println("valeurDeTarage=" + String(myConfig.valeurDeTarage) );
     myFile.println();
 
     myFile.println("// Calibrage de la balance (doit être une valeur entière positive ou négative).");
     myFile.println("calibrationFactor=" + String(myConfig.calibrationFactor) );
+    myFile.println();
+
+    myFile.println("// Identifiant de la poubelle tel que défini dans TOCIO.");
+    myFile.println("IDPoubelle=" + String(myConfig.IDPoubelle) );
+    myFile.println();
+
+    myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.");
+    myFile.println("poidOld=" + String(myConfig.poidOld) );
+    myFile.println();
+
   } else {
     AfficheErreur("ERREUR : SDCard.h SD_WriteSettings> Impossible d'ouvrir le fichier '" + String(fileName) + "' sur la carte SD pour écrire dedans");
   }
@@ -115,9 +125,6 @@ void SD_WriteWifi(Configuration &myConfig) {
     // Ouverture du fichier en écriture
     myFile.println("// Ceci est le fichier de configuration pour les accès WIFI.");
     myFile.println("// Il faut renommer ce fichier avec le nom wifi.txt");
-    myFile.println();
-    myFile.println("// Identifiant de la poubelle tel que défini dans le Back Office TOCIO.");
-    myFile.println("IDPoubelle=" + String(myConfig.IDPoubelle) );
     myFile.println();
     myFile.println("// Configuration WIFI");
     myFile.println("ssid=LeNomDuReseauWifi");
@@ -165,9 +172,17 @@ boolean SD_Read_Config(Configuration &myConfig) {
         // Lecture de la valeur de tarage de la balance
       } else if (cfg.nameIs("valeurDeTarage")) {
         myConfig.valeurDeTarage = cfg.getIntValue(); // Get integer
+
+        // lecture de l'identifiant poubelle
+      } else if (cfg.nameIs("IDPoubelle")) {
+        myConfig.IDPoubelle = cfg.copyValue();      // Get String
+
+        // lecture de la dernière pesée
+      } else if (cfg.nameIs("poidOld")) {
+        myConfig.poidOld = cfg.getIntValue();      // Get String
+
       }
     }
-
 
     // le fichier n'existe pas, on le créé à vide
   } else {
@@ -178,8 +193,8 @@ boolean SD_Read_Config(Configuration &myConfig) {
     // affiche erreur sur carte Wifi
     code_erreur_normal = ERREUR_CARTE_SD;
     Serial.println ("Fichiers de configuration inexistant");
- 
-    
+
+
     return false;
   }
 
@@ -197,7 +212,7 @@ boolean SD_Read_Config(Configuration &myConfig) {
    par erreur le fichier en cas de mauvaise lecture.
    Renvoie true si la conifg est lue, false sinon.
 */
-boolean SD_Read_Wifi(Configuration &myConfig) {
+boolean SD_Read_Wifi(Configuration & myConfig) {
   const char* fileName = "/wifi.txt";
 
   // Le fichier de configuration
@@ -208,21 +223,13 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
 
     // Lecture de la config du fichier
     while (cfg.readNextSetting()) {
-      // Lecture de l'ID de la poubelle
-      if (cfg.nameIs("IDPoubelle")) {
-        myConfig.IDPoubelle = cfg.copyValue();      // Get String
-
-        // Lecture du SSID
-      } else if (cfg.nameIs("ssid")) {
-
-        // Get value as string
-        myConfig.ssid = cfg.copyValue();
+      // Lecture du SSID
+      if (cfg.nameIs("ssid")) {
+        myConfig.ssid = cfg.copyValue();   // Get value as string
 
         // Lecture du Mot de passe
       } else if (cfg.nameIs("mdp")) {
-
-        // Dynamically allocate a copy of the string.
-        myConfig.password = cfg.copyValue();
+        myConfig.password = cfg.copyValue();// Dynamically allocate a copy of the string.
 
       }
     }
@@ -231,8 +238,8 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
     // le fichier n'existe pas, on le créé à vide
   } else {
 
-    AfficheErreur("ERR (SD_Read_Wifi)> Fichier "+String(fileName) +" introuvable. Creation d'un vierge qu'il faut initialiser.");
-   // affiche erreur sur carte Wifi
+    AfficheErreur("ERR (SD_Read_Wifi)> Fichier " + String(fileName) + " introuvable. Creation d'un vierge qu'il faut initialiser.");
+    // affiche erreur sur carte Wifi
     code_erreur_normal = ERREUR_CARTE_SD;
     Serial.println ("Fichiers de configuration vide");
 
@@ -254,7 +261,7 @@ boolean SD_Read_Wifi(Configuration &myConfig) {
 // ---------------------------------------------------------------------------------------------------
 /**
    Ecriture d'une ligne dans le fichier des mesures sur la carte SD.
-   
+
    IDPoubelle : L'identificatn de la poubelle tel que défini dans le BO TOCIO.
    chaine : La chaine de caractère à écrire dans le fichier.
 */
@@ -289,7 +296,7 @@ String SD_writeEntesMesure() {
   // Si on a réussi à ouvrir le fichier en écriture
   if (dataFile) {
     // Ecriture de la ligne dans le fichier
-    dataFile.println("IDPoubelle,Date,Poids,Niveau batterie,RSSI,Réception TOCIO");
+    dataFile.println("IDPoubelle,Date,Poids Ajouté,Niveau batterie,RSSI,Réception TOCIO");
 
     // Fermeture du fichier
     dataFile.close();
