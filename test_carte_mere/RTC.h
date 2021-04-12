@@ -22,7 +22,7 @@ RTC_PCF8523 rtc;
       Si elle à été reinitilisée, on l'initialise avec le serveur de temps pool.ntp.org
 
            The PCF8523 can be calibrated for:
-            - Aging adjustment
+            - Aging gettimement
             - Temperature compensation
             - Accuracy tuning
      The offset mode to use, once every two hours or once every minute.

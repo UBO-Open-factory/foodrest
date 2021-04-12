@@ -6,8 +6,6 @@
 #include "globalVariable.h"
 
 
-
-
 // Librairie de gestion des erreurs
 #include "GestionErreur.h"
 
@@ -107,24 +105,19 @@ Serial.println ("");
 // lit l'heure de la rtc
 // compare
 // si les deux heures sont différentes ou si erreur RTC => Erreur vérifier alimentaion des périphériques et cablage RTC
+Serial.print ("Date indiquée par la RTC (elle doit être à peu près à lheure) :");
+Serial.println (rtc_getDate());
 
 
+Serial.println ("La date et l'heure sont-elles correctes (O/N) ? ");
 
-
-
-
-
-// ecriture : rtc.adjust(DateTime(("timestamp"));
-
-
-// String lecture rtc_getTimestamp();
-
-
-
-
-
-
-
+while (!Serial.available());
+while (Serial.available()){
+  String reponse = Serial.readString().substring(0,1);
+  if (reponse !="O" and reponse !="o") {
+    erreur_test("Il y a probablement un soucis avec le cablage de la RTC");
+  }
+}
 
 
 
@@ -230,29 +223,13 @@ Serial.println ("");
 Serial.println ("La balance va afficher la tension de la batterie.");
 Serial.print ("Tension mesurée (sortie CAN) : ");
 int tension = analogRead(A0);
-
-// si entre 1800 et 1850 OK .....
-
-
-
-  // TODO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Serial.print(tension);
+Serial.print (" ... ");
+if (tension>=1800 and tension<=1840) {
+  Serial.println ("OK");
+} else {
+  erreur_test("ERREUR lors de la lecture de la tension batterie.");
+}
 
 Serial.println ("");
 Serial.println (" ----------------------------------------------------------------");
