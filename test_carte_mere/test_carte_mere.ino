@@ -216,8 +216,7 @@ Serial.println ("");
 Serial.println ("Si la carte mère se réinitialise lorsque vous ouvrez le couvercle,");
 Serial.println ("il faudra vérifier le cablage du masque de RESET.");
 Serial.println ("");
-
-Serial.println ("Vous devrez pressez une touche si tout se passe bien.");
+Serial.println ("Si rien ne se passe lorsque vous ouvrez le capot ... c'est normal. Pressez une touche pour continuer.");
 Serial.println ("");
 Serial.println ("Ouvrez et fermez le couvercle.");
 
@@ -235,7 +234,7 @@ Serial.println ("                         Test de l'ouverture du capot");
 Serial.println ("");
 Serial.println ("La poubelle va passer en deep_Sleep.");
 Serial.println ("D&brancher le cordon USB et mesurer la consommation en passant sur le calibre 'µA'");
-Serial.printyln ("Rebrancher le cordon USB");
+Serial.println ("Rebrancher le cordon USB");
 Serial.println ("Ouvrez et fermez le couvercle.");
 Serial.println ("Si la carte mère reboot :  la carte mère est consdérée comme OK. ");
 Serial.println ("Dans le cas contraire, il faudra vérifier le cablage du RESET et du masque");
