@@ -119,30 +119,6 @@ while (Serial.available()){
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Serial.println ("");
 Serial.println (" ----------------------------------------------------------------");
 Serial.println ("                         Test du lecteur de carte SD");
@@ -225,7 +201,7 @@ Serial.print ("Tension mesurée (sortie CAN) : ");
 int tension = analogRead(A0);
 Serial.print(tension);
 Serial.print (" ... ");
-if (tension>=1800 and tension<=1840) {
+if (tension>500) {
   Serial.println ("OK");
 } else {
   erreur_test("ERREUR lors de la lecture de la tension batterie.");
@@ -257,12 +233,13 @@ Serial.println ("");
 Serial.println (" ----------------------------------------------------------------");
 Serial.println ("                         Test de l'ouverture du capot");
 Serial.println ("");
-Serial.println ("La poubelle va passer en deep_Sleep. Ouvrez le capot pour la réveiller.");
-Serial.println ("Si cela fonctionne la carte mère est consdérée comme OK. ");
+Serial.println ("La poubelle va passer en deep_Sleep.");
+Serial.println ("D&brancher le cordon USB et mesurer la consommation en passant sur le calibre 'µA'");
+Serial.printyln ("Rebrancher le cordon USB");
+Serial.println ("Ouvrez et fermez le couvercle.");
+Serial.println ("Si la carte mère reboot :  la carte mère est consdérée comme OK. ");
 Serial.println ("Dans le cas contraire, il faudra vérifier le cablage du RESET et du masque");
 Serial.println ("de reset.");
-Serial.println ("");
-Serial.println ("N'oubliez pas de réaliser le testde consommation en deepSleep (programme séparé).");
 Serial.println ("");
 affichage_erreurs_mode_normale(); // pour passer en deep sleep
 }
