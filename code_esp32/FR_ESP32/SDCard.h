@@ -106,6 +106,14 @@ void SD_WriteSettings(Configuration &myConfig) {
     myFile.println("poidOld=" + String(myConfig.poidOld) );
     myFile.println();
 
+    myFile.println("// Calibrage de la balance initiale (doit être une valeur entière positive ou négative) (** ne doit pas être modifié **).");
+    myFile.println("calibrationFactorInitial=" + String(myConfig.calibrationFactorInitial) );
+    myFile.println();
+
+    myFile.println("// Valeur de tarage initiale de la balance (** ne doit pas être modifié **).");
+    myFile.println("valeurDeTarageInitial=" + String(myConfig.valeurDeTarageInitial) );
+    myFile.println();
+
   } else {
     AfficheErreur("ERREUR : SDCard.h SD_WriteSettings> Impossible d'ouvrir le fichier '" + String(fileName) + "' sur la carte SD pour écrire dedans");
   }
@@ -173,6 +181,14 @@ boolean SD_Read_Config(Configuration &myConfig) {
       } else if (cfg.nameIs("valeurDeTarage")) {
         myConfig.valeurDeTarage = cfg.getIntValue(); // Get integer
 
+        // Lecture de la valeur initiale de calibration de la balance
+      } else if (cfg.nameIs("calibrationFactorInitial")) {
+        myConfig.calibrationFactorInitial = cfg.getIntValue(); // Get integer
+
+        // Lecture de la valeur initiale de tarage de la balance
+      } else if (cfg.nameIs("valeurDeTarageInitial")) {
+        myConfig.valeurDeTarageInitial = cfg.getIntValue(); // Get integer
+
         // lecture de l'identifiant poubelle
       } else if (cfg.nameIs("IDPoubelle")) {
         myConfig.IDPoubelle = cfg.copyValue();      // Get String
@@ -190,11 +206,11 @@ boolean SD_Read_Config(Configuration &myConfig) {
     // Ecriture d'un fichier de config vierge
     AfficheErreur("ERR (SD_Read_Config)> Fichier " + String(fileName) + " introuvable. Creation d'un vierge qu'il faut initialiser.");
     SD_WriteSettings(myConfig);
+    
     // affiche erreur sur carte Wifi
     code_erreur_normal = ERREUR_CARTE_SD;
-    Serial.println ("Fichiers de configuration inexistant");
 
-
+    cfg.end();
     return false;
   }
 
