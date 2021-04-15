@@ -8,7 +8,7 @@
    Renvoie true si la connection est possible (false sinon)
 */
 boolean connectionWifi() {
-  // Extinction de la LED rouge ________________________ ROUGE ON
+  // LED rouge ________________________ ROUGE ON
   digitalWrite(LED_PESEE_PIN, HIGH);
 
   // station mode: the ESP32 connects to an access point
