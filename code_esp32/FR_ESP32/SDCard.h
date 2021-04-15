@@ -106,11 +106,11 @@ void SD_WriteSettings(Configuration &myConfig) {
     myFile.println("poidOld=" + String(myConfig.poidOld) );
     myFile.println();
 
-    myFile.println("// Calibrage de la balance initiale (doit être une valeur entière positive ou négative) (** ne doit pas être modifié **).");
+    myFile.println("// Calibrage initial de la balance (doit être une valeur entière positive ou négative) (** ne doit pas être modifié **).");
     myFile.println("calibrationFactorInitial=" + String(myConfig.calibrationFactorInitial) );
     myFile.println();
 
-    myFile.println("// Valeur de tarage initiale de la balance (** ne doit pas être modifié **).");
+    myFile.println("// Valeur initiale de tarage de la balance (** ne doit pas être modifié **).");
     myFile.println("valeurDeTarageInitial=" + String(myConfig.valeurDeTarageInitial) );
     myFile.println();
 
@@ -312,7 +312,7 @@ String SD_writeEntesMesure() {
   // Si on a réussi à ouvrir le fichier en écriture
   if (dataFile) {
     // Ecriture de la ligne dans le fichier
-    dataFile.println("IDPoubelle,Date,Poids Ajouté,Niveau batterie,RSSI,Réception TOCIO");
+    dataFile.println("IDPoubelle,Date,Poids mesuré,Poids brute,Niveau batterie,RSSI,Réception TOCIO");
 
     // Fermeture du fichier
     dataFile.close();

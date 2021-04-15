@@ -73,13 +73,6 @@ void affichage_erreurs_mode_normale() {
       delay(k);
     }
   }
-
-  // passage en deep sleep si ce n'est pas une erreur inhérenta à la carte SD
-  esp_deep_sleep_start();
-
-
-
-
 }
 
 
