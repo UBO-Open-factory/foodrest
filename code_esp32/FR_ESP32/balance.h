@@ -38,9 +38,6 @@ float BALANCE_pesee_balance() {
 
   // Mesure du poid absolu ( sur un échantillonnage de 20 mesures)
   return  balance.get_units(BALANCE_NB_ECHANTILLONS_PESEE);
-
-  // Supprime la valeur de tarage du poid mesuré
-  //return poid + configLocale.valeurDeTarage;
 }
 
 
