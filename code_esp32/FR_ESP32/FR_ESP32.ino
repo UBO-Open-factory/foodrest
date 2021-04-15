@@ -79,10 +79,6 @@ void setup() {
 
     // On fait un calibrage usine car la variable est positionnée à TRUE dans le fichier --------------
     // de settings
-
-
-
-
     if ( configLocale.InitialisationUsine ) {
       TraceDebug("On entre en mode calibration d'usine.");
 
@@ -128,7 +124,7 @@ void setup() {
       } else {
         configLocale.poidOld = poidNew;
       }
-      
+
       // Formattage du poid pour TOCIO
       Mesures.concat(formatString(deltaPesee, "-5.0"));
 
@@ -176,7 +172,7 @@ void setup() {
       }
 
       // Ecriture dans le fichier CSV ----------------------------------------------------------------------
-      Mesures = configLocale.IDPoubelle + "," + rtc_getDate() + "," + String(deltaPesee,0) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
+      Mesures = configLocale.IDPoubelle + "," + rtc_getDate() + "," + String(deltaPesee, 0) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
       SD_writeMesure(configLocale.IDPoubelle, Mesures);
       TraceDebug("Ecriture dans le fichier CSV");
       TraceDebug("Mesures: " + Mesures);
