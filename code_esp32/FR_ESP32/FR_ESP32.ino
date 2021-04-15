@@ -75,8 +75,6 @@ void setup() {
 
 
 
-
-
     // On fait un calibrage usine car la variable est positionnée à TRUE dans le fichier --------------
     // de settings
     if ( configLocale.InitialisationUsine ) {
@@ -108,36 +106,43 @@ void setup() {
       Mesures.concat(timeStamp);
 
       // POIDS
-      // pesée de la poubelle
+      // pesée de la poubelle (valeur calculée)
       balance.set_scale(configLocale.calibrationFactor);
       float poidNew = BALANCE_pesee_balance() + (configLocale.valeurDeTarage / configLocale.calibrationFactor);
       float deltaPesee = poidNew - configLocale.poidOld;
 
-      // La poubelle a été vidée
+      // La poubelle a été vidée, on retare la balance
       if (abs(poidNew) <= BALANCE_getMargeErreurVidange(configLocale.poidOld)) {
         deltaPesee = 0;
         configLocale.poidOld = 0;
+        
         // on retare la balance
         configLocale.valeurDeTarage = BALANCE_setTare();
+
 
         // on a enlevé une partie du contenu de la poubelle et que l'on ne l'a pas vidée complètement
       } else {
         configLocale.poidOld = poidNew;
       }
 
-      // Formattage du poid pour TOCIO
+      // pesée No2 de la poubelle (valeur brute)
+      balance.set_scale(configLocale.calibrationFactorInitial);
+      float poidBrute = BALANCE_pesee_balance() + (configLocale.valeurDeTarageInitial / configLocale.calibrationFactorInitial);
+
+
+
+      // Formattage des poids pour TOCIO
       Mesures.concat(formatString(deltaPesee, "-5.0"));
+      Mesures.concat(formatString(poidBrute, "-5.0"));
 
       // FORCE DU WIFI
-      int rssi = 0; // Sera mis à jour lorsque la connecction sera faite
+      int rssi = 0; // Sera mis à jour lorsque la connection WIFI sera faite
       String retourTOCIO = "";
 
       // BATTERIE
       int niveauBatteri = niveau_battrie();
-      Serial.print ("Niveau batterie : ");
-      Serial.println (niveauBatteri);
       if (niveauBatteri < SEUIL_LOW_BAT) {
-        Serial.println ("code_erreur_normal = ERREUR_LOW_BAT");
+        TraceDebug("code_erreur_normal = ERREUR_LOW_BAT");
         code_erreur_normal = ERREUR_LOW_BAT;
       }
       Mesures.concat(formatString(niveauBatteri, "4.0"));
@@ -166,8 +171,7 @@ void setup() {
 
         // Pas de connection au Wifi --------------------------------------------------------------------
       } else {
-        Serial.println ("Pas de Wifi...");
-        Serial.println ("code_erreur_normal = ERREUR_WIFI");
+        TraceDebug("Pas de Wifi... code_erreur_normal = ERREUR_WIFI");
         code_erreur_normal = ERREUR_WIFI;
       }
 
@@ -180,8 +184,6 @@ void setup() {
       // sauvegarde des settings pour mémoriser le poid mesuré
       SD_EraseSettings();
       SD_WriteSettings(configLocale);
-
-
     }
   }
   // Sortie "propre"
