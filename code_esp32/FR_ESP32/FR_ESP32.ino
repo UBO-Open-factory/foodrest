@@ -115,7 +115,7 @@ void setup() {
       if (abs(poidNew) <= BALANCE_getMargeErreurVidange(configLocale.poidOld)) {
         deltaPesee = 0;
         configLocale.poidOld = 0;
-        
+
         // on retare la balance
         configLocale.valeurDeTarage = BALANCE_setTare();
 
@@ -176,7 +176,7 @@ void setup() {
       }
 
       // Ecriture dans le fichier CSV ----------------------------------------------------------------------
-      Mesures = configLocale.IDPoubelle + "," + rtc_getDate() + "," + String(deltaPesee, 0) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
+      Mesures = configLocale.IDPoubelle + "," + rtc_getDate() + "," + String(deltaPesee, 0) + "," + String(poidBrute, 0) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
       SD_writeMesure(configLocale.IDPoubelle, Mesures);
       TraceDebug("Ecriture dans le fichier CSV");
       TraceDebug("Mesures: " + Mesures);
@@ -190,8 +190,12 @@ void setup() {
   digitalWrite(MASQUE_RESET, HIGH); // autorise le RESET lorsque le capot est ouvert
   digitalWrite(GND_C_EN, LOW);      // coupe l'alimentation des périphériques
   digitalWrite(LED_PESEE_PIN, LOW); // extinction de la led "pesée en cours"
+
+  // Affichage des erreurs
   affichage_erreurs_mode_normale();
 
+  // Passage en deep sleep
+  esp_deep_sleep_start();
 }
 
 
