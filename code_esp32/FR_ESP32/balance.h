@@ -63,7 +63,7 @@ float BALANCE_setTare() {
    Calibraiton de la balance.
 */
 void CZL635_setup() {
-  // début de la procédure de calibration usine
+  // début de la procédure de calibration usine de la balance
   Serial.println("");
   Serial.println("");
   Serial.println("*************************************************");
@@ -91,7 +91,7 @@ void CZL635_setup() {
 
   Serial.print ("Tare (pour information) : ");
 
-  Serial.println (t_tare);
+  Serial.println(t_tare);
 
   Serial.println("OK");
   Serial.println("");
@@ -114,7 +114,7 @@ void CZL635_setup() {
   balance.callibrate_scale(poids_a_atteindre, 50);  // 50 = nbEssaisCalibration
   float t_scale = balance.get_scale();
   Serial.print ("Scale : ");
-  Serial.println (t_scale);
+  Serial.println(t_scale);
   Serial.println("");
   Serial.println("Calibration terminée");
   Serial.println("");
@@ -127,7 +127,7 @@ void CZL635_setup() {
   Serial.println("***************************************************");
 
   Serial.print("La nouvelle valeur du facteur de calibration est : ");
-  Serial.println (t_scale);
+  Serial.println(t_scale);
   //Serial.println(configLocale.calibrationFactor);
   Serial.println("");
   Serial.print("Le poids actuellement dans la balance est de : ");
@@ -138,6 +138,8 @@ void CZL635_setup() {
   // Sauvegarde du configurationFactor
   configLocale.calibrationFactor = t_scale;
   configLocale.valeurDeTarage = t_tare;
+  configLocale.calibrationFactorInitial = t_scale;
+  configLocale.valeurDeTarageInitial    = t_tare;
   configLocale.InitialisationUsine = false; // Pour ne pas refaire la configuration d'usine.
   configLocale.AfficheTraceDebug = false;
   configLocale.poidOld = 0;   // dernière pesée pour le poids différentiel
