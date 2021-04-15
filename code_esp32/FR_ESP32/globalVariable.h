@@ -53,7 +53,9 @@ typedef struct {
   boolean AfficheTraceDebug = false;    // Cette valeur sera lue à partir du fichier des settings.
   float calibrationFactor = 110;        // Cette valeur sera lue à partir du fichier des settings.
   float valeurDeTarage = 1;             // Cette valeur sera lue à partir du fichier des settings.
-  float poidOld =0;                   // poids de la dernière pesée pour calculer le différentiel
+  float calibrationFactorBrute = 110;   // Calibration factor brute (il est calculée en usine uniquement)
+  float valeurDeTarageBrute = 1;        // Valeur de tarage brute (elle est calculée en usine uniquement)
+  float poidOld =0;                     // poids de la dernière pesée pour calculer le différentiel
 } Configuration;
 Configuration configLocale; // Initialisation de la configuration locale
 
