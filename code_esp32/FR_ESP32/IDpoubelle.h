@@ -19,9 +19,9 @@ void IDPoubelle_setup() {
 
   // Lecture de l'ID saisie au clavier
   while (!Serial.available());
-  configLocale.IDPoubelle = Serial.readString();
+  configLocale.IDPoubelle = Serial.readStringUntil('\n');
 
-  // Effacement préventif du fichier wifi
+  // Effacement préventif du fichier des settings
   SD_EraseSettings();
 
   // Ecriture du fichier
@@ -35,7 +35,7 @@ void IDPoubelle_setup() {
   */
   String file = SD_writeEntesMesure();
   if ( file != "" ) {
-    TraceDebug("Initialisation du fichier des mesures : OK");
+    TraceDebug("Initialisation du fichier des mesures faite dans :" + file);
   } else {
     TraceDebug("Impossible d'ouvir le fichier " + file);
   }
