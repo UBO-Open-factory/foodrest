@@ -106,10 +106,6 @@ void SD_WriteSettings(Configuration &myConfig) {
     myFile.println("poidOld=" + String(myConfig.poidOld) );
     myFile.println();
 
-    myFile.println("// Calibrage initial de la balance (doit être une valeur entière positive ou négative) (** ne doit pas être modifié **).");
-    myFile.println("calibrationFactorInitial=" + String(myConfig.calibrationFactorInitial) );
-    myFile.println();
-
     myFile.println("// Valeur initiale de tarage de la balance (** ne doit pas être modifié **).");
     myFile.println("valeurDeTarageInitial=" + String(myConfig.valeurDeTarageInitial) );
     myFile.println();
@@ -181,10 +177,6 @@ boolean SD_Read_Config(Configuration &myConfig) {
       } else if (cfg.nameIs("valeurDeTarage")) {
         myConfig.valeurDeTarage = cfg.getIntValue(); // Get integer
 
-        // Lecture de la valeur initiale de calibration de la balance
-      } else if (cfg.nameIs("calibrationFactorInitial")) {
-        myConfig.calibrationFactorInitial = cfg.getIntValue(); // Get integer
-
         // Lecture de la valeur initiale de tarage de la balance
       } else if (cfg.nameIs("valeurDeTarageInitial")) {
         myConfig.valeurDeTarageInitial = cfg.getIntValue(); // Get integer
@@ -206,7 +198,7 @@ boolean SD_Read_Config(Configuration &myConfig) {
     // Ecriture d'un fichier de config vierge
     AfficheErreur("ERR (SD_Read_Config)> Fichier " + String(fileName) + " introuvable. Creation d'un vierge qu'il faut initialiser.");
     SD_WriteSettings(myConfig);
-    
+
     // affiche erreur sur carte Wifi
     code_erreur_normal = ERREUR_CARTE_SD;
 
