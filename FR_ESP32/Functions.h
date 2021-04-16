@@ -67,5 +67,5 @@ void calibrageUsine() {
   }
 
   // Calibration de la ballance
-  CZL635_setup();
+  BALANCE_setup();
 }

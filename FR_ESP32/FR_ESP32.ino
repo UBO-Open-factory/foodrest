@@ -51,7 +51,7 @@ void setup() {
 
   // Initialisaiton de la balance ---------------------------------------------------------------------
   balance.begin(BALANCE_DAT, BALANCE_CLK);
-  balance.set_scale();
+
 
   // Initialisation de la carte SD ---------------------------------------------------------------------
   // Si on n'arrive pas à initialiser la carte SD
@@ -78,7 +78,6 @@ void setup() {
     // On fait un calibrage usine car la variable est positionnée à TRUE dans le fichier --------------
     // de settings
     if ( configLocale.InitialisationUsine ) {
-      TraceDebug("On entre en mode calibration d'usine.");
 
       // Afichage d'un message d'attente pour laisser le temps au port USB de "capter" la balance
       while (true) {
@@ -108,7 +107,8 @@ void setup() {
       // POIDS
       // pesée de la poubelle (valeur calculée)
       balance.set_scale(configLocale.calibrationFactor);
-      float poidNew = BALANCE_pesee_balance() + (configLocale.valeurDeTarage / configLocale.calibrationFactor);
+      // float poidNew = BALANCE_getPeseeBalance(configLocale.valeurDeTarage) + (configLocale.valeurDeTarage / configLocale.calibrationFactor);
+      float poidNew = BALANCE_getPeseeBalance(configLocale.valeurDeTarage);
       float deltaPesee = poidNew - configLocale.poidOld;
 
       // La poubelle a été vidée, on retare la balance
@@ -120,14 +120,15 @@ void setup() {
         configLocale.valeurDeTarage = BALANCE_setTare();
 
 
-        // on a enlevé une partie du contenu de la poubelle et que l'on ne l'a pas vidée complètement
+        // on a enlevé une partie du contenu de la poubelle et on ne l'a pas vidée complètement
       } else {
         configLocale.poidOld = poidNew;
       }
 
       // pesée No2 de la poubelle (valeur brute)
-      balance.set_scale(configLocale.calibrationFactorInitial);
-      float poidBrute = BALANCE_pesee_balance() + (configLocale.valeurDeTarageInitial / configLocale.calibrationFactorInitial);
+      //      balance.set_scale(configLocale.calibrationFactorInitial);
+      // float poidBrute = BALANCE_getPeseeBalance() + (configLocale.valeurDeTarageInitial / configLocale.calibrationFactorInitial);
+      float poidBrute = BALANCE_getPeseeBalance(configLocale.valeurDeTarageInitial);
 
 
 
@@ -181,7 +182,8 @@ void setup() {
       TraceDebug("Ecriture dans le fichier CSV");
       TraceDebug("Mesures: " + Mesures);
 
-      // sauvegarde des settings pour mémoriser le poid mesuré
+      // sauvegarde des settings 
+    // (pour mémoriser le poid mesuré et éventuellement la nouvelle valeur de tarage)
       SD_EraseSettings();
       SD_WriteSettings(configLocale);
     }
@@ -201,7 +203,4 @@ void setup() {
 
 
 void loop() {
-
-
-
 }

@@ -3,19 +3,19 @@
 */
 //*********************************************************************
 //       Mise au point de la cablibration de la balance
-//       Version : 1
-//       auteur : Laurent Marchal
+//       auteur : Laurent Marchal & Alexandre PERETJATKO
 //       date : 17/03/2021
 //
 //        calibration d'un capteur de poids (0/20 kg) associé
 //        à une carte sparkfun load Cell Amp basée sur le
 //        circuit HX711.
 //
-//        Utilisation d'une carte FireBeetle ESP8266 pour l'essai
+//        Utilisation d'une carte FireBeetle ESP8266
 //
 //*********************************************************************
 //
-//        Nécessite la bibliothèque HX711.h
+//        Nécessite la bibliothèque HX711.h disponible dans le
+//        répertoire Librairies provenant de https://github.com/bogde/HX711
 //
 //*********************************************************************
 //
@@ -31,25 +31,27 @@ HX711 balance;
 // ---------------------------------------------------------------------------------------------------
 /**
    Renvoie le poid mesuré en grammes.
-*/
-float BALANCE_pesee_balance() {
-  // Adjust to this calibration factor
-  //balance.set_scale(configLocale.calibrationFactor);
 
-  // Mesure du poid absolu ( sur un échantillonnage de 20 mesures)
+   float valeurTarage : Valeur de tarage.
+
+   @return float : valeur en grammes.
+*/
+float BALANCE_getPeseeBalance(float valeurTarage) {
+  balance.set_scale(configLocale.calibrationFactor);
+  balance.set_offset(valeurTarage);
+
   return  balance.get_units(BALANCE_NB_ECHANTILLONS_PESEE);
 }
 
 
 /*
- * Tarage de la balance.
- * Renvoie un float
- * @return float
- */
+   Tarage de la balance.
+   @return float contenant la valeur de tarage.
+*/
 float BALANCE_setTare() {
-  balance.set_scale(1);
+  balance.set_scale();
   balance.tare(BALANCE_NB_ECHANTILLONS_TARAGE);
-  return balance.get_tare();
+  return balance.get_scale();
 }
 
 
@@ -59,7 +61,7 @@ float BALANCE_setTare() {
 /**
    Calibraiton de la balance.
 */
-void CZL635_setup() {
+void BALANCE_setup() {
   // début de la procédure de calibration usine de la balance
   Serial.println("");
   Serial.println("");
@@ -71,7 +73,6 @@ void CZL635_setup() {
   Serial.println("");
   Serial.println("");
 
-  // Tarage de la poubelle
   Serial.println("**************************************************");
   Serial.println("*     ETAPE 1/5 : tarage de la balance           *");
   Serial.println("**************************************************");
@@ -82,17 +83,15 @@ void CZL635_setup() {
   while (Serial.available()) Serial.read();
   Serial.print("Tarage en cours. Cette opération peut prendre plusieurs secondes... ");
 
-  float t_tare = BALANCE_setTare();
+  balance.set_scale();
+  balance.tare(BALANCE_NB_ECHANTILLONS_TARAGE);                // reset the scale to 0 on 20 echantillons
 
 
-
+  configLocale.valeurDeTarage = balance.get_scale();
   Serial.print ("Tare (pour information) : ");
-
-  Serial.println(t_tare);
-
-  Serial.println("OK");
+  Serial.println(configLocale.valeurDeTarage);
   Serial.println("");
-  Serial.println("");
+
 
   // Etalonnage de la balance
   Serial.println("**************************************************");
@@ -104,42 +103,38 @@ void CZL635_setup() {
   Serial.println("         le poids doit être exprimé en grammes et sans unités ni décimale");
   Serial.println("          ex. : 1965  pour 1965 grammes");
   Serial.println("");
-  int nb_essais = 1;
+
+  // Lecture d'une saisie d'un  poids
   while (!Serial.available());
   String xx = Serial.readString();
   float poids_a_atteindre = xx.toFloat();
-  balance.callibrate_scale(poids_a_atteindre, 50);  // 50 = nbEssaisCalibration
-  float t_scale = balance.get_scale();
+
+  // Facteur de calibration
+  float poids_lu = balance.get_units(BALANCE_NB_ECHANTILLONS_PESEE);
+  float result = poids_lu / poids_a_atteindre;
+  balance.set_scale(result);
+  configLocale.calibrationFactor = balance.get_scale();
+
   Serial.print ("Scale : ");
-  Serial.println(t_scale);
-  Serial.println("");
+  Serial.println(configLocale.calibrationFactor);
   Serial.println("Calibration terminée");
   Serial.println("");
   Serial.println("");
-
 
   // enregistrement des informations
   Serial.println("***************************************************");
   Serial.println("*     ETAPE 3/5 : enregistrement des informations *");
   Serial.println("***************************************************");
-
-  Serial.print("La nouvelle valeur du facteur de calibration est : ");
-  Serial.println(t_scale);
-  //Serial.println(configLocale.calibrationFactor);
-  Serial.println("");
   Serial.print("Le poids actuellement dans la balance est de : ");
-  Serial.print(BALANCE_pesee_balance());
+  Serial.print(BALANCE_getPeseeBalance(configLocale.valeurDeTarage));
   Serial.println("g");
   Serial.println("");
 
-  // Sauvegarde du configurationFactor
-  configLocale.calibrationFactor = t_scale;
-  configLocale.valeurDeTarage = t_tare;
-  configLocale.calibrationFactorInitial = t_scale;
-  configLocale.valeurDeTarageInitial    = t_tare;
-  configLocale.InitialisationUsine = false; // Pour ne pas refaire la configuration d'usine.
-  configLocale.AfficheTraceDebug = false;
-  configLocale.poidOld = 0;   // dernière pesée pour le poids différentiel
+  // Sauvegarde de la configuration locale dans le fichier de settings
+  configLocale.valeurDeTarageInitial  = configLocale.valeurDeTarage;
+  configLocale.InitialisationUsine    = false; // Pour ne pas refaire la configuration d'usine.
+  configLocale.AfficheTraceDebug      = false;
+  configLocale.poidOld                = 0;   // dernière pesée pour le poids différentiel
 
   SD_EraseSettings();
   SD_WriteSettings( configLocale );
@@ -158,9 +153,8 @@ void CZL635_setup() {
   Serial.println("");
   Serial.println("Pressez 'x' pour quitter le programme détalonnage.");
   while (true) {
-    balance.set_scale(configLocale.calibrationFactor);
     Serial.print("Poids mesuré : ");
-    Serial.print(BALANCE_pesee_balance(), 1);
+    Serial.print(BALANCE_getPeseeBalance(configLocale.valeurDeTarage), 1);
     Serial.println(" g");
 
     if (Serial.available()) {
