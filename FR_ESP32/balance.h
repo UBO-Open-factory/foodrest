@@ -68,17 +68,15 @@ void BALANCE_setup() {
   Serial.println("*************************************************");
   Serial.println("*     FOOD REST : calibration de la balance     *");
   Serial.println("*************************************************");
-  Serial.println("Lorsque le programme vous demandera de presser une touche");
-  Serial.println("Pressez une touche puis la touche [Enter].");
+  Serial.println("Lorsque le programme vous demandera de presser une touche, vous devez la valider par [Enter]");
   Serial.println("");
   Serial.println("");
 
   Serial.println("**************************************************");
   Serial.println("*     ETAPE 1/5 : tarage de la balance           *");
   Serial.println("**************************************************");
-  Serial.println("1 - Assurez-vous que la poubelle est compètement vide");
-  Serial.println("2 - Equipez la poubelle d'un sac");
-  Serial.println("3 - puis pressez une touche");
+  Serial.println(" - Assurez-vous que la poubelle est complètement vide");
+  Serial.println(" - puis pressez une touche");
   while (!Serial.available());
   while (Serial.available()) Serial.read();
   Serial.print("Tarage en cours. Cette opération peut prendre plusieurs secondes... ");
@@ -87,9 +85,10 @@ void BALANCE_setup() {
   balance.tare(BALANCE_NB_ECHANTILLONS_TARAGE);                // reset the scale to 0 on 20 echantillons
 
 
-  configLocale.valeurDeTarage = balance.get_scale();
-  Serial.print ("Tare (pour information) : ");
+  configLocale.valeurDeTarage = balance.get_offset();
+  Serial.println("la valeure mesurée de tare est (pour information) : ");
   Serial.println(configLocale.valeurDeTarage);
+  Serial.println("");
   Serial.println("");
 
 
@@ -102,12 +101,12 @@ void BALANCE_setup() {
   Serial.println("3 - Saisissez le poids inséré dans la balance.");
   Serial.println("         le poids doit être exprimé en grammes et sans unités ni décimale");
   Serial.println("          ex. : 1965  pour 1965 grammes");
-  Serial.println("");
 
   // Lecture d'une saisie d'un  poids
   while (!Serial.available());
   String xx = Serial.readString();
   float poids_a_atteindre = xx.toFloat();
+  Serial.println("Patience je calcul dur...");
 
   // Facteur de calibration
   float poids_lu = balance.get_units(BALANCE_NB_ECHANTILLONS_PESEE);

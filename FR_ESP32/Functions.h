@@ -15,7 +15,7 @@ boolean connectionWifi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(configLocale.ssid, configLocale.password);
 
-  TraceDebug("Connection au réseau WIFI en cours ");
+  Serial.println("Connection au réseau WIFI en cours ");
   int compteur = 1;
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
@@ -61,7 +61,7 @@ void calibrageUsine() {
   // Saisie de l'identifiant de la poubelle
   IDPoubelle_setup();
 
-  // Calibration de la RTC
+  // Calibration de la RTC (si on est connecté au Réseau WIFI )
   if (  connectionWifi() ) {
     rtc_setup_pcf8523();
   }
