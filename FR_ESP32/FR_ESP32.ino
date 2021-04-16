@@ -51,6 +51,7 @@ void setup() {
 
   // Initialisaiton de la balance ---------------------------------------------------------------------
   balance.begin(BALANCE_DAT, BALANCE_CLK);
+  balance.power_up();
 
 
   // Initialisation de la carte SD ---------------------------------------------------------------------
@@ -192,6 +193,7 @@ void setup() {
   digitalWrite(MASQUE_RESET, HIGH); // autorise le RESET lorsque le capot est ouvert
   digitalWrite(GND_C_EN, LOW);      // coupe l'alimentation des périphériques
   digitalWrite(LED_PESEE_PIN, LOW); // extinction de la led "pesée en cours"
+  balance.power_down();             // Put the ADC in Sleep mode
 
   // Affichage des erreurs
   affichage_erreurs_mode_normale();
