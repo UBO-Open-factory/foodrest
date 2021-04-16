@@ -1,85 +1,215 @@
-
-[![Arduino CI](https://github.com/RobTillaart/HX711/workflows/Arduino%20CI/badge.svg)](https://github.com/marketplace/actions/arduino_ci)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/RobTillaart/HX711/blob/master/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/RobTillaart/HX711.svg?maxAge=3600)](https://github.com/RobTillaart/HX711/releases)
-
-
 # HX711
+An Arduino library to interface the [Avia Semiconductor HX711 24-Bit Analog-to-Digital Converter (ADC)]
+for reading load cells / weight scales.
 
-Arduino library for HX711 24 bit ADC  used for load cells and scales.
+It supports the architectures `atmelavr`, `espressif8266`, `espressif32`,
+`atmelsam`, `teensy` and `ststm32` by corresponding [PlatformIO] targets.
 
-# Description
-
-This HX711 library has an interface which is a superset of a library made by bogde.
-Some missing functions were added to get more info from the lib. 
-
-Another important difference is that this library uses floats. The 23 bits mantisse 
-of the IEE754 float matches the 24 bit ADC very well. Furthermore it gave a smaller
-footprint. 
-
-### Main flow
-
-First action is to call **begin(dataPin, clockPin)** to make connetion to the **HX711**.
-
-Second step is callibration for which a number of functions exist.
-- **tare()** measures zero point
-- **set_scale(factor)** set a known conversion factor e.g. from EEPROM.
-- **callibrate_scale(WEIGHT, TIMES)** determines the scale factor based upon a known weight e.g. 1 Kg.
-
-Steps to take for callibration
-1. clear the scale
-1. call tare() to set the zero offset
-1. put a known weight on the scale 
-1. call callibrate_scale(weight) 
-1. scale is calculated.
-1. save the offset and scale for later use e.g. EEPROM.
+[Avia Semiconductor HX711 24-Bit Analog-to-Digital Converter (ADC)]: http://www.dfrobot.com/image/data/SEN0160/hx711_english.pdf
+[PlatformIO]: https://platformio.org/
 
 
-### Pricing
+## Synopsis
 
-Some price functions were added to make it easy to use this library
-for pricing goods or for educational purposes. These functions are under discussion
-if they will stay. Another set of function to add weights together didn't make it in 
-the 0.2.0 release, it is on a todo list.
+### Blocking mode
+The library is usually used in blocking mode, i.e. it will wait for the
+hardware becoming available before returning a reading.
 
-For weight conversion functions see https://github.com/RobTillaart/weight
+```c++
+#include "HX711.h"
+HX711 loadcell;
 
-## Notes
+// 1. HX711 circuit wiring
+const int LOADCELL_DOUT_PIN = 2;
+const int LOADCELL_SCK_PIN = 3;
 
-### Scale values for loadcells
+// 2. Adjustment settings
+const long LOADCELL_OFFSET = 50682624;
+const long LOADCELL_DIVIDER = 5895655;
 
-These scale values worked pretty well with a set of loadcells, 
-Use callibrate to find your values.
+// 3. Initialize library
+loadcell.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+loadcell.set_scale(LOADCELL_DIVIDER);
+loadcell.set_offset(LOADCELL_OFFSET);
 
-- 5 KG loadcell   scale.set_scale(420.52); 
-- 20 KG loadcell  scale.set_scale(127.15); 
+// 4. Acquire reading
+Serial.print("Weight: ");
+Serial.println(loadcell.get_units(10), 2);
+```
 
-### Connections HX711
+### Non-blocking mode
+It is also possible to define a maximum timeout to wait for the hardware
+to be initialized. This won't send the program into a spinlock when the
+scale is disconnected and will probably also account for hardware failures.
+```
+// 4. Acquire reading without blocking
+if (loadcell.wait_ready_timeout(1000)) {
+    long reading = loadcell.get_units(10);
+    Serial.print("Weight: ");
+    Serial.println(reading, 2);
+} else {
+    Serial.println("HX711 not found.");
+}
+```
 
-- A+/A-  uses gain of 128 or 64
-- B+/B-  uses gain of 32
 
-### Connections
-
-| HX711 Pin | Color |
-|:----:|:----:|
-|  E+  |  red           |
-|  E-  |  black         |
-|  A-  |  white         |
-|  A+  |  green         |
-|  B-  |  not connected |
-|  B+  |  not connected |
+## FAQ
+https://github.com/bogde/HX711/blob/master/doc/faq.md
 
 
-| HX711 Pin | Color |
-|:----:|:----:|
-|  E+  | red           |
-|  E-  | black         |
-|  A-  | blue          |
-|  A+  | white         |
-|  B-  | not connected |
-|  B+  | not connected |
+## More examples
+See `examples` directory in this repository.
 
-## Operation
 
-See examples
+## HAL support
+- [Arduino AVR core](https://github.com/arduino/ArduinoCore-avr)
+- [Arduino core for ESP8266](https://github.com/esp8266/Arduino)
+- [Arduino core for ESP32](https://github.com/espressif/arduino-esp32)
+- [Arduino core for SAMD21](https://github.com/arduino/ArduinoCore-samd) (untested)
+- [Arduino core for SAMD51](https://github.com/adafruit/ArduinoCore-samd) (untested)
+- [Arduino core for STM32](https://github.com/stm32duino/Arduino_Core_STM32)
+- [Arduino Core for Adafruit Bluefruit nRF52 Boards](https://github.com/adafruit/Adafruit_nRF52_Arduino)
+
+
+## Hardware support
+The library has been tested successfully on the following hardware.
+
+- [ATmega328]: Arduino Uno
+- [ESP8266]: WeMos D1 mini, Adafruit HUZZAH
+- [ESP32]: ESP32 DEVKIT V1, Heltec WiFi Kit 32, Adafruit Feather HUZZAH32
+- [STM32 F1] ([Cortex-M3]): STM32F103C8T6 STM32 Blue Pill Board
+- [nRF52]: Adafruit Feather nRF52840 Express
+
+Thanks, @bogde and @ClemensGruber!
+
+[ATmega328]: https://en.wikipedia.org/wiki/ATmega328
+[ESP8266]: https://en.wikipedia.org/wiki/ESP8266
+[ESP32]: https://en.wikipedia.org/wiki/ESP32
+[STM32 F1]: https://en.wikipedia.org/wiki/STM32#STM32_F1
+[Cortex-M3]: https://en.wikipedia.org/wiki/ARM_Cortex-M#Cortex-M3
+[nRF52]: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fstruct_nrf52%2Fstruct%2Fnrf52.html
+
+
+## Features
+1. It provides a `tare()` function, which "resets" the scale to 0. Many other
+   implementations calculate the tare weight when the ADC is initialized only.
+   I needed a way to be able to set the tare weight at any time.
+   **Use case**: Place an empty container on the scale, call `tare()` to reset
+   the readings to 0, fill the container and get the weight of the content.
+
+2. It provides a `power_down()` function, to put the ADC into a low power mode.
+   According to the datasheet,
+   > When PD_SCK pin changes from low to high and stays at high
+   > for longer than 60μs, HX711 enters power down mode.
+
+   **Use case**: Battery-powered scales. Accordingly, there is a `power_up()`
+   function to get the chip out of the low power mode.
+
+3. It has a `set_gain(byte gain)` function that allows you to set the gain factor
+   and select the channel. According to the datasheet,
+   > Channel A can be programmed with a gain of 128 or 64, corresponding to
+   a full-scale differential input voltage of ±20mV or ±40mV respectively, when
+   a 5V supply is connected to AVDD analog power supply pin. Channel B has
+   a fixed gain of 32.
+
+   The same function is used to select the channel A or channel B, by passing
+   128 or 64 for channel A, or 32 for channel B as the parameter. The default
+   value is 128, which means "channel A with a gain factor of 128", so one can
+   simply call `set_gain()`.
+
+   This function is also called from the initializer method `begin()`.
+
+4. The `get_value()` and `get_units()` functions can receive an extra parameter "times",
+   and they will return the average of multiple readings instead of a single reading.
+
+
+## How to calibrate your load cell
+1. Call `set_scale()` with no parameter.
+2. Call `tare()` with no parameter.
+3. Place a known weight on the scale and call `get_units(10)`.
+4. Divide the result in step 3 to your known weight. You should
+   get about the parameter you need to pass to `set_scale()`.
+5. Adjust the parameter in step 4 until you get an accurate reading.
+
+
+## Build
+
+### All architectures
+This will spawn a Python virtualenv in the current directory,
+install `platformio` into it and then execute `platformio run`,
+effectively building for all environments defined in `platformio.ini`.
+
+    make build-all
+
+#### Result
+```
+Environment feather_328                 [SUCCESS]
+Environment atmega_2560	                [SUCCESS]
+Environment huzzah                      [SUCCESS]
+Environment lopy4                       [SUCCESS]
+Environment teensy31                    [SUCCESS]
+Environment teensy36                    [SUCCESS]
+Environment feather_m0                  [SUCCESS]
+Environment arduino_due                 [SUCCESS]
+Environment feather_m4                  [SUCCESS]
+Environment bluepill   	                [SUCCESS]
+Environment adafruit_feather_nrf52840   [SUCCESS]
+```
+
+#### Details
+https://gist.github.com/amotl/5ed6b3eb1fcd2bc78552b218b426f6aa
+
+
+### Specific architecture
+You can run a build for a specific architecture by specifying
+the appropriate platform label on the command line.
+
+    # Build for LoPy4
+    make build-env environment=lopy4
+
+    # Build for Feather M0
+    make build-env environment=feather_m0
+
+
+## Deprecation warning
+This library received some spring-cleaning in February 2019 (#123),
+removing the pin definition within the constructor completely, as
+this was not timing safe. (#29) Please use the new initialization
+flavor as outlined in the example above.
+
+
+## Credits
+Thanks to Weihong Guan who started the first version of this library in 2012
+already (see [[arduino|module]Hx711 electronic scale kit](http://aguegu.net/?p=1327),
+[sources](https://github.com/aguegu/ardulibs/tree/master/hx711)), Bogdan Necula
+who took over in 2014 and last but not least all others who contributed to this
+library over the course of the last years, see also `CONTRIBUTORS.rst` in this
+repository.
+
+#### See also
+- https://item.taobao.com/item.htm?id=18121631630
+- https://item.taobao.com/item.htm?id=544769386300
+
+
+## Similar libraries
+There are other libraries around, enjoy:
+
+- https://github.com/olkal/HX711_ADC
+- https://github.com/queuetue/Q2-HX711-Arduino-Library
+
+
+---
+
+## Appendix
+
+### Considerations about real world effects caused by physics
+You should consider getting into the details of strain-gauge load cell
+sensors when expecting reasonable results. The range of topics is from
+sufficient and stable power supply, using the proper excitation voltage
+to the Seebeck effect and temperature compensation.
+
+See also:
+- [Overview about real world effects](https://community.hiveeyes.org/t/analog-vs-digital-signal-gain-amplifiers/380/6)
+- [Thermoelectric effect](https://en.wikipedia.org/wiki/Thermoelectric_effect) (Seebeck effect)
+- Temperature compensation: [Resource collection](https://community.hiveeyes.org/t/temperaturkompensation-fur-waage-hardware-firmware/115), [DIY research](https://community.hiveeyes.org/t/temperaturkompensation-fur-waage-notig-datensammlung/245)
+- [Power management for HX711](https://community.hiveeyes.org/t/stromversorgung-hx711/893)
