@@ -106,7 +106,7 @@ void BALANCE_setup() {
   while (!Serial.available());
   String xx = Serial.readString();
   float poids_a_atteindre = xx.toFloat();
-  Serial.println("Patience je calcul dur...");
+  Serial.println("Patience je calcul ... et c'est dur...");
 
   // Facteur de calibration
   float poids_lu = balance.get_units(BALANCE_NB_ECHANTILLONS_PESEE);
