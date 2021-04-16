@@ -39,7 +39,7 @@ La librairie **RTC** utilisée est celle disponible sur le [dépot Git officiel 
 Cette librairie est également disponible dans le répertoire du projet (répertoire /Librairies/RTClib ).
 
 ### Balance (HX711)
-La librairie **HX711** utilisée est celle disponible sur le [Arduino core for ESP32](https://github.com/espressif/arduino-esp32)
+La librairie **HX711** utilisée est celle disponible sur le [dépot GIT](https://github.com/bogde/HX711)
 
 Cette librairie est également disponible dans le répertoire du projet (répertoire /Librairies/HX711 ).
 
