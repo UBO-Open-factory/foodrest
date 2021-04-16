@@ -49,7 +49,7 @@ typedef struct {
   char* ssid = "";          // Cette valeur sera lue à partir du fichier de config WIFI
   char* password = "";      // Cette valeur sera lue à partir du fichier de config WIFI
   String IDPoubelle = "";   // Cette valeur sera lue à partir du fichier de config WIFI
-  boolean InitialisationUsine = false;  // Cette valeur sera lue à partir du fichier des settings.
+  boolean InitialisationUsine = true;   // Cette valeur sera lue à partir du fichier des settings.
   boolean AfficheTraceDebug = false;    // Cette valeur sera lue à partir du fichier des settings.
   float calibrationFactor = 110;        // Cette valeur sera lue à partir du fichier des settings.
   float valeurDeTarage = 1;             // Cette valeur sera lue à partir du fichier des settings.
