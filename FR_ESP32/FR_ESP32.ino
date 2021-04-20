@@ -67,6 +67,11 @@ void setup() {
     // Lecture de la config à partir du fichier sur la carte SD ---------------------------------------
     // ( renseigne le ssid, password, poid, IDPoubelle, etc... )
     configLocale = CONF_lectureConfigurationFromSD();
+    TraceDebug("valeurDeTarage");
+    TraceDebug(configLocale.valeurDeTarage);
+
+    TraceDebug("laValeurDeTarageInitiale");
+    TraceDebug(configLocale.laValeurDeTarageInitiale);
 
 
     // si un problème a été détecté sur la carte SD => erreur
@@ -80,17 +85,7 @@ void setup() {
     // de settings
     if ( configLocale.InitialisationUsine ) {
 
-      // Afichage d'un message d'attente pour laisser le temps au port USB de "capter" la balance
-      while (true) {
-        Serial.println ("Veuillez presser une touche pour entrer dans le mode usine...");
-        if (Serial.available()) {
-          while (Serial.available()) {
-            Serial.read();
-          }
-          break;
-        }
-        delay(1000);
-      }
+
       calibrageUsine();
 
 
@@ -104,6 +99,9 @@ void setup() {
       // TIMESTAMP
       String timeStamp = rtc_getTimestamp();
       Mesures.concat(timeStamp);
+
+      // Pause de 4 sec pour attendre que la poubelle se stabilise avant de faire une mesure.
+      delay(4000);
 
       // POIDS
       // pesée de la poubelle (valeur calculée)
@@ -128,9 +126,8 @@ void setup() {
 
       // pesée No2 de la poubelle (valeur brute)
       //      balance.set_scale(configLocale.calibrationFactorInitial);
-      // float poidBrute = BALANCE_getPeseeBalance() + (configLocale.valeurDeTarageInitial / configLocale.calibrationFactorInitial);
-      float poidBrute = BALANCE_getPeseeBalance(configLocale.valeurDeTarageInitial);
-
+      // float poidBrute = BALANCE_getPeseeBalance() + (configLocale.laValeurDeTarageInitiale / configLocale.calibrationFactorInitial);
+      float poidBrute = BALANCE_getPeseeBalance(configLocale.laValeurDeTarageInitiale);
 
 
       // Formattage des poids pour TOCIO
@@ -183,8 +180,8 @@ void setup() {
       TraceDebug("Ecriture dans le fichier CSV");
       TraceDebug("Mesures: " + Mesures);
 
-      // sauvegarde des settings 
-    // (pour mémoriser le poid mesuré et éventuellement la nouvelle valeur de tarage)
+      // sauvegarde des settings
+      // (pour mémoriser le poid mesuré et éventuellement la nouvelle valeur de tarage)
       SD_EraseSettings();
       SD_WriteSettings(configLocale);
     }

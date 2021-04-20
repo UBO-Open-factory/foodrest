@@ -19,7 +19,7 @@ boolean connectionWifi() {
   int compteur = 1;
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
-    if (compteur%10 == 0 && compteur!=0) {
+    if (compteur % 10 == 0 && compteur != 0) {
       Serial.println("+");
     } else {
       Serial.print (".");
@@ -58,6 +58,18 @@ int niveau_battrie() {
    Permet de calibrer les capteurs.
 */
 void calibrageUsine() {
+  // Afichage d'un message d'attente pour laisser le temps au port USB de "capter" la balance
+  while (true) {
+    Serial.println ("Veuillez presser une touche pour entrer dans le mode usine...");
+    if (Serial.available()) {
+      while (Serial.available()) {
+        Serial.read();
+      }
+      break;
+    }
+    delay(1000);
+  }
+
   // Saisie de l'identifiant de la poubelle
   IDPoubelle_setup();
 

@@ -75,6 +75,12 @@ void SD_EraseWifiFile() {
 void SD_WriteSettings(Configuration &myConfig) {
   const char* fileName = "/settings.txt";
 
+  TraceDebug("valeurDeTarage");
+  TraceDebug(myConfig.valeurDeTarage);
+
+  TraceDebug("laValeurDeTarageInitiale");
+  TraceDebug(myConfig.laValeurDeTarageInitiale);
+
   // Ouverture du fichier en écriture (et réiniitialisation)
   File myFile = SD.open(fileName, FILE_WRITE);
   if (myFile) {
@@ -107,7 +113,7 @@ void SD_WriteSettings(Configuration &myConfig) {
     myFile.println();
 
     myFile.println("// Valeur initiale de tarage de la balance (** ne doit pas être modifié **).");
-    myFile.println("valeurDeTarageInitial=" + String(myConfig.valeurDeTarageInitial) );
+    myFile.println("laValeurDeTarageInitiale=" + String(myConfig.laValeurDeTarageInitiale) );
     myFile.println();
 
   } else {
@@ -178,8 +184,8 @@ boolean SD_Read_Config(Configuration &myConfig) {
         myConfig.valeurDeTarage = cfg.getIntValue(); // Get integer
 
         // Lecture de la valeur initiale de tarage de la balance
-      } else if (cfg.nameIs("valeurDeTarageInitial")) {
-        myConfig.valeurDeTarageInitial = cfg.getIntValue(); // Get integer
+      } else if (cfg.nameIs("laValeurDeTarageInitiale")) {
+        myConfig.laValeurDeTarageInitiale = cfg.getIntValue(); // Get integer
 
         // lecture de l'identifiant poubelle
       } else if (cfg.nameIs("IDPoubelle")) {
@@ -208,6 +214,11 @@ boolean SD_Read_Config(Configuration &myConfig) {
 
   // clean up
   cfg.end();
+
+  TraceDebug("valeurDeTarage");
+  TraceDebug(myConfig.valeurDeTarage);
+
+
   return true;
 }
 
@@ -304,7 +315,7 @@ String SD_writeEntesMesure() {
   // Si on a réussi à ouvrir le fichier en écriture
   if (dataFile) {
     // Ecriture de la ligne dans le fichier
-    dataFile.println("IDPoubelle,Date,Poids mesuré,Poids brute,Niveau batterie,RSSI,Réception TOCIO");
+    dataFile.println("IDPoubelle,Date,Poids relatif,Poids absolu,Niveau batterie,Force du signal Wifi,Réception TOCIO");
 
     // Fermeture du fichier
     dataFile.close();

@@ -51,7 +51,7 @@ float BALANCE_getPeseeBalance(float valeurTarage) {
 float BALANCE_setTare() {
   balance.set_scale();
   balance.tare(BALANCE_NB_ECHANTILLONS_TARAGE);
-  return balance.get_scale();
+  return balance.get_offset();
 }
 
 
@@ -130,7 +130,7 @@ void BALANCE_setup() {
   Serial.println("");
 
   // Sauvegarde de la configuration locale dans le fichier de settings
-  configLocale.valeurDeTarageInitial  = configLocale.valeurDeTarage;
+  configLocale.laValeurDeTarageInitiale  = configLocale.valeurDeTarage;
   configLocale.InitialisationUsine    = false; // Pour ne pas refaire la configuration d'usine.
   configLocale.AfficheTraceDebug      = false;
   configLocale.poidOld                = 0;   // dernière pesée pour le poids différentiel
