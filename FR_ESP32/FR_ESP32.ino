@@ -107,32 +107,28 @@ void setup() {
       // pesée de la poubelle (valeur calculée)
       balance.set_scale(configLocale.calibrationFactor);
       // float poidNew = BALANCE_getPeseeBalance(configLocale.valeurDeTarage) + (configLocale.valeurDeTarage / configLocale.calibrationFactor);
-      float poidNew = BALANCE_getPeseeBalance(configLocale.valeurDeTarage);
+      float poidNew = BALANCE_getPeseeBalance(configLocale.laValeurDeTarageInitiale);
       float deltaPesee = poidNew - configLocale.poidOld;
+      configLocale.poidOld = poidNew;
 
-      // La poubelle a été vidée, on retare la balance
-      if (abs(poidNew) <= BALANCE_getMargeErreurVidange(configLocale.poidOld)) {
-        deltaPesee = 0;
-        configLocale.poidOld = 0;
-
-        // on retare la balance
-        configLocale.valeurDeTarage = BALANCE_setTare();
-
-
-        // on a enlevé une partie du contenu de la poubelle et on ne l'a pas vidée complètement
-      } else {
-        configLocale.poidOld = poidNew;
+      // supppression des cas très négatifs (lorsque l'on soulève la poubelle pendant une pesée)
+      if (poidNew < -(BALANCE_POIDS_SAC + BALANCE_MARGE_POIDS_SAC)) {
+        TraceDebug("Pesée trop négative => deep sleep sans sauvegarde SD ni CSV");
+        break;
       }
 
-      // pesée No2 de la poubelle (valeur brute)
-      //      balance.set_scale(configLocale.calibrationFactorInitial);
-      // float poidBrute = BALANCE_getPeseeBalance() + (configLocale.laValeurDeTarageInitiale / configLocale.calibrationFactorInitial);
-      float poidBrute = BALANCE_getPeseeBalance(configLocale.laValeurDeTarageInitiale);
+
+
+      if (deltaPesee <0 && abs(poidNew+BALANCE_POIDS_SAC) < BALANCE_MARGE_POIDS_SAC) {
+        deltaPesee=0;
+        configLocale.poidOld = 0;
+      }
+
 
 
       // arrondi des mesures pour supprimer les décimales
-      
       deltaPesee = round(deltaPesee);
+      float poidBrute = poidNew;
       poidBrute = round(poidBrute);
       
 
@@ -192,6 +188,8 @@ void setup() {
       SD_WriteSettings(configLocale);
     }
   }
+
+  
   // Sortie "propre"
   digitalWrite(MASQUE_RESET, HIGH); // autorise le RESET lorsque le capot est ouvert
   digitalWrite(GND_C_EN, LOW);      // coupe l'alimentation des périphériques

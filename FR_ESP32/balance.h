@@ -76,6 +76,7 @@ void BALANCE_setup() {
   Serial.println("*     ETAPE 1/5 : tarage de la balance           *");
   Serial.println("**************************************************");
   Serial.println(" - Assurez-vous que la poubelle est complètement vide");
+  Serial.println(" - Equipez la poubelle avec un sac vide");
   Serial.println(" - puis pressez une touche");
   while (!Serial.available());
   while (Serial.available()) Serial.read();
@@ -191,5 +192,5 @@ void BALANCE_setup() {
  * */
 int BALANCE_getMargeErreurVidange(float poid) {
   //if (poid < 500) return 10; else return 20;
-  return 20;
+  return BALANCE_MARGE_POIDS_SAC;
 }
