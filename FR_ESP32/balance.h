@@ -190,5 +190,6 @@ void BALANCE_setup() {
    @return int : marge d'erreur
  * */
 int BALANCE_getMargeErreurVidange(float poid) {
-  if (poid < 500) return 10; else return 20;
+  //if (poid < 500) return 10; else return 20;
+  return 20;
 }
