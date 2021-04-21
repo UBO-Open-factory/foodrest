@@ -153,8 +153,12 @@ void BALANCE_setup() {
   Serial.println("Pressez 'x' pour quitter le programme détalonnage.");
   while (true) {
     Serial.print("Poids mesuré : ");
-    Serial.print(BALANCE_getPeseeBalance(configLocale.valeurDeTarage), 1);
-    Serial.println(" g");
+    float pesee_tmp = BALANCE_getPeseeBalance(configLocale.valeurDeTarage);
+    Serial.print(pesee_tmp, 1);
+    Serial.print(" g => arrondi : ");
+    pesee_tmp = round(pesee_tmp);
+    Serial.println(pesee_tmp);
+
 
     if (Serial.available()) {
       char cc = Serial.read();

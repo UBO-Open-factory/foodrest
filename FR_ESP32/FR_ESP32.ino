@@ -130,6 +130,12 @@ void setup() {
       float poidBrute = BALANCE_getPeseeBalance(configLocale.laValeurDeTarageInitiale);
 
 
+      // arrondi des mesures pour supprimer les décimales
+      
+      deltaPesee = round(deltaPesee);
+      poidBrute = round(poidBrute);
+      
+
       // Formattage des poids pour TOCIO
       Mesures.concat(formatString(deltaPesee, "-5.0"));
       Mesures.concat(formatString(poidBrute, "-5.0"));
