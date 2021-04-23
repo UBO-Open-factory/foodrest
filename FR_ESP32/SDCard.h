@@ -171,15 +171,15 @@ boolean SD_Read_Config(Configuration &myConfig) {
 
         // Lecture de la valeur de calibration de la balance
       } else if (cfg.nameIs("calibrationFactor")) {
-        myConfig.calibrationFactor = float(cfg.getIntValue()) / 100.0; // Get integer
+        myConfig.calibrationFactor = cfg.getIntValue() / 100.0; // Get integer
 
         // Lecture de la valeur de tarage de la balance
       } else if (cfg.nameIs("valeurDeTarage")) {
-        myConfig.valeurDeTarage = float(cfg.getIntValue()) / 100.0; // Get integer
+        myConfig.valeurDeTarage = cfg.getIntValue() / 100.0; // Get integer
 
         // Lecture de la valeur initiale de tarage de la balance
       } else if (cfg.nameIs("laValeurDeTarageInitiale")) {
-        myConfig.laValeurDeTarageInitiale = float(cfg.getIntValue()) / 100.0; // Get integer
+        myConfig.laValeurDeTarageInitiale = cfg.getIntValue() / 100.0; // Get integer
 
         // lecture de l'identifiant poubelle
       } else if (cfg.nameIs("IDPoubelle")) {
@@ -187,7 +187,7 @@ boolean SD_Read_Config(Configuration &myConfig) {
 
         // lecture de la dernière pesée
       } else if (cfg.nameIs("poidOld")) {
-        myConfig.poidOld = float(cfg.getIntValue()) / 100.0; // Get integer
+        myConfig.poidOld = cfg.getIntValue() / 100.0; // Get integer
 
       }
     }
