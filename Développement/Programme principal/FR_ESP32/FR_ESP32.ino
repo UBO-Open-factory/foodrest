@@ -1,7 +1,19 @@
-// programme principal foodrest
+/*
+ * 
+ * Programme  : FOODREST programme principal
+ * 
+ * Auteurs    : Laurent MARCHAL (UOF), ALexandre PERETJATKO (UOF) Mathieu CARIOU (UOF) Tomo MUROVEC (UOF) Arthur PIGNALET (UOF)
+ * 
+ * Licence    : CC-BY-SA
+ * 
+ * Version    : 1.0
+ * 
+ * Date       :  14/10/2021
+ */
 
 
-/**
+
+/*
    Gestion des mesures de la poubelle connectée.
 */
 
