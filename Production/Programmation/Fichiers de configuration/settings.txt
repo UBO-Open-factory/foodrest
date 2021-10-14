@@ -1,0 +1,23 @@
+// Ceci est le fichier de configuration pour l'application.
+
+// Pour pouvoir faire la calibrage d'usine ce paramètre doit être à true (false par défault).
+InitialisationUsine=true
+
+// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.
+AfficheTraceDebug=true
+
+// Valeur de tarage de la balance.
+valeurDeTarage=0
+
+// Calibrage de la balance (doit être une valeur entière positive ou négative).
+calibrationFactor=0
+
+// Identifiant de la poubelle tel que défini dans TOCIO.
+IDPoubelle=
+
+// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.
+poidOld=0
+
+// Valeur initiale de tarage de la balance (** ne doit pas être modifié **).
+valeurDeTarageInitial=0
+
