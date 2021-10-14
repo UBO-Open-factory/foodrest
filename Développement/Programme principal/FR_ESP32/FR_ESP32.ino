@@ -1,3 +1,6 @@
+// programme principal foodrest
+
+
 /**
    Gestion des mesures de la poubelle connectée.
 */
