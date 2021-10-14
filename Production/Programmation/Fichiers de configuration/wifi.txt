@@ -1,0 +1,9 @@
+// Ceci est le fichier de configuration pour les accès WIFI.
+// Il faut renommer ce fichier avec le nom wifi.txt
+
+// le ssid et le mot de passe sont saisis sans ""
+
+
+// Configuration WIFI
+ssid=
+mdp=
