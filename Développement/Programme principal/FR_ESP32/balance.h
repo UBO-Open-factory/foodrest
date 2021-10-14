@@ -76,6 +76,7 @@ void BALANCE_setup() {
   Serial.println("*     ETAPE 1/5 : tarage de la balance           *");
   Serial.println("**************************************************");
   Serial.println(" - Assurez-vous que la poubelle est complètement vide");
+  Serial.println(" - Equipez la poubelle avec un sac vide");
   Serial.println(" - puis pressez une touche");
   while (!Serial.available());
   while (Serial.available()) Serial.read();
@@ -153,8 +154,12 @@ void BALANCE_setup() {
   Serial.println("Pressez 'x' pour quitter le programme détalonnage.");
   while (true) {
     Serial.print("Poids mesuré : ");
-    Serial.print(BALANCE_getPeseeBalance(configLocale.valeurDeTarage), 1);
-    Serial.println(" g");
+    float pesee_tmp = BALANCE_getPeseeBalance(configLocale.valeurDeTarage);
+    Serial.print(pesee_tmp, 1);
+    Serial.print(" g => arrondi : ");
+    pesee_tmp = round(pesee_tmp);
+    Serial.println(pesee_tmp);
+
 
     if (Serial.available()) {
       char cc = Serial.read();
@@ -186,5 +191,6 @@ void BALANCE_setup() {
    @return int : marge d'erreur
  * */
 int BALANCE_getMargeErreurVidange(float poid) {
-  if (poid < 500) return 10; else return 20;
+  //if (poid < 500) return 10; else return 20;
+  return BALANCE_MARGE_POIDS_SAC;
 }

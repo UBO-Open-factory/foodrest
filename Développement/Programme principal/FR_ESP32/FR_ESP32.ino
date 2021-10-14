@@ -1,4 +1,19 @@
-/**
+/*
+ * 
+ * Programme  : FOODREST programme principal
+ * 
+ * Auteurs    : Laurent MARCHAL (UOF), ALexandre PERETJATKO (UOF) Mathieu CARIOU (UOF) Tomo MUROVEC (UOF) Arthur PIGNALET (UOF)
+ * 
+ * Licence    : CC-BY-SA
+ * 
+ * Version    : 1.0
+ * 
+ * Date       :  14/10/2021
+ */
+
+
+
+/*
    Gestion des mesures de la poubelle connectée.
 */
 
@@ -107,85 +122,85 @@ void setup() {
       // pesée de la poubelle (valeur calculée)
       balance.set_scale(configLocale.calibrationFactor);
       // float poidNew = BALANCE_getPeseeBalance(configLocale.valeurDeTarage) + (configLocale.valeurDeTarage / configLocale.calibrationFactor);
-      float poidNew = BALANCE_getPeseeBalance(configLocale.valeurDeTarage);
+      float poidNew = BALANCE_getPeseeBalance(configLocale.laValeurDeTarageInitiale);
       float deltaPesee = poidNew - configLocale.poidOld;
+      configLocale.poidOld = poidNew;
 
-      // La poubelle a été vidée, on retare la balance
-      if (abs(poidNew) <= BALANCE_getMargeErreurVidange(configLocale.poidOld)) {
-        deltaPesee = 0;
-        configLocale.poidOld = 0;
-
-        // on retare la balance
-        configLocale.valeurDeTarage = BALANCE_setTare();
-
-
-        // on a enlevé une partie du contenu de la poubelle et on ne l'a pas vidée complètement
-      } else {
-        configLocale.poidOld = poidNew;
-      }
-
-      // pesée No2 de la poubelle (valeur brute)
-      //      balance.set_scale(configLocale.calibrationFactorInitial);
-      // float poidBrute = BALANCE_getPeseeBalance() + (configLocale.laValeurDeTarageInitiale / configLocale.calibrationFactorInitial);
-      float poidBrute = BALANCE_getPeseeBalance(configLocale.laValeurDeTarageInitiale);
-
-
-      // Formattage des poids pour TOCIO
-      Mesures.concat(formatString(deltaPesee, "-5.0"));
-      Mesures.concat(formatString(poidBrute, "-5.0"));
-
-      // FORCE DU WIFI
-      int rssi = 0; // Sera mis à jour lorsque la connection WIFI sera faite
-      String retourTOCIO = "";
-
-      // BATTERIE
-      int niveauBatteri = niveau_battrie();
-      if (niveauBatteri < SEUIL_LOW_BAT) {
-        TraceDebug("code_erreur_normal = ERREUR_LOW_BAT");
-        code_erreur_normal = ERREUR_LOW_BAT;
-      }
-      Mesures.concat(formatString(niveauBatteri, "4.0"));
-
-      // Connection au WIFI ----------------------------------------------------------------------------
-      // On a réussi à se connecter au WIFI
-      if ( connectionWifi() ) {
-
-        TraceDebug("Voila, c'est fait.");
-        TraceDebug("IP : " + WiFi.localIP().toString() );
-        TraceDebug("MAC address: " + WiFi.macAddress() );
-
-        // Force du signal WIFI
-        rssi = WiFi.RSSI();
-
-        // Envoie des données vers TOCIO ------------------------------------------------------------
-        retourTOCIO = sendDataInHTTPSRequest( Mesures, configLocale );
-
-        if ( retourTOCIO != "ok") {
-          AfficheErreur("ERR (main)> ERREUR lors de l'envoie vers TOCIO. L'erreur renvoyée est :");
-          TraceDebug(retourTOCIO);
-
-        } else  {
-          TraceDebug("Envoie réussi");
+      // supppression des cas très négatifs (lorsque l'on soulève la poubelle pendant une pesée)
+      if (!(poidNew < -(BALANCE_POIDS_SAC + BALANCE_MARGE_POIDS_SAC))) {
+  
+        if (deltaPesee <0 && abs(poidNew+BALANCE_POIDS_SAC) < BALANCE_MARGE_POIDS_SAC) {
+          deltaPesee=0;
+          configLocale.poidOld = 0;
         }
 
-        // Pas de connection au Wifi --------------------------------------------------------------------
-      } else {
-        TraceDebug("Pas de Wifi... code_erreur_normal = ERREUR_WIFI");
-        code_erreur_normal = ERREUR_WIFI;
+        // arrondi des mesures pour supprimer les décimales
+        deltaPesee = round(deltaPesee);
+        float poidBrute = poidNew;
+        poidBrute = round(poidBrute);
+        
+  
+        // Formattage des poids pour TOCIO
+        Mesures.concat(formatString(deltaPesee, "-5.0"));
+        Mesures.concat(formatString(poidBrute, "-5.0"));
+  
+        // FORCE DU WIFI
+        int rssi = 0; // Sera mis à jour lorsque la connection WIFI sera faite
+        String retourTOCIO = "";
+  
+        // BATTERIE
+        int niveauBatteri = niveau_battrie();
+        if (niveauBatteri < SEUIL_LOW_BAT) {
+          TraceDebug("code_erreur_normal = ERREUR_LOW_BAT");
+          code_erreur_normal = ERREUR_LOW_BAT;
+        }
+        Mesures.concat(formatString(niveauBatteri, "4.0"));
+  
+        // Connection au WIFI ----------------------------------------------------------------------------
+        // On a réussi à se connecter au WIFI
+        if ( connectionWifi() ) {
+  
+          TraceDebug("Voila, c'est fait.");
+          TraceDebug("IP : " + WiFi.localIP().toString() );
+          TraceDebug("MAC address: " + WiFi.macAddress() );
+  
+          // Force du signal WIFI
+          rssi = WiFi.RSSI();
+  
+          // Envoie des données vers TOCIO ------------------------------------------------------------
+          retourTOCIO = sendDataInHTTPSRequest( Mesures, configLocale );
+  
+          if ( retourTOCIO != "ok") {
+            AfficheErreur("ERR (main)> ERREUR lors de l'envoie vers TOCIO. L'erreur renvoyée est :");
+            TraceDebug(retourTOCIO);
+  
+          } else  {
+            TraceDebug("Envoie réussi");
+          }
+  
+          // Pas de connection au Wifi --------------------------------------------------------------------
+        } else {
+          TraceDebug("Pas de Wifi... code_erreur_normal = ERREUR_WIFI");
+          code_erreur_normal = ERREUR_WIFI;
+        }
+  
+        // Ecriture dans le fichier CSV ----------------------------------------------------------------------
+        Mesures = configLocale.IDPoubelle + "," + rtc_getDate() + "," + String(deltaPesee, 0) + "," + String(poidBrute, 0) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
+        SD_writeMesure(configLocale.IDPoubelle, Mesures);
+        TraceDebug("Ecriture dans le fichier CSV");
+        TraceDebug("Mesures: " + Mesures);
+  
+        // sauvegarde des settings
+        // (pour mémoriser le poid mesuré et éventuellement la nouvelle valeur de tarage)
+        SD_EraseSettings();
+        SD_WriteSettings(configLocale);
       }
-
-      // Ecriture dans le fichier CSV ----------------------------------------------------------------------
-      Mesures = configLocale.IDPoubelle + "," + rtc_getDate() + "," + String(deltaPesee, 0) + "," + String(poidBrute, 0) + "," + String(niveauBatteri) + "," + String(rssi) + "," + retourTOCIO;
-      SD_writeMesure(configLocale.IDPoubelle, Mesures);
-      TraceDebug("Ecriture dans le fichier CSV");
-      TraceDebug("Mesures: " + Mesures);
-
-      // sauvegarde des settings
-      // (pour mémoriser le poid mesuré et éventuellement la nouvelle valeur de tarage)
-      SD_EraseSettings();
-      SD_WriteSettings(configLocale);
+ 
     }
+    
   }
+
+  
   // Sortie "propre"
   digitalWrite(MASQUE_RESET, HIGH); // autorise le RESET lorsque le capot est ouvert
   digitalWrite(GND_C_EN, LOW);      // coupe l'alimentation des périphériques

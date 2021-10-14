@@ -8,7 +8,9 @@
 #define BALANCE_CLK  26
 #define BALANCE_DAT  27
 #define BALANCE_NB_ECHANTILLONS_TARAGE 100   // passage de 20 à 100 => 
-#define BALANCE_NB_ECHANTILLONS_PESEE 20
+#define BALANCE_NB_ECHANTILLONS_PESEE 20      //
+#define BALANCE_POIDS_SAC 10                   // poids d'un sac vide
+#define BALANCE_MARGE_POIDS_SAC 10             // marge d'erreur tolrable sur le poids d'un sac
 
  /* Cablage des LED *************************************************************************** */
 // pin sur laquelle est connecté la LED rouge

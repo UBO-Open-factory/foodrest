@@ -75,12 +75,6 @@ void SD_EraseWifiFile() {
 void SD_WriteSettings(Configuration &myConfig) {
   const char* fileName = "/settings.txt";
 
-  TraceDebug("valeurDeTarage");
-  TraceDebug(myConfig.valeurDeTarage);
-
-  TraceDebug("laValeurDeTarageInitiale");
-  TraceDebug(myConfig.laValeurDeTarageInitiale);
-
   // Ouverture du fichier en écriture (et réiniitialisation)
   File myFile = SD.open(fileName, FILE_WRITE);
   if (myFile) {
@@ -97,11 +91,11 @@ void SD_WriteSettings(Configuration &myConfig) {
     myFile.println();
 
     myFile.println("// Valeur de tarage de la balance.");
-    myFile.println("valeurDeTarage=" + String(myConfig.valeurDeTarage) );
+    myFile.println("valeurDeTarage=" + String(myConfig.valeurDeTarage * 100) );
     myFile.println();
 
     myFile.println("// Calibrage de la balance (doit être une valeur entière positive ou négative).");
-    myFile.println("calibrationFactor=" + String(myConfig.calibrationFactor) );
+    myFile.println("calibrationFactor=" + String(myConfig.calibrationFactor * 100) );
     myFile.println();
 
     myFile.println("// Identifiant de la poubelle tel que défini dans TOCIO.");
@@ -109,11 +103,11 @@ void SD_WriteSettings(Configuration &myConfig) {
     myFile.println();
 
     myFile.println("// Pour Afficher les traces du programme dans un terminal lorsque la carte est branchée à un PC.");
-    myFile.println("poidOld=" + String(myConfig.poidOld) );
+    myFile.println("poidOld=" + String(myConfig.poidOld * 100) );
     myFile.println();
 
     myFile.println("// Valeur initiale de tarage de la balance (** ne doit pas être modifié **).");
-    myFile.println("laValeurDeTarageInitiale=" + String(myConfig.laValeurDeTarageInitiale) );
+    myFile.println("laValeurDeTarageInitiale=" + String(myConfig.laValeurDeTarageInitiale * 100) );
     myFile.println();
 
   } else {
@@ -177,15 +171,15 @@ boolean SD_Read_Config(Configuration &myConfig) {
 
         // Lecture de la valeur de calibration de la balance
       } else if (cfg.nameIs("calibrationFactor")) {
-        myConfig.calibrationFactor = cfg.getIntValue(); // Get integer
+        myConfig.calibrationFactor = cfg.getIntValue() / 100.0; // Get integer
 
         // Lecture de la valeur de tarage de la balance
       } else if (cfg.nameIs("valeurDeTarage")) {
-        myConfig.valeurDeTarage = cfg.getIntValue(); // Get integer
+        myConfig.valeurDeTarage = cfg.getIntValue() / 100.0; // Get integer
 
         // Lecture de la valeur initiale de tarage de la balance
       } else if (cfg.nameIs("laValeurDeTarageInitiale")) {
-        myConfig.laValeurDeTarageInitiale = cfg.getIntValue(); // Get integer
+        myConfig.laValeurDeTarageInitiale = cfg.getIntValue() / 100.0; // Get integer
 
         // lecture de l'identifiant poubelle
       } else if (cfg.nameIs("IDPoubelle")) {
@@ -193,7 +187,7 @@ boolean SD_Read_Config(Configuration &myConfig) {
 
         // lecture de la dernière pesée
       } else if (cfg.nameIs("poidOld")) {
-        myConfig.poidOld = cfg.getIntValue();      // Get String
+        myConfig.poidOld = cfg.getIntValue() / 100.0; // Get integer
 
       }
     }
